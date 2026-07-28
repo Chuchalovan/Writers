@@ -1,0 +1,82 @@
+{
+  "common": {
+    "appName": "Manuscript",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "loading": "Loading...",
+    "saved": "Saved",
+    "saving": "Saving..."
+  },
+  "landing": {
+    "login": "Log in",
+    "getStarted": "Get started",
+    "heroTitle": "Write. Structure. Create.",
+    "heroSubtitle": "Manuscript is a workspace for writers with an editor, chapter management, statistics, and an AI assistant.",
+    "featureEditorTitle": "Editor",
+    "featureEditorDesc": "A minimal editor with autosave and word count.",
+    "featureStructureTitle": "Structure",
+    "featureStructureDesc": "Organize your work into projects and chapters.",
+    "featureStatsTitle": "Statistics",
+    "featureStatsDesc": "Track progress, goals, and daily writing activity."
+  },
+  "nav": {
+    "projects": "Projects",
+    "stats": "Statistics",
+    "settings": "Settings"
+  },
+  "header": {
+    "language": "Language"
+  },
+  "auth": {
+    "login": "Log in",
+    "register": "Sign up",
+    "logout": "Log out",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "loginDesc": "Sign in to your account",
+    "registerDesc": "Create an account to get started",
+    "loginError": "Invalid email or password",
+    "registerError": "Could not create account",
+    "hasAccount": "Already have an account?",
+    "noAccount": "Don't have an account?",
+    "loading": "Loading..."
+  },
+  "projects": {
+    "title": "Projects",
+    "subtitle": "Your manuscripts and works",
+    "newProject": "New project",
+    "noProjects": "You don't have any projects yet"
+  },
+  "editor": {
+    "wordCount": "{count} words",
+    "focusMode": "Focus mode"
+  },
+  "stats": {
+    "title": "Statistics",
+    "subtitle": "Your writing progress",
+    "today": "Today",
+    "total": "Total",
+    "goal": "Goal"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Profile and app preferences",
+    "profile": "Profile",
+    "profileDesc": "Name and interface language",
+    "aiKey": "AI API key",
+    "aiKeyDesc": "Connect your key for the AI assistant",
+    "comingSoon": "Coming in the next sprint"
+  },
+  "ai": {
+    "title": "AI Assistant",
+    "grammar": "Fix text",
+    "continue": "Continue",
+    "ideas": "Ideas",
+    "chat": "Chat",
+    "apiKeyRequired": "Configure your API key in settings"
+  }
+}

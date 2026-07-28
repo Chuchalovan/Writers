@@ -1,0 +1,82 @@
+{
+  "common": {
+    "appName": "Manuscript",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "create": "Создать",
+    "loading": "Загрузка...",
+    "saved": "Сохранено",
+    "saving": "Сохранение..."
+  },
+  "landing": {
+    "login": "Войти",
+    "getStarted": "Начать",
+    "heroTitle": "Пишите. Структурируйте. Создавайте.",
+    "heroSubtitle": "Manuscript — рабочее пространство для писателей с редактором, управлением главами, статистикой и AI-помощником.",
+    "featureEditorTitle": "Редактор",
+    "featureEditorDesc": "Минималистичный редактор с автосохранением и подсчётом слов.",
+    "featureStructureTitle": "Структура",
+    "featureStructureDesc": "Организуйте произведение по проектам и главам.",
+    "featureStatsTitle": "Статистика",
+    "featureStatsDesc": "Отслеживайте прогресс, цели и ежедневную активность."
+  },
+  "nav": {
+    "projects": "Проекты",
+    "stats": "Статистика",
+    "settings": "Настройки"
+  },
+  "header": {
+    "language": "Язык"
+  },
+  "auth": {
+    "login": "Войти",
+    "register": "Регистрация",
+    "logout": "Выйти",
+    "email": "Email",
+    "password": "Пароль",
+    "name": "Имя",
+    "loginDesc": "Войдите в свой аккаунт",
+    "registerDesc": "Создайте аккаунт для начала работы",
+    "loginError": "Неверный email или пароль",
+    "registerError": "Не удалось создать аккаунт",
+    "hasAccount": "Уже есть аккаунт?",
+    "noAccount": "Нет аккаунта?",
+    "loading": "Загрузка..."
+  },
+  "projects": {
+    "title": "Проекты",
+    "subtitle": "Ваши произведения и рукописи",
+    "newProject": "Новый проект",
+    "noProjects": "У вас пока нет проектов"
+  },
+  "editor": {
+    "wordCount": "{count} слов",
+    "focusMode": "Режим фокуса"
+  },
+  "stats": {
+    "title": "Статистика",
+    "subtitle": "Ваш прогресс в написании",
+    "today": "Сегодня",
+    "total": "Всего",
+    "goal": "Цель"
+  },
+  "settings": {
+    "title": "Настройки",
+    "subtitle": "Профиль и параметры приложения",
+    "profile": "Профиль",
+    "profileDesc": "Имя и язык интерфейса",
+    "aiKey": "AI API-ключ",
+    "aiKeyDesc": "Подключите свой ключ для AI-помощника",
+    "comingSoon": "Будет доступно в следующем спринте"
+  },
+  "ai": {
+    "title": "AI-помощник",
+    "grammar": "Правка текста",
+    "continue": "Продолжить",
+    "ideas": "Идеи",
+    "chat": "Чат",
+    "apiKeyRequired": "Настройте API-ключ в параметрах"
+  }
+}
