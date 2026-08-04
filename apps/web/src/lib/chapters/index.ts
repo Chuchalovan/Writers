@@ -1,4 +1,2 @@
-// Chapter service — CRUD + autosave
-// TODO: implement in Sprint 2
-
-export {};
+// Re-export manuscript service (formerly chapters)
+export * from "@/lib/manuscript";

@@ -3,23 +3,23 @@
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
-import { BookOpen, FolderOpen, BarChart3, Settings } from "lucide-react";
+import { BookOpen, FolderOpen, Settings } from "lucide-react";
 
 const navItems = [
   { href: "/projects", icon: FolderOpen, key: "projects" as const },
-  { href: "/stats", icon: BarChart3, key: "stats" as const },
   { href: "/settings", icon: Settings, key: "settings" as const },
 ];
 
 export function Sidebar() {
   const t = useTranslations("nav");
+  const tCommon = useTranslations("common");
   const pathname = usePathname();
 
   return (
     <aside className="flex h-full w-60 flex-col border-r bg-sidebar">
-      <div className="flex h-16 items-center gap-2 border-b border-sidebar-border px-6">
-        <BookOpen className="h-5 w-5" />
-        <span className="font-serif text-lg font-semibold">Manuscript</span>
+      <div className="flex h-14 items-center gap-2 border-b border-sidebar-border px-6">
+        <BookOpen className="h-5 w-5 text-accent" aria-hidden="true" />
+        <span className="font-display text-lg font-medium">{tCommon("appName")}</span>
       </div>
 
       <nav className="flex-1 space-y-1 p-4">
@@ -36,7 +36,7 @@ export function Sidebar() {
                   : "text-muted-foreground hover:bg-sidebar-accent hover:text-foreground"
               )}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className="h-4 w-4" aria-hidden="true" />
               {t(key)}
             </Link>
           );

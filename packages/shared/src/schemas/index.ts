@@ -2,7 +2,10 @@ import { z } from "zod";
 
 export const CreateProjectSchema = z.object({
   title: z.string().min(1).max(200),
+  subtitle: z.string().max(300).optional(),
   description: z.string().max(5000).optional(),
+  logline: z.string().max(500).optional(),
+  synopsis: z.string().max(10000).optional(),
   genre: z.string().max(100).optional(),
 });
 
@@ -12,11 +15,34 @@ export const UpdateProjectSchema = CreateProjectSchema.partial().extend({
   status: z.enum(["draft", "in_progress", "completed", "archived"]).optional(),
 });
 
+export const CreateManuscriptNodeSchema = z.object({
+  projectId: z.string().cuid(),
+  parentId: z.string().cuid().optional(),
+  type: z.enum(["part", "chapter", "scene"]),
+  title: z.string().min(1).max(200).optional(),
+});
+
+export const UpdateManuscriptNodeSchema = z.object({
+  id: z.string().cuid(),
+  title: z.string().min(1).max(200).optional(),
+  status: z.enum(["idea", "planned", "draft", "revision", "ready"]).optional(),
+  synopsis: z.string().max(5000).optional(),
+  position: z.number().int().min(0).optional(),
+});
+
+export const UpdateSceneContentSchema = z.object({
+  sceneId: z.string().cuid(),
+  contentJson: z.record(z.unknown()).optional(),
+  plainText: z.string().optional(),
+});
+
+/** @deprecated Use CreateManuscriptNodeSchema */
 export const CreateChapterSchema = z.object({
   projectId: z.string().cuid(),
   title: z.string().min(1).max(200).optional(),
 });
 
+/** @deprecated Use UpdateManuscriptNodeSchema + UpdateSceneContentSchema */
 export const UpdateChapterSchema = z.object({
   id: z.string().cuid(),
   title: z.string().min(1).max(200).optional(),
@@ -63,5 +89,8 @@ export const AIChatSchema = z.object({
 
 export type CreateProjectInput = z.infer<typeof CreateProjectSchema>;
 export type UpdateProjectInput = z.infer<typeof UpdateProjectSchema>;
+export type CreateManuscriptNodeInput = z.infer<typeof CreateManuscriptNodeSchema>;
+export type UpdateManuscriptNodeInput = z.infer<typeof UpdateManuscriptNodeSchema>;
+export type UpdateSceneContentInput = z.infer<typeof UpdateSceneContentSchema>;
 export type CreateChapterInput = z.infer<typeof CreateChapterSchema>;
 export type UpdateChapterInput = z.infer<typeof UpdateChapterSchema>;

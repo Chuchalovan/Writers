@@ -1,0 +1,88 @@
+{
+  "Manuscript / Color": {
+    "color/background": {
+      "$type": "color",
+      "$value": "#fbfaf9",
+      "$extensions": {
+        "com.figma": {
+          "codeSyntax": { "WEB": "var(--background)" },
+          "scopes": ["FRAME_FILL", "SHAPE_FILL"]
+        }
+      }
+    },
+    "color/foreground": {
+      "$type": "color",
+      "$value": "#272320",
+      "$extensions": {
+        "com.figma": {
+          "codeSyntax": { "WEB": "var(--foreground)" },
+          "scopes": ["TEXT_FILL"]
+        }
+      }
+    },
+    "color/accent": {
+      "$type": "color",
+      "$value": "#7c5b46",
+      "$extensions": {
+        "com.figma": {
+          "codeSyntax": { "WEB": "var(--accent)" },
+          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL"]
+        }
+      }
+    },
+    "color/status/idea": {
+      "$type": "color",
+      "$value": "#7c746e",
+      "$extensions": {
+        "com.figma": {
+          "codeSyntax": { "WEB": "var(--status-idea)" },
+          "scopes": ["TEXT_FILL"]
+        }
+      }
+    },
+    "color/status/planned": {
+      "$type": "color",
+      "$value": "#b8957f",
+      "$extensions": {
+        "com.figma": {
+          "codeSyntax": { "WEB": "var(--status-planned)" },
+          "scopes": ["TEXT_FILL"]
+        }
+      }
+    },
+    "color/status/draft": {
+      "$type": "color",
+      "$value": "#7c5b46",
+      "$extensions": {
+        "com.figma": {
+          "codeSyntax": { "WEB": "var(--status-draft)" },
+          "scopes": ["TEXT_FILL"]
+        }
+      }
+    },
+    "color/status/revision": {
+      "$type": "color",
+      "$value": "#d97706",
+      "$extensions": {
+        "com.figma": {
+          "codeSyntax": { "WEB": "var(--status-revision)" },
+          "scopes": ["TEXT_FILL"]
+        }
+      }
+    },
+    "color/status/ready": {
+      "$type": "color",
+      "$value": "#16a34a",
+      "$extensions": {
+        "com.figma": {
+          "codeSyntax": { "WEB": "var(--status-ready)" },
+          "scopes": ["TEXT_FILL"]
+        }
+      }
+    }
+  },
+  "$metadata": {
+    "note": "Subset for Tokens Studio / manual import. Full set: run figma-sync-color-variables.js via MCP.",
+    "source": "apps/web/src/app/globals.css"
+  }
+}

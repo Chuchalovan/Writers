@@ -14,6 +14,30 @@ enum ProjectStatus {
   archived
 }
 
+enum ManuscriptNodeType {
+  part
+  chapter
+  scene
+}
+
+enum SceneStatus {
+  idea
+  planned
+  draft
+  revision
+  ready
+}
+
+enum WorldArticleType {
+  location
+  organization
+  object
+  rule
+  culture
+  event
+  article
+}
+
 enum GoalType {
   daily
   project
@@ -87,38 +111,97 @@ model Project {
   id              String        @id @default(cuid())
   userId          String
   title           String
+  subtitle        String?
   description     String?
+  logline         String?
+  synopsis        String?
   genre           String?
+  coverUrl        String?
+  templateId      String?
   targetWordCount Int?
   totalWordCount  Int           @default(0)
   status          ProjectStatus @default(draft)
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+  archivedAt      DateTime?
 
-  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  chapters Chapter[]
-  stats    DailyStat[]
-  goals    WritingGoal[]
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  nodes       ManuscriptNode[]
+  characters  Character[]
+  worldArticles WorldArticle[]
+  stats       DailyStat[]
+  goals       WritingGoal[]
 
   @@index([userId])
   @@index([userId, status])
 }
 
-model Chapter {
+model ManuscriptNode {
+  id        String             @id @default(cuid())
+  projectId String
+  parentId  String?
+  type      ManuscriptNodeType
+  title     String
+  position  Int                @default(0)
+  status    SceneStatus?
+  synopsis  String?
+  wordCount Int                @default(0)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  deletedAt DateTime?
+
+  project  Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  parent   ManuscriptNode?  @relation("NodeTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children ManuscriptNode[] @relation("NodeTree")
+  content  SceneContent?
+
+  @@index([projectId])
+  @@index([projectId, parentId, position])
+  @@index([projectId, type])
+}
+
+model SceneContent {
+  sceneId     String   @id
+  contentJson Json     @default("{}")
+  plainText   String?
+  version     Int      @default(1)
+  updatedAt   DateTime @updatedAt
+
+  scene ManuscriptNode @relation(fields: [sceneId], references: [id], onDelete: Cascade)
+}
+
+model Character {
   id        String   @id @default(cuid())
   projectId String
-  title     String
-  content   Json     @default("{}")
-  plainText String?
-  wordCount Int      @default(0)
-  sortOrder Int      @default(0)
+  name      String
+  role      String?
+  summary   String?
+  imageUrl  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime?
 
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
-  @@index([projectId, sortOrder])
+}
+
+model WorldArticle {
+  id          String           @id @default(cuid())
+  projectId   String
+  type        WorldArticleType
+  title       String
+  summary     String?
+  contentJson Json             @default("{}")
+  imageUrl    String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  deletedAt   DateTime?
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([projectId, type])
 }
 
 model DailyStat {

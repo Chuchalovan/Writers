@@ -1,0 +1,11 @@
+{
+  "codeConnect": {
+    "include": ["src/**/*.figma.ts"],
+    "exclude": [".next/**", "node_modules/**"],
+    "label": "React",
+    "language": "tsx",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  }
+}

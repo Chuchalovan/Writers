@@ -11,20 +11,45 @@
     "saving": "Saving..."
   },
   "landing": {
+    "brand": "Manuscript",
     "login": "Log in",
     "getStarted": "Get started",
-    "heroTitle": "Write. Structure. Create.",
-    "heroSubtitle": "Manuscript is a workspace for writers with an editor, chapter management, statistics, and an AI assistant.",
-    "featureEditorTitle": "Editor",
-    "featureEditorDesc": "A minimal editor with autosave and word count.",
-    "featureStructureTitle": "Structure",
-    "featureStructureDesc": "Organize your work into projects and chapters.",
-    "featureStatsTitle": "Statistics",
-    "featureStatsDesc": "Track progress, goals, and daily writing activity."
+    "heroEyebrow": "A workspace for fiction authors",
+    "heroTitle": "A quiet studio for your book",
+    "heroSubtitle": "Plan your plot, develop characters and world, write scenes, and get contextual AI help — in one calm space where you stay in control.",
+    "exploreFeatures": "Features",
+    "featuresTitle": "Everything connected in one project",
+    "featuresSubtitle": "Your premise, facts, and manuscript no longer live in separate files. Move from idea to draft without extra cognitive load.",
+    "feature_structure_title": "Manuscript structure",
+    "feature_structure_desc": "Parts, chapters, and scenes with ordering, statuses, and drag-and-drop.",
+    "feature_characters_title": "Characters",
+    "feature_characters_desc": "Character cards linked to scenes — open them beside the editor.",
+    "feature_world_title": "World & locations",
+    "feature_world_desc": "Project encyclopedia: places, rules, events, and notes.",
+    "feature_plot_title": "Plot",
+    "feature_plot_desc": "Board, templates, and storylines — no mandatory methodology.",
+    "feature_editor_title": "Scene editor",
+    "feature_editor_desc": "Autosave, focus mode, versions, and a context panel.",
+    "feature_ai_title": "Contextual AI",
+    "feature_ai_desc": "Analysis, questions, and editing — only with chosen context, never imposed.",
+    "principlesTitle": "Product principles",
+    "principle_author_title": "You stay in control",
+    "principle_author_desc": "AI suggests options — you decide to accept, edit, or reject.",
+    "principle_progressive_title": "Progressive disclosure",
+    "principle_progressive_desc": "Start with one scene or build structure first — both paths are equal.",
+    "principle_context_title": "Context beside the text",
+    "principle_context_desc": "Characters, location, and scene goal — in a side panel, no screen switching.",
+    "principle_calm_title": "Calm interface",
+    "principle_calm_desc": "Neutral background, clear typography, and minimal distractions for long sessions.",
+    "principle_ownership_title": "Your data stays yours",
+    "principle_ownership_desc": "Autosave, version history, and export to standard formats.",
+    "ctaTitle": "Create your first project",
+    "ctaDesc": "A working title is enough — add the rest as you go.",
+    "ctaNote": "Free sign-up. Your texts remain yours.",
+    "footerCopyright": "© 2026 Manuscript"
   },
   "nav": {
     "projects": "Projects",
-    "stats": "Statistics",
     "settings": "Settings"
   },
   "header": {
@@ -47,13 +72,48 @@
   },
   "projects": {
     "title": "Projects",
-    "subtitle": "Your manuscripts and works",
+    "subtitle": "Your books and manuscripts",
     "newProject": "New project",
-    "noProjects": "You don't have any projects yet"
+    "noProjects": "You don't have any projects yet",
+    "emptyHint": "Create a project with just a title — genre, structure, and scenes are optional at the start.",
+    "emptyActionWrite": "Start writing",
+    "emptyActionPlan": "Plan the plot",
+    "emptyActionMaterials": "Add materials",
+    "createDesc": "A working title is enough — add the rest later.",
+    "titleLabel": "Title",
+    "titlePlaceholder": "My book",
+    "create": "Create",
+    "creating": "Creating…",
+    "cancel": "Cancel",
+    "createError": "Could not create project",
+    "wordCount": "{count, plural, one {# word} other {# words}}",
+    "nodeCount": "{count, plural, one {# item} other {# items}}",
+    "backToList": "Back to projects",
+    "onboardingDesc": "Choose where to start — you can change your path anytime."
+  },
+  "manuscript": {
+    "title": "Manuscript",
+    "empty": "Structure is empty — add a part, chapter, or scene.",
+    "add_part": "Part",
+    "add_chapter": "Chapter",
+    "add_scene": "Scene",
+    "default_part": "Part 1",
+    "default_chapter": "Chapter 1",
+    "default_scene": "Scene 1",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this item?",
+    "collapse": "Collapse",
+    "expand": "Expand",
+    "status_idea": "Idea",
+    "status_planned": "Planned",
+    "status_draft": "Draft",
+    "status_revision": "In revision",
+    "status_ready": "Ready"
   },
   "editor": {
     "wordCount": "{count} words",
-    "focusMode": "Focus mode"
+    "focusMode": "Focus mode",
+    "comingSoon": "Scene editor — coming in Sprint 3. Structure and navigation work now."
   },
   "stats": {
     "title": "Statistics",
@@ -67,16 +127,16 @@
     "subtitle": "Profile and app preferences",
     "profile": "Profile",
     "profileDesc": "Name and interface language",
-    "aiKey": "AI API key",
-    "aiKeyDesc": "Connect your key for the AI assistant",
+    "aiKey": "AI",
+    "aiKeyDesc": "Contextual assistant settings",
     "comingSoon": "Coming in the next sprint"
   },
   "ai": {
     "title": "AI Assistant",
-    "grammar": "Fix text",
+    "grammar": "Edit text",
     "continue": "Continue",
     "ideas": "Ideas",
     "chat": "Chat",
-    "apiKeyRequired": "Configure your API key in settings"
+    "apiKeyRequired": "Configure AI in settings"
   }
 }

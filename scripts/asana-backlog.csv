@@ -1,0 +1,43 @@
+Name,Description,Section,Priority,Release,Sprint,Status
+"[P0] Email confirm, password reset, profile, delete account","Auth: подтверждение email, сброс пароля, профиль, удаление аккаунта. PRD §3 Foundation & Auth.",Sprint 6 — Import & Polish,P0,MVP Beta,6,Backlog
+"[P0] Карточки проектов, архив, onboarding","Projects: карточки на dashboard, архивирование, onboarding §22. Частично готово.",Sprint 2 — Projects & Manuscript,P0,Closed Alpha,2,In Progress
+"[P0] DnD проектов, фильтры, дублирование","Projects: drag-and-drop порядка карточек, фильтры, дублирование проекта.",Sprint 2 — Projects & Manuscript,P0,Closed Alpha,2,Backlog
+"[P0] Project overview (continue, progress)","Обзор проекта: продолжить писать, прогресс, следующий шаг. Route: /projects/[id].",Sprint 2 — Projects & Manuscript,P0,Closed Alpha,2,In Progress
+"[P0] Drag-and-drop порядка в дереве рукописи","Manuscript: перестановка частей/глав/сцен в навигаторе.",Sprint 2 — Projects & Manuscript,P0,Closed Alpha,2,Backlog
+"[P0] Soft delete + корзина","Manuscript: мягкое удаление узлов дерева и восстановление из корзины.",Sprint 3 — Scene Editor,P0,Closed Alpha,3,Backlog
+"[P0] Поиск по названиям в навигаторе","Manuscript: фильтрация дерева по названию части/главы/сцены.",Sprint 2 — Projects & Manuscript,P0,Closed Alpha,2,Backlog
+"[P0] TipTap редактор + базовое форматирование","Scene Editor: TipTap 2.x, floating toolbar. DEC-002.",Sprint 3 — Scene Editor,P0,Closed Alpha,3,Backlog
+"[P0] Трёхколоночный layout (nav | editor | context)","Scene Editor: left nav 240–280px, editor ~65ch, right panel 300–360px. Figma 9:211.",Sprint 3 — Scene Editor,P0,Closed Alpha,3,Backlog
+"[P0] Автосохранение + offline buffer","Scene Editor: autosave, локальный буфер при потере сети, индикатор состояний save.",Sprint 3 — Scene Editor,P0,Closed Alpha,3,Backlog
+"[P0] Метаданные сцены + контекстная панель","Scene Editor: цель, конфликт, POV, локация; панель Scene/Characters/World/Links/Notes.",Sprint 3 — Scene Editor,P0,Closed Alpha,3,Backlog
+"[P0] Режим фокуса + подсчёт слов","Scene Editor: focus mode (Ctrl+Shift+F), word count в top bar.",Sprint 3 — Scene Editor,P0,Closed Alpha,3,Backlog
+"[P0] История версий + conflict UX","Scene Editor: version history, optimistic concurrency, conflict resolution UI.",Sprint 3 — Scene Editor,P0,MVP Beta,3,Backlog
+"[P0] Персонажи — карточки + связи со сценами","Knowledge Base: CRUD персонажей, привязка к сценам. Figma 9:278.",Sprint 4 — Knowledge Base,P0,Closed Alpha,4,Backlog
+"[P0] Мир и локации","Knowledge Base: WorldArticle, локации. Figma 14:149.",Sprint 4 — Knowledge Base,P0,Closed Alpha,4,Backlog
+"[P0] Глобальный поиск по названиям","Search: поиск сущностей проекта по названию (не полнотекст).",Sprint 4 — Knowledge Base,P0,Closed Alpha,4,Backlog
+"[P0] Экспорт DOCX и TXT","Import/Export: экспорт рукописи в DOCX и TXT.",Sprint 6 — Import & Polish,P0,Closed Alpha,6,Backlog
+"[P0] Empty / loading / error states","Cross-cutting: обязательные состояния экранов §8.5 на P0 экранах.",Sprint 6 — Import & Polish,P0,MVP Beta,6,Backlog
+"[P0] Desktop-first + mobile read-only","Cross-cutting: breakpoints DEC-008, read-only просмотр сцены на mobile.",Sprint 6 — Import & Polish,P0,MVP Beta,6,Backlog
+"[P0] WCAG AA + keyboard navigation","Cross-cutting: доступность на P0 экранах, горячие клавиши §23.8.",Sprint 6 — Import & Polish,P0,MVP Beta,6,Backlog
+"[P0] Privacy policy + analytics (без текста рукописи)","Ops: политика приватности, продуктовая аналитика без content рукописи.",Sprint 6 — Import & Polish,P0,MVP Beta,6,Backlog
+"[P1] Command palette (Ctrl+K)","Scene Editor: палитра команд для быстрой навигации и действий.",Sprint 4 — Knowledge Base,P1,MVP Beta,4,Backlog
+"[P1] Сюжетная доска + шаблоны","Plot board: 3-act, Hero's Journey и др. DEC-009. Figma 9:135.",Sprint 4 — Knowledge Base,P1,MVP Beta,4,Backlog
+"[P1] Таймлайн событий","Timeline: список событий проекта. Figma 9:340.",Sprint 4 — Knowledge Base,P1,MVP Beta,4,Backlog
+"[P1] Заметки и материалы","Notes: заметки автора, прикреплённые материалы. DEC-010 limits.",Sprint 4 — Knowledge Base,P1,MVP Beta,4,Backlog
+"[P1] Полнотекстовый поиск","Search: индексация и поиск по содержимому сцен и заметок.",Sprint 4 — Knowledge Base,P1,MVP Beta,4,Backlog
+"[P1] AI-чат с выбором контекста (Level 0–3)","AI: чат с явным выбором контекста до отправки. DEC-005/006. Figma 9:427.",Sprint 5 — AI Assistant,P1,MVP Beta,5,Backlog
+"[P1] Редактура выделенного + diff accept/reject","AI: правка выделенного текста, diff UI, Принять/Отклонить.",Sprint 5 — AI Assistant,P1,MVP Beta,5,Backlog
+"[P1] Hybrid platform AI + BYOK","AI: платформенный провайдер + bring-your-own-key. UserApiKey Sprint 5.",Sprint 5 — AI Assistant,P1,MVP Beta,5,Backlog
+"[P1] Экспорт PDF, Markdown, ZIP","Import/Export: расширенные форматы экспорта.",Sprint 6 — Import & Polish,P1,MVP Beta,6,Backlog
+"[P1] Импорт DOCX, TXT, Markdown + wizard","Import/Export: wizard импорта с маппингом структуры.",Sprint 6 — Import & Polish,P1,MVP Beta,6,Backlog
+"[P2] OAuth, 2FA, workspaces","Auth: Google/Apple OAuth, двухфакторная аутентификация, workspaces.",Post-MVP,P2,Public Launch+,—,Backlog
+"[P2] Тарифы и billing","Ops: платёжная инфраструктура, free/paid тарифы. DEC-004.",Post-MVP,P2,Public Launch,—,Backlog
+"[P2] AI consistency check + style profile","AI: проверка консистентности, профиль стиля автора.",Post-MVP,P2,Post-MVP,—,Backlog
+"[P2] Real-time collaboration","Post-MVP: совместное редактирование, ProjectMember.",Post-MVP,P2,Post-MVP,—,Backlog
+"[P2] WritingGoal / DailyStat","Post-MVP: цели написания и дневная статистика. DEC-012.",Post-MVP,P2,Post-MVP,—,Backlog
+"[P2] Редакторский кабинет","Post-MVP: кабинет редактора для работы с авторами.",Post-MVP,P2,Post-MVP,—,Backlog
+"[P2] Кастомные поля","Post-MVP: пользовательские поля для сущностей.",Post-MVP,P2,Post-MVP,—,Backlog
+"[P2] Series / API / native mobile","Post-MVP: серии книг, публичный API, нативное mobile-приложение.",Post-MVP,P2,Post-MVP,—,Backlog
+"[Design] Figma variables publish (Light/Dark)","Design System: опубликовать коллекцию Manuscript / Color (29 vars). DEC-011.",Design & QA,P0,MVP Beta,—,Backlog
+"[Design] Code Connect — Chip, AI Review Panel","UI Kit: Chip/*, Panel/AI Review → Code Connect templates.",Design & QA,P1,MVP Beta,—,Backlog
+"[Data] SceneMetadata + Plot/Timeline tables","Prisma: SceneMetadata, Storyline, StoryBeat, TimelineEvent, Note, AIConversation, Version.",Data Model,P1,MVP Beta,4–5,Backlog

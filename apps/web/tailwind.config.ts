@@ -49,11 +49,23 @@ const config: Config = {
           border: "hsl(var(--sidebar-border))",
           accent: "hsl(var(--sidebar-accent))",
         },
+        status: {
+          idea: "hsl(var(--status-idea))",
+          planned: "hsl(var(--status-planned))",
+          draft: "hsl(var(--status-draft))",
+          revision: "hsl(var(--status-revision))",
+          ready: "hsl(var(--status-ready))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        serif: ["var(--font-serif)", "Georgia", "serif"],
+        mono: ["ui-monospace", "monospace"],
       },
     },
   },

@@ -1,0 +1,154 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "Manuscript design tokens — source: apps/web/src/app/globals.css. Import to Figma via MCP use_figma or manual variable creation.",
+  "color": {
+    "background": {
+      "$type": "color",
+      "light": { "$value": "#fbfaf9", "hsl": "40 25% 98%", "css": "var(--background)" },
+      "dark": { "$value": "#1c1917", "hsl": "24 10% 10%", "css": "var(--background)" }
+    },
+    "foreground": {
+      "$type": "color",
+      "light": { "$value": "#272320", "hsl": "24 10% 14%", "css": "var(--foreground)" },
+      "dark": { "$value": "#f3f1ed", "hsl": "38 20% 94%", "css": "var(--foreground)" }
+    },
+    "card": {
+      "$type": "color",
+      "light": { "$value": "#ffffff", "hsl": "0 0% 100%", "css": "var(--card)" },
+      "dark": { "$value": "#221e1c", "hsl": "24 10% 12%", "css": "var(--card)" }
+    },
+    "card-foreground": {
+      "$type": "color",
+      "light": { "$value": "#272320", "css": "var(--card-foreground)" },
+      "dark": { "$value": "#f3f1ed", "css": "var(--card-foreground)" }
+    },
+    "primary": {
+      "$type": "color",
+      "light": { "$value": "#272320", "css": "var(--primary)" },
+      "dark": { "$value": "#f3f1ed", "css": "var(--primary)" }
+    },
+    "primary-foreground": {
+      "$type": "color",
+      "light": { "$value": "#fbfaf9", "css": "var(--primary-foreground)" },
+      "dark": { "$value": "#1c1917", "css": "var(--primary-foreground)" }
+    },
+    "secondary": {
+      "$type": "color",
+      "light": { "$value": "#f2f0ed", "css": "var(--secondary)" },
+      "dark": { "$value": "#2c2826", "css": "var(--secondary)" }
+    },
+    "secondary-foreground": {
+      "$type": "color",
+      "light": { "$value": "#38322e", "css": "var(--secondary-foreground)" },
+      "dark": { "$value": "#dedad3", "css": "var(--secondary-foreground)" }
+    },
+    "muted": {
+      "$type": "color",
+      "light": { "$value": "#eeebe8", "css": "var(--muted)" },
+      "dark": { "$value": "#2c2826", "css": "var(--muted)" }
+    },
+    "muted-foreground": {
+      "$type": "color",
+      "light": { "$value": "#7c746e", "css": "var(--muted-foreground)" },
+      "dark": { "$value": "#9c968b", "css": "var(--muted-foreground)" }
+    },
+    "accent": {
+      "$type": "color",
+      "light": { "$value": "#7c5b46", "css": "var(--accent)" },
+      "dark": { "$value": "#a07f6a", "css": "var(--accent)" }
+    },
+    "accent-foreground": {
+      "$type": "color",
+      "light": { "$value": "#fbfaf9", "css": "var(--accent-foreground)" },
+      "dark": { "$value": "#1c1917", "css": "var(--accent-foreground)" }
+    },
+    "destructive": {
+      "$type": "color",
+      "light": { "$value": "#dc2828", "css": "var(--destructive)" },
+      "dark": { "$value": "#7c1d1d", "css": "var(--destructive)" }
+    },
+    "destructive-foreground": {
+      "$type": "color",
+      "light": { "$value": "#fafafa", "css": "var(--destructive-foreground)" },
+      "dark": { "$value": "#fafafa", "css": "var(--destructive-foreground)" }
+    },
+    "border": {
+      "$type": "color",
+      "light": { "$value": "#e5e2dc", "css": "var(--border)" },
+      "dark": { "$value": "#322d2a", "css": "var(--border)" }
+    },
+    "input": {
+      "$type": "color",
+      "light": { "$value": "#e5e2dc", "css": "var(--input)" },
+      "dark": { "$value": "#322d2a", "css": "var(--input)" }
+    },
+    "ring": {
+      "$type": "color",
+      "light": { "$value": "#7c5b46", "css": "var(--ring)" },
+      "dark": { "$value": "#a07f6a", "css": "var(--ring)" }
+    },
+    "sidebar-background": {
+      "$type": "color",
+      "light": { "$value": "#f7f5f3", "css": "var(--sidebar-background)" },
+      "dark": { "$value": "#161412", "css": "var(--sidebar-background)" }
+    },
+    "sidebar-foreground": {
+      "$type": "color",
+      "light": { "$value": "#272320", "css": "var(--sidebar-foreground)" },
+      "dark": { "$value": "#f3f1ed", "css": "var(--sidebar-foreground)" }
+    },
+    "sidebar-border": {
+      "$type": "color",
+      "light": { "$value": "#e5e2dc", "css": "var(--sidebar-border)" },
+      "dark": { "$value": "#322d2a", "css": "var(--sidebar-border)" }
+    },
+    "sidebar-accent": {
+      "$type": "color",
+      "light": { "$value": "#eeece7", "css": "var(--sidebar-accent)" },
+      "dark": { "$value": "#272321", "css": "var(--sidebar-accent)" }
+    },
+    "status-idea": {
+      "$type": "color",
+      "light": { "$value": "#7c746e", "css": "var(--status-idea)", "note": "alias muted-foreground" },
+      "dark": { "$value": "#9c968b", "css": "var(--status-idea)" }
+    },
+    "status-planned": {
+      "$type": "color",
+      "light": { "$value": "#b8957f", "css": "var(--status-planned)", "note": "accent @ 60%" },
+      "dark": { "$value": "#c4a995", "css": "var(--status-planned)" }
+    },
+    "status-draft": {
+      "$type": "color",
+      "light": { "$value": "#7c5b46", "css": "var(--status-draft)", "note": "alias accent" },
+      "dark": { "$value": "#a07f6a", "css": "var(--status-draft)" }
+    },
+    "status-revision": {
+      "$type": "color",
+      "light": { "$value": "#d97706", "css": "var(--status-revision)" },
+      "dark": { "$value": "#f59e0b", "css": "var(--status-revision)" }
+    },
+    "status-ready": {
+      "$type": "color",
+      "light": { "$value": "#16a34a", "css": "var(--status-ready)" },
+      "dark": { "$value": "#22c55e", "css": "var(--status-ready)" }
+    }
+  },
+  "radius": {
+    "base": { "$type": "dimension", "$value": "6px", "css": "var(--radius)" },
+    "lg": { "$type": "dimension", "$value": "6px", "css": "var(--radius)" },
+    "md": { "$type": "dimension", "$value": "4px", "css": "calc(var(--radius) - 2px)" },
+    "sm": { "$type": "dimension", "$value": "2px", "css": "calc(var(--radius) - 4px)" }
+  },
+  "spacing": {
+    "xs": { "$type": "dimension", "$value": "4px" },
+    "sm": { "$type": "dimension", "$value": "8px" },
+    "md": { "$type": "dimension", "$value": "16px" },
+    "lg": { "$type": "dimension", "$value": "24px" },
+    "xl": { "$type": "dimension", "$value": "32px" }
+  },
+  "typography": {
+    "font-sans": { "$type": "fontFamily", "$value": "Inter", "css": "var(--font-sans)" },
+    "font-serif": { "$type": "fontFamily", "$value": "Source Serif 4", "css": "var(--font-serif)" },
+    "font-mono": { "$type": "fontFamily", "$value": "ui-monospace", "css": "var(--font-mono)" }
+  }
+}

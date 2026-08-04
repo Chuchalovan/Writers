@@ -10,7 +10,10 @@
     "typecheck": "tsc --noEmit",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "figma:connect:parse": "figma connect parse",
+    "figma:connect:publish": "figma connect publish",
+    "figma:connect:unpublish": "figma connect unpublish"
   },
   "dependencies": {
     "@manuscript/ai": "workspace:*",
@@ -34,6 +37,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
+    "@figma/code-connect": "^1.5.2",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

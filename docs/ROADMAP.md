@@ -1,106 +1,111 @@
 # Roadmap
 
+> **Единый PRD:** [PRD - Manuscript.md](./PRD%20-%20Manuscript.md)  
+> Согласован с PRD v1.0  
+> **Scope (P0/P1/P2 ↔ sprint ↔ release):** [MVP-SCOPE-MATRIX.md](./MVP-SCOPE-MATRIX.md)  
+> **Open decisions (PRD §17):** [DECISION-LOG.md](./DECISION-LOG.md)
+
 ## Phase 0 — Подготовка ✅
 
-- [x] PRD и документация
+- [x] PRD v1.0 и документация
 - [x] Структура monorepo
-- [x] Prisma schema (черновик)
+- [x] Prisma schema (целевая модель v1.0)
 - [x] CI/CD pipeline (GitHub Actions)
-- [x] PostgreSQL — нативная установка Windows (скрипт `scripts/setup-db.ps1`)
+- [x] PostgreSQL — нативная установка Windows (`scripts/setup-db.ps1`)
+- [x] Landing page (черновик, выравнивание под PRD v1.0)
 
 ---
 
-## Phase 1 — MVP Core (4–6 недель)
+## Phase 1 — Alpha (Этап 1 PRD)
 
-### Sprint 1: Foundation
-- [x] Инициализация Next.js + Tailwind + shadcn/ui
-- [x] PostgreSQL + Prisma setup, миграции (нативная установка Windows)
+### Sprint 1: Foundation ✅
+- [x] Next.js 15 + Tailwind + shadcn/ui
+- [x] PostgreSQL + Prisma
 - [x] Better Auth (email/password)
 - [x] i18n (next-intl, ru/en)
 - [x] Базовый layout (sidebar, header)
+- [x] Landing page
 
-### Sprint 2: Projects & Chapters
-- [ ] CRUD проектов
-- [ ] CRUD глав
-- [ ] Навигация: список проектов → проект → глава
-- [ ] Drag-and-drop сортировка глав
+### Sprint 2: Projects & Manuscript structure
+- [x] CRUD проектов (создание только по названию)
+- [x] ManuscriptNode: части, главы, сцены (создание, удаление)
+- [x] Навигатор рукописи (дерево, статусы)
+- [ ] Drag-and-drop порядка
+- [x] Onboarding: «Начать писать» / «Спланировать сюжет» / «Добавить материалы»
+- [ ] Обзор проекта (продолжить, прогресс, следующий шаг) — частично
 
-### Sprint 3: Editor
+### Sprint 3: Scene editor
 - [ ] TipTap редактор с базовым форматированием
-- [ ] Автосохранение (debounce)
-- [ ] Подсчёт слов в реальном времени
-- [ ] Режим «фокус»
+- [ ] Трёхколоночный layout: навигатор | редактор | контекст
+- [ ] Автосохранение + локальный буфер при потере сети
+- [ ] Метаданные сцены (цель, конфликт, POV, локация)
+- [ ] Режим фокуса, подсчёт слов
+- [ ] История версий сцен
 
-### Sprint 4: Stats
-- [ ] DailyStat tracking при сохранении
-- [ ] Дашборд статистики (график, прогресс)
-- [ ] Цели по словам (daily / project)
-- [ ] Streak
+### Sprint 4: Knowledge base
+- [ ] Персонажи (карточки, связи со сценами)
+- [ ] Мир и локации
+- [ ] Сюжетная доска + шаблоны
+- [ ] Таймлайн (список событий)
+- [ ] Заметки и материалы
+- [ ] Глобальный поиск по проекту
 
-### Sprint 5: AI (BYOK)
-- [ ] UI настройки API-ключа
-- [ ] Шифрование / хранение ключей
-- [ ] AI: правка текста
-- [ ] AI: продолжение текста
-- [ ] AI: генерация идей
-- [ ] AI: чат по проекту
+### Sprint 5: AI assistant
+- [ ] AI-чат с выбором контекста
+- [ ] Анализ и редактура выделенного текста
+- [ ] Принять / принять фрагмент / отклонить
+- [ ] Настройки AI и политика приватности
+- [ ] Прозрачность использованного контекста
 
-### Sprint 6: Polish
-- [ ] Landing page
-- [ ] Onboarding flow
-- [ ] Error handling & loading states
-- [ ] Responsive design
-- [ ] Тестирование, баг-фиксы
-
----
-
-## Phase 2 — Collaboration (6–8 недель)
-
-- [ ] Приглашение пользователей в проект
-- [ ] Роли: owner, editor, viewer
-- [ ] Комментарии к тексту
-- [ ] Совместное редактирование (Yjs / Liveblocks)
-- [ ] Уведомления
+### Sprint 6: Import, export & polish
+- [ ] Импорт DOCX / TXT / Markdown
+- [ ] Экспорт DOCX / PDF / TXT / Markdown / ZIP
+- [ ] Восстановление пароля, профиль
+- [ ] Error/loading/empty states
+- [ ] Responsive (desktop-first, read-only mobile)
+- [ ] Usability-тесты
 
 ---
 
-## Phase 3 — Rich Structure (4–6 недель)
+## Phase 2 — MVP Beta (Этап 2 PRD)
 
-- [ ] Персонажи (Character cards)
-- [ ] Локации (Location cards)
-- [ ] Timeline / хронология
-- [ ] Связи между сущностями и главами
-- [ ] Outline view (карточки сцен)
-
----
-
-## Phase 4 — Export & Integrations (3–4 недели)
-
-- [ ] Экспорт: PDF, DOCX, EPUB
-- [ ] Импорт из Scrivener / plain text
-- [ ] Webhook API
-- [ ] OAuth провайдеры (Google, GitHub)
+- [ ] Платёжная инфраструктура
+- [ ] Расширенный поиск и индексация
+- [ ] Улучшенная надёжность синхронизации
+- [ ] Продуктовая аналитика (без текста рукописи)
 
 ---
 
-## Phase 5 — Platform (ongoing)
+## Phase 3 — Public launch (Этап 3 PRD)
 
-- [ ] Подписки / billing
-- [ ] Managed AI (без BYOK, с лимитами)
-- [ ] Мобильное PWA
-- [ ] Офлайн-режим
-- [ ] Self-hosted Docker image
-- [ ] Marketplace шаблонов / промптов
+- [ ] Onboarding v2
+- [ ] Справка и документация
+- [ ] Тарифы
+- [ ] OAuth (Google/Apple)
+
+> Сюжетные шаблоны — Sprint 4 / MVP Beta (P1), см. [MVP-SCOPE-MATRIX.md](./MVP-SCOPE-MATRIX.md).
+
+---
+
+## Phase 4 — Post-MVP
+
+- [ ] Real-time collaboration
+- [ ] Редакторский кабинет
+- [ ] Расширенный таймлайн
+- [ ] Кастомные поля
+- [ ] API и интеграции
+- [ ] Мобильное приложение
 
 ---
 
 ## Приоритеты
 
 ```
-MVP (Phase 1)  ──────────────────►  Release v1.0
+Alpha (Phase 1)  ──────────────►  Closed alpha
      │
-     ├── Phase 2 (Collaboration)  ──►  v1.5
-     ├── Phase 3 (Structure)       ──►  v2.0
-     ├── Phase 4 (Export)          ──►  v2.5
-     └── Phase 5 (Platform)        ──►  v3.0+
+Beta (Phase 2)   ──────────────►  MVP beta
+     │
+Launch (Phase 3) ──────────────►  Public v1.0
+     │
+Phase 4          ──────────────►  v2.0+
 ```

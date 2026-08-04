@@ -4,56 +4,66 @@
 
 @layer base {
   :root {
-    --background: 40 33% 98%;
-    --foreground: 24 10% 10%;
+    --background: 40 25% 98%;
+    --foreground: 24 10% 14%;
     --card: 0 0% 100%;
-    --card-foreground: 24 10% 10%;
+    --card-foreground: 24 10% 14%;
     --popover: 0 0% 100%;
-    --popover-foreground: 24 10% 10%;
-    --primary: 24 10% 10%;
-    --primary-foreground: 40 33% 98%;
-    --secondary: 40 20% 94%;
-    --secondary-foreground: 24 10% 10%;
-    --muted: 40 20% 94%;
-    --muted-foreground: 24 5% 45%;
-    --accent: 40 20% 94%;
-    --accent-foreground: 24 10% 10%;
-    --destructive: 0 84% 60%;
+    --popover-foreground: 24 10% 14%;
+    --primary: 24 10% 14%;
+    --primary-foreground: 40 25% 98%;
+    --secondary: 38 18% 94%;
+    --secondary-foreground: 24 10% 20%;
+    --muted: 38 15% 92%;
+    --muted-foreground: 24 6% 46%;
+    --accent: 24 28% 38%;
+    --accent-foreground: 40 25% 98%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
-    --border: 40 15% 88%;
-    --input: 40 15% 88%;
-    --ring: 24 10% 10%;
-    --radius: 0.5rem;
-    --sidebar-background: 40 25% 96%;
-    --sidebar-foreground: 24 10% 10%;
-    --sidebar-border: 40 15% 88%;
-    --sidebar-accent: 40 20% 92%;
+    --border: 38 14% 88%;
+    --input: 38 14% 88%;
+    --ring: 24 28% 38%;
+    --radius: 0.375rem;
+    --sidebar-background: 38 20% 96%;
+    --sidebar-foreground: 24 10% 14%;
+    --sidebar-border: 38 14% 88%;
+    --sidebar-accent: 38 18% 92%;
+    --status-idea: 24 6% 46%;
+    --status-planned: 24 28% 62%;
+    --status-draft: 24 28% 38%;
+    --status-revision: 32 95% 44%;
+    --status-ready: 142 76% 36%;
   }
 
   .dark {
     --background: 24 10% 10%;
-    --foreground: 40 33% 98%;
+    --foreground: 38 20% 94%;
     --card: 24 10% 12%;
-    --card-foreground: 40 33% 98%;
+    --card-foreground: 38 20% 94%;
     --popover: 24 10% 12%;
-    --popover-foreground: 40 33% 98%;
-    --primary: 40 33% 98%;
+    --popover-foreground: 38 20% 94%;
+    --primary: 38 20% 94%;
     --primary-foreground: 24 10% 10%;
-    --secondary: 24 8% 18%;
-    --secondary-foreground: 40 33% 98%;
-    --muted: 24 8% 18%;
-    --muted-foreground: 40 10% 60%;
-    --accent: 24 8% 18%;
-    --accent-foreground: 40 33% 98%;
+    --secondary: 24 8% 16%;
+    --secondary-foreground: 38 15% 85%;
+    --muted: 24 8% 16%;
+    --muted-foreground: 38 8% 58%;
+    --accent: 24 22% 52%;
+    --accent-foreground: 24 10% 10%;
     --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 98%;
     --border: 24 8% 18%;
     --input: 24 8% 18%;
-    --ring: 40 20% 80%;
+    --ring: 24 22% 52%;
     --sidebar-background: 24 10% 8%;
-    --sidebar-foreground: 40 33% 98%;
+    --sidebar-foreground: 38 20% 94%;
     --sidebar-border: 24 8% 18%;
     --sidebar-accent: 24 8% 14%;
+    --status-idea: 38 8% 58%;
+    --status-planned: 24 22% 62%;
+    --status-draft: 24 22% 52%;
+    --status-revision: 38 92% 50%;
+    --status-ready: 142 71% 45%;
   }
 }
 
@@ -62,7 +72,22 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans), system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-serif), Georgia, serif;
+  }
+
+  .font-label {
+    font-family: var(--font-mono), ui-monospace, monospace;
   }
 }

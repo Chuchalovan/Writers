@@ -1,13 +1,26 @@
 import type { Metadata } from "next";
+import { Inter, Source_Serif_4 } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
+const sourceSerif = Source_Serif_4({
+  subsets: ["latin", "cyrillic"],
+  variable: "--font-serif",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin", "cyrillic"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "Manuscript",
-  description: "Веб-приложение для писателей",
+  title: "Манускрипт",
+  description: "Рабочая среда для авторов художественной прозы",
 };
 
 export function generateStaticParams() {
@@ -32,7 +45,7 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale}>
-      <body>
+      <body className={`${sourceSerif.variable} ${inter.variable} font-sans`}>
         <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
       </body>
     </html>
