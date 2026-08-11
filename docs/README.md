@@ -29,7 +29,7 @@ BRD  →  PRD  →  User Stories  →  ТЗ  →  Roadmap  →  Technical
 ## Быстрые ссылки
 
 - [PRD v2.0 (текущий)](./prd/PRD.md)
-- [BRD](./brd/BRD.md)
+- [BRD v1.0](./brd/BRD.md) · [методы сюжета](./brd/plot-methods.md)
 - [Техническое задание](./tz/TZ.md)
 - [Roadmap](./roadmap/ROADMAP.md)
 - [User Stories](./user-stories/README.md)

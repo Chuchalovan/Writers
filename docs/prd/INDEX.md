@@ -12,7 +12,8 @@
 | [PRD v1.0 (archive)](./archive/PRD-v1.0.md) | Исходная нормативная спецификация §1–§30 |
 | [MVP-SCOPE-MATRIX](../roadmap/MVP-SCOPE-MATRIX.md) | SoT приоритетов P0/P1/P2 |
 | [DECISION-LOG](../roadmap/DECISION-LOG.md) | DEC-001…012 |
-| [BRD](../brd/BRD.md) | Бизнес-требования |
+| [BRD v1.0](../brd/BRD.md) | Бизнес-требования |
+| [Методы сюжета](../brd/plot-methods.md) | Каталог методов построения сюжета |
 | [ТЗ](../tz/TZ.md) | Техническое задание |
 | [User Stories](../user-stories/) | Сценарии и AC |
 | [ROADMAP](../roadmap/ROADMAP.md) | Спринты |

@@ -355,7 +355,7 @@
 | FR-KN-02 | P0 | Связь персонаж ↔ сцена | Отображается в карточке и/или контексте сцены |
 | FR-KN-03 | P0 | Локации и базовые статьи мира | CRUD с типом и описанием |
 | FR-KN-04 | P1 | Обратные ссылки мира | Видны упоминания/привязки сущности |
-| FR-KN-05 | P1 | Сюжетная доска + шаблоны + линии | Карточки DnD; шаблоны необязательны; термины простым языком |
+| FR-KN-05 | P1 | Сюжетная доска + **методы построения сюжета** + линии | Карточки DnD; автор выбирает **один** метод или `blank`; Must к Beta: `three-act`, `heros-journey`, `beat-sheet`, `blank`. Каталог и MoSCoW: [plot-methods.md](../brd/plot-methods.md), [BRD §8](../brd/BRD.md). Термины — простым языком |
 | FR-KN-06 | P1 | Таймлайн — список событий | Сортировка по story time; предупреждение о конфликте порядка (не hard-block) |
 | FR-KN-07 | P1 | Заметки и материалы (текст, ссылки; файлы с квотами) | Связь с сущностями; лимиты — DEC-010 |
 | FR-KN-08 | P0 | Глобальный поиск по названиям | Результаты по типам; открытие сущности |
@@ -498,7 +498,7 @@
 | AI retention / privacy UX | Product + Legal | Sprint 5 | DEC-006 |
 | Юрисдикция и legal docs | Legal / Product | Beta gate | DEC-007 |
 | Глубина mobile | Product + Design | Sprint 6 | DEC-008 |
-| Контент шаблонов сюжета | Product | Sprint 4 | DEC-009 |
+| Контент шагов/битов Must-методов сюжета по [plot-methods.md](../brd/plot-methods.md) / [BRD](../brd/BRD.md) | Product | Sprint 4 | DEC-009 |
 | Лимиты файлов/изображений | Product + Eng | Sprint 4 | DEC-010 |
 | Figma tokens publish | Design | Beta | DEC-011 |
 | WritingGoal / DailyStat в scope? | Product | Sprint 6 | DEC-012 → P2 proposed |

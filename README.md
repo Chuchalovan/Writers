@@ -52,7 +52,7 @@ manuscript/
 | Раздел | Ссылка |
 |--------|--------|
 | **PRD** | [PRD v2.0](./docs/prd/PRD.md) · [указатель](./docs/prd/INDEX.md) · [v1.1 archive](./docs/prd/archive/PRD-v1.1-consolidated.md) · [v1.0 archive](./docs/prd/archive/PRD-v1.0.md) |
-| **BRD** | [BRD](./docs/brd/BRD.md) |
+| **BRD** | [BRD v1.0](./docs/brd/BRD.md) · [методы сюжета](./docs/brd/plot-methods.md) |
 | **ТЗ** | [Техническое задание](./docs/tz/TZ.md) |
 | **Roadmap** | [Roadmap](./docs/roadmap/ROADMAP.md) · [Scope Matrix](./docs/roadmap/MVP-SCOPE-MATRIX.md) · [Decision Log](./docs/roadmap/DECISION-LOG.md) |
 | **User Stories** | [Эпики и истории](./docs/user-stories/) |

@@ -4,7 +4,7 @@
 > **Версия:** 0.1 (структура + ссылки на SoT)  
 > **Дата:** 11 августа 2026  
 > **Статус:** рабочий каркас  
-> **Основание:** [PRD v2.0](../prd/PRD.md), [BRD](../brd/BRD.md), [User Stories](../user-stories/)
+> **Основание:** [PRD v2.0](../prd/PRD.md), [BRD v1.0](../brd/BRD.md), [User Stories](../user-stories/)
 
 ---
 

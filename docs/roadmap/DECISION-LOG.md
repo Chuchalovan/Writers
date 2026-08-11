@@ -36,7 +36,7 @@
 | [DEC-006](#dec-006-ai-хранение-и-приватность) | AI: хранение запросов | 🟡 Proposed | Product + Legal | Sprint 5 start | Sprint 5 |
 | [DEC-007](#dec-007-юрисдикция-и-legal) | Юрисдикция и compliance | ⬜ Open | Legal / Product | MVP Beta gate | Beta, Launch |
 | [DEC-008](#dec-008-глубина-mobile) | Глубина mobile | 🟡 Proposed | Product + Design | Sprint 6 start | Sprint 6 |
-| [DEC-009](#dec-009-шаблоны-сюжета) | Шаблоны сюжета (контент) | ⬜ Open | Product | Sprint 4 start | Sprint 4 |
+| [DEC-009](#dec-009-шаблоны-сюжета-методы-построения) | Методы сюжета (контент битов) | ⬜ Open | Product | Sprint 4 start | Sprint 4 |
 | [DEC-010](#dec-010-лимиты-файлов-и-изображений) | Лимиты файлов | ⬜ Open | Product + Eng | Sprint 4 start | Sprint 4 |
 | [DEC-011](#dec-011-figma-design-handoff) | Figma tokens & handoff | ⬜ Open | Design | MVP Beta gate | Beta |
 | [DEC-012](#dec-012-writinggoaldailystat) | WritingGoal / DailyStat | 🟡 Proposed | Product | Sprint 6 start | — |
@@ -327,35 +327,42 @@ PRD §1.4: полноценное mobile app — non-goal. §11.4: read-only + l
 
 ---
 
-## DEC-009: Шаблоны сюжета
+## DEC-009: Шаблоны сюжета (методы построения)
 
 **Статус:** ⬜ Open  
 **Owner:** Product  
 **Deadline:** начало Sprint 4  
-**PRD §17:** точный набор шаблонов  
-**Блокирует:** Sprint 4 (Plot board)
+**PRD:** `FR-KN-05`; **BRD:** §8 Must/Should  
+**Блокирует:** Sprint 4 (Plot board + методы)
 
 ### Контекст
 
-PRD §6.6: триактная, Hero's Journey, Save the Cat, пустая. Нужен **контент** битов, не только названия.
+Автор должен иметь возможность **создать произведение, выбрав один метод построения сюжета** (или `blank`). Канон методов и MoSCoW: [plot-methods.md](../brd/plot-methods.md), бизнес-правила: [BRD.md](../brd/BRD.md).
 
-### Рекомендация — состав MVP (P1)
+Нужен **контент** битов/шагов с i18n и пояснениями простым языком — не только названия.
 
-| ID | Шаблон | Битов | Источник |
-|----|--------|-------|----------|
-| `blank` | Пустая структура | 0 | — |
-| `three-act` | Трёхактная | 9 | Setup / Confrontation / Resolution |
+### Рекомендация — Must к MVP Beta (P1)
+
+| ID | Метод | Битов / шагов | Источник |
+|----|-------|---------------|----------|
+| `blank` | Без метода / пустая структура | 0 | — |
+| `three-act` | Трёхактная | ~9 | Setup / Confrontation / Resolution |
 | `heros-journey` | Путь героя | 12 | Campbell (упрощённый) |
-| `save-the-cat` | Save the Cat | 15 | Blake Snyder beats (упрощённый) |
+| `beat-sheet` | Сценарный план (Beat Sheet) | ~15 | Цель→Конфликт→… / близок Save the Cat |
+
+### Should (после Must или Launch+)
+
+`snowflake-lite`, `string`, `index-cards` — см. каталог.
 
 ### Deliverable
 
-- [ ] `packages/shared/src/templates/plot/*.json` — beat definitions с i18n keys
-- [ ] UI: tooltip с plain-language объяснением каждого бита (PRD §6.6)
+- [ ] `packages/shared/src/templates/plot/*.json` — beat/step definitions с i18n keys  
+- [ ] UI: выбор одного метода при создании/в сюжете; tooltip с plain-language объяснением  
+- [ ] Связь элементов каркаса со сценами; смена метода без потери текста рукописи  
 
 ### Owner action
 
-Утвердить список битов (можно начать с `blank` + `three-act` для Sprint 4, остальные +1 sprint).
+Утвердить список битов Must-методов (можно начать с `blank` + `three-act` для Sprint 4, `heros-journey` + `beat-sheet` следом в том же gate Beta).
 
 ---
 
