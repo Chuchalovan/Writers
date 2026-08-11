@@ -10,19 +10,29 @@
   
   "documentation": {
     "paths": {
-      "root": "ai_docs",
+      "root": "docs",
+      "prd": "docs/prd",
+      "brd": "docs/brd",
+      "tz": "docs/tz",
+      "roadmap": "docs/roadmap",
+      "userStories": "docs/user-stories",
+      "architecture": "docs/technical",
+      "api": "docs/technical",
+      "design": "docs/technical/design",
       "plans": "ai_docs/develop/plans",
       "reports": "ai_docs/develop/reports",
       "issues": "ai_docs/develop/issues",
-      "architecture": "ai_docs/develop/architecture",
       "features": "ai_docs/develop/features",
-      "api": "ai_docs/develop/api",
       "components": "ai_docs/develop/components",
-      "design": "ai_docs/design",
       "changelog": "ai_docs/changelog",
       "audits": "ai_docs/develop/audits"
     },
     "enabled": {
+      "prd": true,
+      "brd": true,
+      "tz": true,
+      "roadmap": true,
+      "userStories": true,
       "plans": true,
       "reports": true,
       "issues": true,
@@ -34,6 +44,6 @@
       "changelog": true,
       "audits": true
     },
-    "comment": "Customize paths for your project. Set 'enabled' to false or path to null to disable specific documentation types"
+    "comment": "Product docs live in docs/ (PRD, BRD, TZ, Roadmap, User Stories). Agent plans/reports remain under ai_docs/."
   }
 }

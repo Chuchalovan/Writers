@@ -1,10 +1,13 @@
-# PRD — Manuscript
+﻿# PRD — Manuscript (архив v1.1)
+
+> **Архив.** Актуальный документ: **[../PRD.md](../PRD.md)** (v2.0).  
+> Этот файл сохранён для истории consolidated-версии от 4 августа 2026.
 
 > **Продукт:** «Манускрипт» — рабочая среда для авторов художественной прозы  
-> **Версия документа:** 1.1 (consolidated)  
+> **Версия документа:** 1.1 (consolidated) — archived  
 > **Дата:** 4 августа 2026  
-> **Статус:** рабочая спецификация для проектирования и разработки  
-> **Базовый PRD:** [Манускрипт — PRD v1.0](./Манускрипт%20—%20Product%20Requirements%20Document%20(PRD)%20v1.0.md) (30 июля 2026)  
+> **Статус:** архив (заменён PRD v2.0)  
+> **Базовый PRD:** [PRD v1.0](./PRD-v1.0.md) (30 июля 2026)  
 > **Figma:** [Manuscript Design System](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System)
 
 ---
@@ -24,7 +27,7 @@
 
 **Правило при расхождении:** побеждает **§3 Scope Matrix** этого документа.
 
-**Текущая разработка:** [ROADMAP.md](./ROADMAP.md) · **Архитектура:** [ARCHITECTURE.md](./ARCHITECTURE.md)
+**Текущая разработка:** [ROADMAP.md](../roadmap/ROADMAP.md) · **Архитектура:** [ARCHITECTURE.md](../technical/ARCHITECTURE.md)
 
 ---
 
@@ -293,7 +296,7 @@ Real-time collab, ProjectMember, WritingGoal/DailyStat, editor cabinet, custom f
 
 **Scene status:** `--status-idea` … `--status-ready` → Tailwind `text-status-*`.
 
-**Figma collection (target):** `Manuscript / Color` — 29 vars, modes Light/Dark. Spec: [FIGMA-VARIABLES.md](./FIGMA-VARIABLES.md).
+**Figma collection (target):** `Manuscript / Color` — 29 vars, modes Light/Dark. Spec: [FIGMA-VARIABLES.md](../technical/design/FIGMA-VARIABLES.md).
 
 ### 6.4. Breakpoints (DEC-008)
 
@@ -336,7 +339,7 @@ Manuscript Design System (Starter — max 3 pages)
 | Tree item (`9:239`) | `manuscript-tree.tsx` | ✅ |
 | Chip/*, Panel/AI Review | — | ⬜ |
 
-Publish в Figma blocked: Starter plan (Org required). Детали: [CODE-CONNECT.md](./CODE-CONNECT.md).
+Publish в Figma blocked: Starter plan (Org required). Детали: [CODE-CONNECT.md](../technical/design/CODE-CONNECT.md).
 
 ### 6.8. Обязательные состояния экранов (§8.5)
 
@@ -422,7 +425,7 @@ User ── UserApiKey (Sprint 5)
 | DEC-011 | Figma handoff & variables | 🟡 Partial | Beta | Design QA |
 | DEC-012 | WritingGoal / DailyStat scope | 🟡 Proposed → P2 | Sprint 6 | — |
 
-Полные записи: [DECISION-LOG.md](./DECISION-LOG.md)
+Полные записи: [DECISION-LOG.md](../roadmap/DECISION-LOG.md)
 
 ---
 
@@ -457,15 +460,15 @@ User ── UserApiKey (Sprint 5)
 
 | Документ | Назначение |
 |----------|------------|
-| [PRD v1.0 (полный текст)](./Манускрипт%20—%20Product%20Requirements%20Document%20(PRD)%20v1.0.md) | Нормативные §6–§29, user stories, AI spec |
-| [MVP-SCOPE-MATRIX.md](./MVP-SCOPE-MATRIX.md) | Полная матрица (identical §3) |
-| [DECISION-LOG.md](./DECISION-LOG.md) | Детали DEC-001…012 |
-| [DESIGN-HANDOFF.md](./DESIGN-HANDOFF.md) | Figma node-ids, component map |
-| [FIGMA-VARIABLES.md](./FIGMA-VARIABLES.md) | Tokens, sync scripts |
-| [CODE-CONNECT.md](./CODE-CONNECT.md) | Figma ↔ React mappings |
-| [DATABASE.md](./DATABASE.md) | Prisma models, migrations backlog |
-| [ROADMAP.md](./ROADMAP.md) | Sprint checklist |
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | System design |
+| [PRD v1.0 (полный текст)](./archive/PRD-v1.0.md) | Нормативные §6–§29, user stories, AI spec |
+| [MVP-SCOPE-MATRIX.md](../roadmap/MVP-SCOPE-MATRIX.md) | Полная матрица (identical §3) |
+| [DECISION-LOG.md](../roadmap/DECISION-LOG.md) | Детали DEC-001…012 |
+| [DESIGN-HANDOFF.md](../technical/design/DESIGN-HANDOFF.md) | Figma node-ids, component map |
+| [FIGMA-VARIABLES.md](../technical/design/FIGMA-VARIABLES.md) | Tokens, sync scripts |
+| [CODE-CONNECT.md](../technical/design/CODE-CONNECT.md) | Figma ↔ React mappings |
+| [DATABASE.md](../technical/DATABASE.md) | Prisma models, migrations backlog |
+| [ROADMAP.md](../roadmap/ROADMAP.md) | Sprint checklist |
+| [ARCHITECTURE.md](../technical/ARCHITECTURE.md) | System design |
 
 ---
 

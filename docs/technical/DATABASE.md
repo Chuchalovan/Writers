@@ -1,8 +1,8 @@
-# Схема базы данных
+﻿# Схема базы данных
 
 > **Источник реализации:** `apps/web/prisma/schema.prisma`  
-> **Норматив PRD:** [PRD v1.0 §9](./Манускрипт%20—%20Product%20Requirements%20Document%20(PRD)%20v1.0.md)  
-> **Scope:** [MVP-SCOPE-MATRIX.md](./MVP-SCOPE-MATRIX.md), [DEC-012](./DECISION-LOG.md#dec-012-writinggoal--dailystat)  
+> **Норматив PRD:** [PRD v1.0 §9](../prd/archive/PRD-v1.0.md)  
+> **Scope:** [MVP-SCOPE-MATRIX.md](../roadmap/MVP-SCOPE-MATRIX.md), [DEC-012](../roadmap/DECISION-LOG.md#dec-012-writinggoal--dailystat)  
 > **Обновлено:** 4 августа 2026
 
 ---
@@ -47,8 +47,8 @@
 | 9.14 AIConversation | — | 5 (P1) | ⬜ | AI panel |
 | 9.15 Version | — | 3+ | ⬜ | Optimistic concurrency via `SceneContent.version` only |
 | — | `UserApiKey` | 5 (P1) | 🟢 Schema | BYOK; не в PRD §9 явно |
-| — | `DailyStat` | P2 | 🟡 Schema | [DEC-012](./DECISION-LOG.md#dec-012-writinggoal--dailystat) |
-| — | `WritingGoal` | P2 | 🟡 Schema | [DEC-012](./DECISION-LOG.md#dec-012-writinggoal--dailystat) |
+| — | `DailyStat` | P2 | 🟡 Schema | [DEC-012](../roadmap/DECISION-LOG.md#dec-012-writinggoal--dailystat) |
+| — | `WritingGoal` | P2 | 🟡 Schema | [DEC-012](../roadmap/DECISION-LOG.md#dec-012-writinggoal--dailystat) |
 
 **Правило при расхождении:** для MVP реализация следует **Prisma + MVP-SCOPE-MATRIX**; PRD §9 — целевая полная модель.
 
@@ -161,7 +161,7 @@ Better Auth managed. Таблица `user`.
 | wordsWritten | Int | Daily delta |
 
 **Unique:** `(userId, projectId, date)`  
-См. [DEC-012](./DECISION-LOG.md#dec-012-writinggoal--dailystat).
+См. [DEC-012](../roadmap/DECISION-LOG.md#dec-012-writinggoal--dailystat).
 
 ### UserApiKey (P1 Sprint 5)
 

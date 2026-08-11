@@ -1,6 +1,6 @@
-# Decision Log
+﻿# Decision Log
 
-> Закрывает [PRD v1.0 §17](./Манускрипт%20—%20Product%20Requirements%20Document%20(PRD)%20v1.0.md) и дополняет [MVP-SCOPE-MATRIX.md](./MVP-SCOPE-MATRIX.md)  
+> Закрывает [PRD v1.0 §17](../prd/archive/PRD-v1.0.md) и дополняет [MVP-SCOPE-MATRIX.md](./MVP-SCOPE-MATRIX.md)  
 > **Обновлено:** 4 августа 2026
 
 Журнал продуктовых и технических решений. Каждая запись должна иметь **владельца** и **deadline** до перевода в `Accepted`.
@@ -75,7 +75,7 @@
 - Server Actions + API routes для AI-стриминга
 - Миграции через Prisma
 
-**Ссылки:** [ARCHITECTURE.md](./ARCHITECTURE.md), [README.md](../README.md)
+**Ссылки:** [ARCHITECTURE.md](../technical/ARCHITECTURE.md), [README.md](../../README.md)
 
 ---
 
@@ -402,14 +402,14 @@ PRD §8.1: Figma — source of truth; design audit не выполнен (лим
 
 ### Deliverables
 
-- [x] [DESIGN-HANDOFF.md](./DESIGN-HANDOFF.md) — screen inventory, tokens, component map, audit checklist
+- [x] [DESIGN-HANDOFF.md](../technical/design/DESIGN-HANDOFF.md) — screen inventory, tokens, component map, audit checklist
 - [ ] Figma frame node-id column filled
 - [ ] Exported tokens synced with `globals.css`
 
 ### Рекомендация
 
 1. Design audit sprint (3–5 дней) — сопоставить §23–25 PRD с Figma
-2. Результат: [DESIGN-HANDOFF.md](./DESIGN-HANDOFF.md) — frame → screen → component (node-id заполняет Design)
+2. Результат: [DESIGN-HANDOFF.md](../technical/design/DESIGN-HANDOFF.md) — frame → screen → component (node-id заполняет Design)
 3. Расхождения — fix in Figma **или** update PRD (не менять product logic без Product sign-off)
 
 ### Критерий принятия
@@ -471,6 +471,6 @@ Prisma уже содержит `WritingGoal`, `DailyStat`. PRD §6.5 — «це�
 ## Связанные документы
 
 - [MVP-SCOPE-MATRIX.md](./MVP-SCOPE-MATRIX.md)
-- [PRD v1.0 §17](./Манускрипт%20—%20Product%20Requirements%20Document%20(PRD)%20v1.0.md)
-- [ARCHITECTURE.md](./ARCHITECTURE.md)
+- [PRD v1.0 §17](../prd/archive/PRD-v1.0.md)
+- [ARCHITECTURE.md](../technical/ARCHITECTURE.md)
 - [ROADMAP.md](./ROADMAP.md)

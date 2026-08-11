@@ -1,13 +1,12 @@
-# Roadmap
+﻿# Roadmap
 
-> **Единый PRD:** [PRD - Manuscript.md](./PRD%20-%20Manuscript.md)  
-> Согласован с PRD v1.0  
+> **PRD:** [PRD v2.0](../prd/PRD.md)  
 > **Scope (P0/P1/P2 ↔ sprint ↔ release):** [MVP-SCOPE-MATRIX.md](./MVP-SCOPE-MATRIX.md)  
-> **Open decisions (PRD §17):** [DECISION-LOG.md](./DECISION-LOG.md)
+> **Open decisions:** [DECISION-LOG.md](./DECISION-LOG.md)
 
 ## Phase 0 — Подготовка ✅
 
-- [x] PRD v1.0 и документация
+- [x] PRD v1.0 / v2.0 и структура документации
 - [x] Структура monorepo
 - [x] Prisma schema (целевая модель v1.0)
 - [x] CI/CD pipeline (GitHub Actions)

@@ -1,12 +1,12 @@
-# MVP Scope Matrix
+﻿# MVP Scope Matrix
 
-> **Единый PRD:** [PRD - Manuscript.md](./PRD%20-%20Manuscript.md)  
-> **Источник приоритетов:** PRD v1.0 §27  
+> **PRD:** [PRD v2.0](../prd/PRD.md)  
+> **Источник приоритетов:** PRD v1.0 §27 → матрица; в v2.0 — §6  
 > **Спринты:** [ROADMAP.md](./ROADMAP.md) Phase 1  
-> **Релизы:** PRD §14 (Этапы 0–4)  
-> **Обновлено:** 4 августа 2026
+> **Релизы:** PRD v2.0 §12–§13  
+> **Обновлено:** 11 августа 2026
 
-Этот документ — **единый источник истины** для scope. При противоречии между PRD §13, §14 и ROADMAP побеждает эта матрица.
+Этот документ — **единый источник истины** для scope. При противоречии между PRD v2.0 §6, архивным PRD §13/§14 и ROADMAP побеждает эта матрица.
 
 ---
 
@@ -256,8 +256,8 @@ Phase 4 ──► Этап 4: Post-MVP         ← P2 и backlog §15
 
 ## Связанные документы
 
-- [PRD v1.0](./Манускрипт%20—%20Product%20Requirements%20Document%20(PRD)%20v1.0.md) — нормативные требования
+- [PRD v1.0](../prd/archive/PRD-v1.0.md) — нормативные требования
 - [DECISION-LOG.md](./DECISION-LOG.md) — открытые решения §17
-- [DESIGN-HANDOFF.md](./DESIGN-HANDOFF.md) — Figma ↔ code handoff
+- [DESIGN-HANDOFF.md](../technical/design/DESIGN-HANDOFF.md) — Figma ↔ code handoff
 - [ROADMAP.md](./ROADMAP.md) — спринтовый трекер (статусы задач)
-- [DATABASE.md](./DATABASE.md) — схема данных (синхронизирована с Prisma + PRD §9 matrix)
+- [DATABASE.md](../technical/DATABASE.md) — схема данных (синхронизирована с Prisma + PRD §9 matrix)

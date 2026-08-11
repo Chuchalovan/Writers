@@ -47,17 +47,16 @@ manuscript/
 
 ## Документация
 
-- **[PRD — Manuscript](./docs/PRD%20-%20Manuscript.md)** — единый продуктовый документ (v1.1)
-- [PRD v1.0 — исходная спецификация](./docs/Манускрипт%20—%20Product%20Requirements%20Document%20(PRD)%20v1.0.md)
-- [PRD — указатель](./docs/PRD.md)
-- [MVP Scope Matrix](./docs/MVP-SCOPE-MATRIX.md)
-- [Decision Log](./docs/DECISION-LOG.md)
-- [Design Handoff](./docs/DESIGN-HANDOFF.md)
-- [Архитектура](./docs/ARCHITECTURE.md)
-- [Схема базы данных](./docs/DATABASE.md)
-- [API](./docs/API.md)
-- [Roadmap](./docs/ROADMAP.md)
-- [CI/CD](./docs/CI-CD.md)
+Полный индекс: **[docs/README.md](./docs/README.md)**
+
+| Раздел | Ссылка |
+|--------|--------|
+| **PRD** | [PRD v2.0](./docs/prd/PRD.md) · [указатель](./docs/prd/INDEX.md) · [v1.1 archive](./docs/prd/archive/PRD-v1.1-consolidated.md) · [v1.0 archive](./docs/prd/archive/PRD-v1.0.md) |
+| **BRD** | [BRD](./docs/brd/BRD.md) |
+| **ТЗ** | [Техническое задание](./docs/tz/TZ.md) |
+| **Roadmap** | [Roadmap](./docs/roadmap/ROADMAP.md) · [Scope Matrix](./docs/roadmap/MVP-SCOPE-MATRIX.md) · [Decision Log](./docs/roadmap/DECISION-LOG.md) |
+| **User Stories** | [Эпики и истории](./docs/user-stories/) |
+| **Technical** | [Архитектура](./docs/technical/ARCHITECTURE.md) · [БД](./docs/technical/DATABASE.md) · [API](./docs/technical/API.md) · [CI/CD](./docs/technical/CI-CD.md) · [Design](./docs/technical/design/) |
 
 ## Быстрый старт
 

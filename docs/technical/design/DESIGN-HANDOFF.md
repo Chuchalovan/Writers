@@ -1,9 +1,9 @@
-# Design Handoff
+﻿# Design Handoff
 
 > **Figma:** [Manuscript Design System](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System)  
 > **PRD:** §8 (design system), §23–25 (screens)  
-> **Decision:** [DEC-011](./DECISION-LOG.md#dec-011-figma-design-handoff)  
-> **Scope:** [MVP-SCOPE-MATRIX.md](./MVP-SCOPE-MATRIX.md)  
+> **Decision:** [DEC-011](../../roadmap/DECISION-LOG.md#dec-011-figma-design-handoff)  
+> **Scope:** [MVP-SCOPE-MATRIX.md](../../roadmap/MVP-SCOPE-MATRIX.md)  
 > **Обновлено:** 4 августа 2026 (Figma frames synced)
 
 Handoff-документ для разработки: экран → Figma frame → route → компоненты → состояния → токены.
@@ -60,7 +60,7 @@ https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?nod
 
 ## Breakpoints & layout shell
 
-Источник: PRD §8.2, [DEC-008](./DECISION-LOG.md#dec-008-глубина-mobile).
+Источник: PRD §8.2, [DEC-008](../../roadmap/DECISION-LOG.md#dec-008-глубина-mobile).
 
 | Token | Min width | Layout |
 |-------|-----------|--------|
@@ -359,9 +359,9 @@ Before Scene editor implementation:
 
 ## Связанные документы
 
-- [DECISION-LOG.md](./DECISION-LOG.md) — DEC-008, DEC-011
-- [MVP-SCOPE-MATRIX.md](./MVP-SCOPE-MATRIX.md)
-- [PRD v1.0 §8, §23–25](./Манускрипт%20—%20Product%20Requirements%20Document%20(PRD)%20v1.0.md)
+- [DECISION-LOG.md](../../roadmap/DECISION-LOG.md) — DEC-008, DEC-011
+- [MVP-SCOPE-MATRIX.md](../../roadmap/MVP-SCOPE-MATRIX.md)
+- [PRD v1.0 §8, §23–25](../../prd/archive/PRD-v1.0.md)
 - [Figma — Manuscript Design System](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System)
 - [FIGMA-VARIABLES.md](./FIGMA-VARIABLES.md) — tokens spec + Figma sync script
 - [CODE-CONNECT.md](./CODE-CONNECT.md) — Figma ↔ code mappings
