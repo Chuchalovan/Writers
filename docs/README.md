@@ -10,8 +10,8 @@
 | [BRD](./brd/) | Зачем строим: бизнес-цели, рынок, метрики, риски | Business, Product |
 | [ТЗ](./tz/) | Как реализуем: требования к системе, интеграции, НФТ | Eng, QA |
 | [Roadmap](./roadmap/) | Когда: фазы, спринты, приоритеты, решения | Product, Eng |
-| [User Stories](./user-stories/) | Для кого и в каком сценарии: эпики и истории | Product, Design, Eng, QA |
-| [Technical](./technical/) | Справочники: архитектура, API, БД, дизайн-handoff | Eng, Design |
+| [User Stories](./user-stories/) | Для кого и в каком сценарии: эпики, use case, истории | Product, Design, Eng, QA |
+| [Technical](./technical/) | Справочники: архитектура, API, БД, CI/CD, дизайн-handoff | Eng, Design |
 
 ## Порядок чтения
 
@@ -28,13 +28,14 @@ BRD  →  PRD  →  User Stories  →  ТЗ  →  Roadmap  →  Technical
 
 ## Быстрые ссылки
 
-- [PRD v2.0 (текущий)](./prd/PRD.md)
+- [PRD v2.1 (текущий)](./prd/PRD.md)
 - [BRD v1.0](./brd/BRD.md) · [методы сюжета](./brd/plot-methods.md)
 - [Техническое задание](./tz/TZ.md)
 - [Roadmap](./roadmap/ROADMAP.md)
 - [User Stories](./user-stories/README.md)
+- [Use Cases](./user-stories/use-cases.md)
 - [MVP Scope Matrix](./roadmap/MVP-SCOPE-MATRIX.md)
-- [Архитектура](./technical/ARCHITECTURE.md)
+- [Архитектура](./technical/ARCHITECTURE.md) · [API](./technical/API.md) · [OpenAPI](./technical/openapi.yaml) · [CI/CD](./technical/CI-CD.md)
 
 ## Правила ведения
 

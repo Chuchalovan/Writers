@@ -1,4 +1,4 @@
-// url=https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=8-10
+// url=https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=2-74
 // source=src/components/ui/button.tsx
 // component=Button
 import figma from "figma";

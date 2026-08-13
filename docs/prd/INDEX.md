@@ -1,13 +1,13 @@
 ﻿# PRD — Product Requirements Document
 
-> **Актуальный документ:** **[PRD.md](./PRD.md)** (v2.0, 11 августа 2026)  
+> **Актуальный документ:** **[PRD.md](./PRD.md)** (v2.1, 13 августа 2026)  
 > Структура по практикам [X-Com PRD](https://www.xcom.ru/blog/tekhnologii/chto-takoe-prd-product-requirements-document/)
 
 ## Быстрые ссылки
 
 | Документ | Содержание |
 |----------|------------|
-| **[PRD v2.0](./PRD.md)** | Проблема, цели, сценарии, FR/NFR, метрики, объём, запуск |
+| **[PRD v2.1](./PRD.md)** | Проблема, цели, сценарии, FR/NFR, метрики, объём, запуск |
 | [PRD v1.1 (archive)](./archive/PRD-v1.1-consolidated.md) | Consolidated: matrix + design + data snapshot |
 | [PRD v1.0 (archive)](./archive/PRD-v1.0.md) | Исходная нормативная спецификация §1–§30 |
 | [MVP-SCOPE-MATRIX](../roadmap/MVP-SCOPE-MATRIX.md) | SoT приоритетов P0/P1/P2 |
@@ -16,6 +16,7 @@
 | [Методы сюжета](../brd/plot-methods.md) | Каталог методов построения сюжета |
 | [ТЗ](../tz/TZ.md) | Техническое задание |
 | [User Stories](../user-stories/) | Сценарии и AC |
+| [Use Cases](../user-stories/use-cases.md) | Каталог use case (актор, поток, исключения) |
 | [ROADMAP](../roadmap/ROADMAP.md) | Спринты |
 | [Design handoff](../technical/design/) | Figma ↔ code |
 

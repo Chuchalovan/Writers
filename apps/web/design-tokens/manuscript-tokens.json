@@ -1,6 +1,6 @@
 {
   "$schema": "https://design-tokens.github.io/community-group/format/",
-  "$description": "Manuscript design tokens — source: apps/web/src/app/globals.css. Import to Figma via MCP use_figma or manual variable creation.",
+  "$description": "CURRENT CODE tokens from apps/web/src/app/globals.css — lagging Ink Studio. Visual SoT: design-tokens/ink-studio-tokens.json (Figma DY4LOZnkponU6E1rmb34Fs).",
   "color": {
     "background": {
       "$type": "color",

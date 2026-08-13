@@ -1,5 +1,7 @@
 /**
  * Figma Plugin API — sync radius + spacing variables.
+ * ARCHIVED — targets old file 7vP03INYMrwQ3Q6qT7A2NT.
+ * Do not run on Ink Studio (DY4LOZnkponU6E1rmb34Fs).
  * Run via use_figma on fileKey 7vP03INYMrwQ3Q6qT7A2NT.
  */
 const RADIUS_COLLECTION = "Manuscript / Radius";

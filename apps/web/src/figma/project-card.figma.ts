@@ -1,4 +1,4 @@
-// url=https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=8-33
+// url=https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=4-53
 // source=src/components/project/project-card.tsx
 // component=ProjectCard
 import figma from "figma";

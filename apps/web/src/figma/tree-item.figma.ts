@@ -1,4 +1,4 @@
-// url=https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=9-239
+// url=https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=5-215
 // source=src/components/manuscript/manuscript-tree.tsx
 // component=TreeNode row (scene)
 import figma from "figma";

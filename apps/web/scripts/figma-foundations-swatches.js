@@ -1,5 +1,6 @@
 /**
- * Figma Plugin API — color swatch board on page "00 Foundations".
+ * ARCHIVED — targets old file 7vP03INYMrwQ3Q6qT7A2NT.
+ * Ink Studio already has Foundations (2:2). Do not run on DY4LOZnkponU6E1rmb34Fs.
  * Requires Manuscript / Color variables (run figma-sync-color-variables.js first).
  */
 const PAGE_NAME = "00 Foundations";

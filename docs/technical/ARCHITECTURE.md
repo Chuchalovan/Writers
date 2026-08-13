@@ -1,45 +1,53 @@
 # Архитектура
 
+> **Норматив:** [ТЗ §6.1](../tz/TZ.md#61-архитектура), [§7](../tz/TZ.md#7-нефункциональные-требования), [DEC-001](../roadmap/DECISION-LOG.md#dec-001-технологическая-платформа)  
+> **Продукт:** [PRD v2.1](../prd/PRD.md)  
+> **Данные:** [DATABASE.md](./DATABASE.md) · **контракты:** [API.md](./API.md) · **UI:** [design/](./design/)  
+> **Обновлено:** 13 августа 2026
+
+При расхождении **цель** = ТЗ; этот файл описывает **слои кода как сейчас** и gap до норматива.
+
+---
+
 ## Обзор
 
-Manuscript построен как **monorepo** с единым Next.js приложением (fullstack) и выделенными пакетами для переиспользуемой логики.
+Fullstack Next.js 15: браузер рисует UI; сервер хранит данные, проверяет владельца и делает побочные эффекты (почта, AI, файлы).
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                      Browser                            │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌─────────┐ │
-│  │  Editor  │  │ Structure│  │  Stats   │  │ AI Chat │ │
-│  │ (TipTap) │  │  Panel   │  │ Dashboard│  │  Panel  │ │
-│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬────┘ │
-└───────┼─────────────┼─────────────┼─────────────┼───────┘
-        │             │             │             │
-        ▼             ▼             ▼             ▼
-┌─────────────────────────────────────────────────────────┐
-│                   apps/web (Next.js)                    │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐ │
-│  │ App Router  │  │ API Routes  │  │ Server Actions  │ │
-│  │ + next-intl │  │  /api/*     │  │                 │ │
-│  └──────┬──────┘  └──────┬──────┘  └────────┬────────┘ │
-│         │                │                   │          │
-│  ┌──────┴────────────────┴───────────────────┴────────┐ │
-│  │              Service Layer (lib/)                  │ │
-│  │  projects · chapters · stats · auth · ai           │ │
-│  └──────────────────────┬─────────────────────────────┘ │
-└─────────────────────────┼───────────────────────────────┘
-                          │
-        ┌─────────────────┼─────────────────┐
-        ▼                 ▼                 ▼
-┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-│  PostgreSQL  │  │ packages/ai  │  │ packages/    │
-│  (Prisma)    │  │  providers   │  │ shared       │
-└──────────────┘  └──────┬───────┘  └──────────────┘
-                         │
-                         ▼
-                  ┌──────────────┐
-                  │ External AI  │
-                  │ (User's API) │
-                  └──────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│  Browser                                                     │
+│  App Router UI · TipTap (цель Sprint 3) · IndexedDB буфер    │
+└───────────────┬───────────────────────────────┬──────────────┘
+                │ Server Actions                │ REST /api/v1
+                ▼                               ▼
+┌──────────────────────────────────────────────────────────────┐
+│  apps/web                                                    │
+│  Middleware (locale) · actions/ · lib/ · Better Auth         │
+└───────────────┬───────────────────────────────┬──────────────┘
+                │                               │
+        PostgreSQL+Prisma              packages/ai (заглушка)
+                │                      packages/shared (Zod)
+                ▼
+         SMTP / AI / S3 — по gate ТЗ §6.6
 ```
+
+Нормативная схема: [ТЗ §6.1 mermaid](../tz/TZ.md#61-архитектура).
+
+---
+
+## Gap vs ТЗ
+
+| Тема | Норматив | Факт кода |
+|------|----------|-----------|
+| CRUD | Server Actions + Zod `@manuscript/shared` | Частично: projects + manuscript nodes |
+| AI | Platform AI, SSE `POST /api/v1/ai/*`, BYOK = P2 (DEC-005) | Нет route; `lib/ai` и `packages/ai` — TODO Sprint 5. Старые промпты grammar/continue/ideas **не норматив** |
+| Автосейв | Debounce 2 с → IndexedDB → `saveSceneContent` + `baseVersion` ([ТЗ §8.3](../tz/TZ.md#83-редактор-и-сохранность-текста)) | Scene page есть; flush/конфликт/буфер — нет |
+| Auth guard | Middleware + session | Locale middleware only; dashboard layout редиректит на `/login` |
+| Ошибки | `{ error: { code, message, details } }` | Часто `throw new Error(...)` |
+| Экспорт | DOCX/TXT Alpha; job если не укладывается в timeout | Нет |
+| Статистика / цели | P2, DEC-012 | Страница `/stats`, `lib/stats` пустой; модели в Prisma |
+| Шифрование BYOK | AES-256-GCM, P2 | `lib/crypto` — TODO |
+| UI shell | Ink Studio: rail \| navigator \| sheet \| inspector | Широкий sidebar, старые токены |
 
 ---
 
@@ -47,153 +55,171 @@ Manuscript построен как **monorepo** с единым Next.js прил
 
 ```
 manuscript/
-├── apps/
-│   └── web/                    # Next.js 15 fullstack app
-│       ├── src/
-│       │   ├── app/            # App Router (pages + API)
-│       │   ├── components/     # React components
-│       │   ├── lib/            # Server-side services
-│       │   ├── hooks/          # Client hooks
-│       │   └── i18n/           # Локализация
-│       └── prisma/             # Schema + migrations
-│
-├── packages/
-│   ├── shared/                 # Types, constants, utils
-│   └── ai/                     # AI provider abstraction
-│
-└── docs/                       # Документация
+├── apps/web/                 # Next.js 15 (@manuscript/web)
+│   ├── src/app/              # App Router + api/auth
+│   ├── src/actions/          # Server Actions
+│   ├── src/components/       # UI по feature
+│   ├── src/lib/              # сервисы
+│   ├── src/i18n/             # next-intl
+│   └── prisma/               # schema + migrations
+├── packages/shared/          # Zod, types, constants
+├── packages/ai/              # провайдеры + промпты (не реализованы)
+├── docs/
+└── .github/workflows/        # CI / CD
 ```
-
-### Пакеты
 
 | Пакет | Назначение |
 |-------|------------|
-| `@manuscript/web` | Основное приложение |
-| `@manuscript/shared` | Общие TypeScript типы, константы, утилиты |
-| `@manuscript/ai` | Абстракция AI-провайдеров, промпты |
+| `@manuscript/web` | Приложение |
+| `@manuscript/shared` | Zod-схемы и типы на границе |
+| `@manuscript/ai` | Абстракция провайдера; реализации — Sprint 5 |
 
 ---
 
-## Слои приложения (apps/web)
+## Слои (apps/web)
 
-### Presentation Layer
+### Presentation
 
-- **App Router** — маршрутизация, layouts, server/client components
-- **Components** — UI-компоненты, организованные по feature:
-  - `components/editor/` — TipTap редактор
-  - `components/project/` — список проектов, настройки
-  - `components/chapter/` — навигация по главам
-  - `components/stats/` — дашборд статистики
-  - `components/ai/` — AI-панель и чат
-  - `components/ui/` — shadcn/ui базовые компоненты
+- App Router, layouts `(auth)` / `(dashboard)`, next-intl (`/ru`, `/en`)
+- Компоненты: `editor/`, `manuscript/`, `project/`, `layout/`, `ui/` (shadcn)
+- Устаревшие относительно продукта: `stats/` (P2), нет `characters/`, `world/`, rail
 
-### Application Layer
+### Application
 
-- **Server Actions** — мутации (CRUD проектов, глав, настройки)
-- **API Routes** — endpoints для AI-стриминга, webhooks
-- **Middleware** — auth guard, i18n routing
+| Механизм | Факт | Цель |
+|----------|------|------|
+| Server Actions | `src/actions/projects.ts`, `manuscript.ts` | полный набор [API.md](./API.md) |
+| API Routes | только `GET/POST /api/auth/[...all]` (Better Auth) | `/api/v1/ai/*`, export |
+| Middleware | next-intl matcher `/(ru\|en)` | + auth на защищённых префиксах |
 
-### Domain Layer (lib/)
+### Domain (`src/lib/`)
 
 ```
 lib/
-├── auth/           # Better Auth config + helpers
-├── db/             # Prisma client singleton
-├── projects/       # Project service
-├── chapters/       # Chapter service
-├── stats/          # Word count, daily stats
-├── ai/             # AI orchestration (uses @manuscript/ai)
-└── crypto/         # API key encryption/decryption
+├── auth/         # Better Auth + session helpers     ✅
+├── db/           # Prisma singleton                   ✅
+├── projects/     # CRUD проектов, assertProjectOwner  ✅
+├── manuscript/   # дерево ManuscriptNode + soft delete ✅
+├── chapters/     # re-export manuscript (legacy alias)
+├── stats/        # пусто — не делать в MVP
+├── ai/           # пусто — Sprint 5
+└── crypto/       # пусто — BYOK P2
 ```
+
+Нет отдельных `lib/characters`, `lib/export`, `lib/world` — gap Sprint 4 / 6.
 
 ---
 
-## Ключевые архитектурные решения
+## Маршруты клиента
 
-### 1. Fullstack Next.js
+Префикс: `/[locale]/…`. Норматив: [ТЗ §6.2](../tz/TZ.md#62-маршруты-клиента-логические).
 
-**Почему:** единая кодовая база, SSR для SEO landing-страниц, Server Actions для простых мутаций, гибкость развёртывания (Vercel, Docker, VPS).
+| Маршрут | Факт | Цель |
+|---------|------|------|
+| `/`, `/login`, `/register` | ✅ | ✅ |
+| `/forgot-password`, `/reset-password` | ⬜ | Beta |
+| `/projects`, `/projects/[id]` | ✅ | ✅ |
+| `/projects/[id]/scenes/[sceneId]` | ✅ страница-заглушка | редактор Sprint 3 |
+| `/projects/[id]/characters`, `…/world` | ⬜ | P0 Sprint 4 |
+| `/projects/[id]/plot`, `timeline`, `notes` | ⬜ | P1 |
+| `/settings` | ✅ страница | профиль / удаление Beta |
+| `/stats` | ✅ лишняя | убрать из MVP (DEC-012) |
 
-### 2. PostgreSQL + Prisma
+Защита: `(dashboard)/layout.tsx` без сессии → `/login`. `callbackUrl` — проверить при доработке auth.
 
-**Почему:** реляционная модель хорошо ложится на Project → Chapters, Prisma даёт type-safe доступ и миграции.
+---
 
-### 3. BYOK для AI
+## Ключевые решения
 
-Пользовательский API-ключ:
-1. Вводится в настройках
-2. Шифруется AES-256-GCM с ключом из `ENCRYPTION_SECRET`
-3. Хранится в БД (`UserApiKey`)
-4. Расшифровывается только при AI-запросе на сервере
-5. Передаётся напрямую во внешний API — не логируется
+### 1. Fullstack Next.js (DEC-001 Accepted)
+
+Одна кодовая база, SSR лендинга, Server Actions для CRUD, Docker/Vercel на выбор.
+
+### 2. PostgreSQL 16 + Prisma
+
+Дерево `Project → ManuscriptNode` (part/chapter/scene), не модель `Chapter`. Схема: [DATABASE.md](./DATABASE.md), норматив полей — [ТЗ §6.5](../tz/TZ.md#65-модель-базы-данных).
+
+### 3. AI: platform для Beta (DEC-005 Proposed)
+
+До sign-off ТЗ фиксирует: **platform AI**, ключ на сервере. BYOK (`UserApiKey` + AES-256-GCM) — **P2**, не блокер Beta. Клиент не передаёт полный текст проекта как единственный источник контекста: сервер собирает сущности по `level` + `contextEntityIds` ([ТЗ §8.5](../tz/TZ.md#85-ai)).
+
+### 4. i18n
+
+`next-intl`, locales `ru` \| `en`. Сообщения: `apps/web/messages/{ru,en}.json`. P0-потоки без сырых ключей (NFR-12).
+
+### 5. Автосохранение (цель Sprint 3)
 
 ```
-User → [encrypted key in DB] → Server decrypts → OpenAI API
+onChange → debounce 2000ms → IndexedDB(sceneId) → saveSceneContent({ contentJson, baseVersion })
+Ctrl+S / blur → flush сразу
 ```
 
-### 4. i18n (next-intl)
+- Optimistic concurrency: `baseVersion` ↔ `SceneContent.version`; иначе `409 CONFLICT`
+- Alpha: явный выбор «сервер» / «оставить моё», не тихий overwrite
+- Offline: статус «Сохранено на устройстве»; по сети — flush одной сцены
+- Счётчик слов: Unicode words по `plainText` в `@manuscript/shared`, на сервере при успешном save
 
-- Locale prefix routing: `/ru/projects`, `/en/projects`
-- Middleware определяет locale из URL или cookie
-- Переводы в `messages/ru.json`, `messages/en.json`
+### 6. Сессия
 
-### 5. Автосохранение
+Better Auth, email+пароль ≥8. Cookie HTTP-only, SameSite=Lax, Secure в prod. Logout и смена пароля инвалидируют сессии (ТЗ-SEC-04) — проверить при Beta auth.
 
-```
-Editor onChange → debounce(2000ms) → Server Action → DB
-                                   ↓
-                            Optimistic UI update
-```
+---
 
-- Debounce 2 секунды для снижения нагрузки
-- Индикатор статуса: «Сохранено» / «Сохранение...» / «Ошибка»
-- Word count пересчитывается на клиенте и синхронизируется с сервером
+## Интеграции (ТЗ §6.6)
 
-### 6. Статистика
+| Система | Gate | Факт |
+|---------|------|------|
+| SMTP | Beta (confirm/reset) | нет |
+| AI HTTPS + SSE, timeout 30 с | P1 | нет |
+| S3-совместимое хранилище | P1 файлы | нет; docker только Postgres |
+| OAuth | P2 | нет |
 
-При каждом сохранении главы:
-1. Вычисляется delta слов (новое − предыдущее)
-2. Обновляется `DailyStat` для текущей даты
-3. Обновляется `Chapter.wordCount` и `Project.totalWordCount`
+Аналитика: только имена событий [PRD §9.2](../prd/PRD.md). Текст рукописи, промпты и ответы AI **не** пишутся в логи и аналитику (TZ-SEC-10).
+
+---
+
+## Безопасность (факт vs ТЗ §7.2)
+
+| Область | Факт | Норматив |
+|---------|------|----------|
+| Пароли | Better Auth, min 8 | scrypt/argon2id; не SHA-1/MD5 |
+| Сессии | HTTP-only cookie | + Secure prod, инвалидация на logout/reset |
+| CSRF | Next.js / Better Auth | TZ-SEC-08 |
+| Вход | Zod + session на actions | ≤5 неудач / 10 мин / IP+email → `RATE_LIMITED` |
+| Изоляция | `assertProjectOwner` / `getNodeWithAuth` | каждый серверный метод |
+| Файлы | нет upload | MIME whitelist, лимит, без executable |
+| Rate limit | нет | TZ-SEC-09, квоты AI |
 
 ---
 
 ## Развёртывание
 
-Архитектура поддерживает несколько вариантов:
+Окружения норматив: `local`, `preview` (PR), `staging`, `production` (TZ-ENV-06). Факт: local + GitHub Actions CI; preview/staging/prod не подключены. CD — placeholder, см. [CI-CD.md](./CI-CD.md).
 
-| Вариант | Описание |
-|---------|----------|
-| **Cloud (SaaS)** | Vercel/Railway + managed PostgreSQL |
-| **Self-hosted** | Docker Compose (app + postgres) на VPS |
-| **Hybrid** | Frontend на CDN, backend на своём сервере |
-
-### Docker (self-hosted)
-
-```yaml
-services:
-  app:      # Next.js standalone build
-  postgres: # PostgreSQL 16
-```
-
----
-
-## Безопасность
-
-| Область | Подход |
+| Вариант | Статус |
 |---------|--------|
-| Пароли | bcrypt (via Better Auth) |
-| API-ключи | AES-256-GCM encryption |
-| Sessions | HTTP-only cookies, secure flag |
-| CSRF | Built-in Next.js / Better Auth protection |
-| Input | Zod validation на всех endpoints |
-| Rate limiting | Middleware (post-MVP) |
+| Local | `docker-compose.yml` — только PostgreSQL 16; app через `pnpm dev` |
+| Cloud SaaS | цель Vercel/Railway + managed Postgres; секреты не заданы |
+| Self-hosted | цель: Next standalone + Postgres; compose для app ещё нет |
+
+Секреты (TZ-ENV-07): `DATABASE_URL`, `BETTER_AUTH_SECRET`, `ENCRYPTION_SECRET`, ключи почты/AI. Шаблон: `.env.example`.
+
+Миграции: только вперёд совместимые на release gate (TZ-REL-05). Rollback деплоя **без** затирания данных пользователя.
 
 ---
 
-## Масштабирование (post-MVP)
+## После MVP
 
-- **Collaboration:** WebSocket (Yjs + TipTap Collaboration) или Liveblocks
-- **File storage:** S3 для экспорта и вложений
-- **Background jobs:** BullMQ для экспорта, email
-- **Caching:** Redis для sessions и rate limiting
+- Real-time collab (Yjs / Liveblocks) — Won't MVP
+- BullMQ для тяжёлого экспорта, если синхронный DOCX не укладывается в timeout
+- Redis: rate limit, сессии при горизонтальном масштабе
+- Визуальный граф героев — P2
+
+---
+
+## Changelog
+
+| Дата | Изменение |
+|------|-----------|
+| — | Первичный обзор (главы, BYOK как основной AI, DailyStat в ядре) |
+| 2026-08-13 | Согласование с ТЗ v1.2 / PRD v2.1: ManuscriptNode, platform AI, gap-таблица, Ink Studio как UI SoT |

@@ -1,0 +1,85 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "Manuscript Ink Studio tokens — source of truth: Figma file DY4LOZnkponU6E1rmb34Fs. Code (globals.css) is not yet synced.",
+  "figma": {
+    "fileKey": "DY4LOZnkponU6E1rmb34Fs",
+    "fileName": "Manuscript — Ink Studio",
+    "url": "https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio"
+  },
+  "primitives": {
+    "$description": "Collection Primitives / mode Value",
+    "ink": {
+      "950": { "$type": "color", "$value": "#0C0F12" },
+      "800": { "$type": "color", "$value": "#1A1F24" },
+      "700": { "$type": "color", "$value": "#252B32" },
+      "600": { "$type": "color", "$value": "#3A424A" },
+      "400": { "$type": "color", "$value": "#6B747C" },
+      "200": { "$type": "color", "$value": "#C5C0B5" }
+    },
+    "paper": {
+      "0": { "$type": "color", "$value": "#FAF7F0" },
+      "50": { "$type": "color", "$value": "#F4EFE4" },
+      "100": { "$type": "color", "$value": "#EBE4D4" }
+    },
+    "teal": {
+      "700": { "$type": "color", "$value": "#245753" },
+      "600": { "$type": "color", "$value": "#2F6F6A" },
+      "400": { "$type": "color", "$value": "#4A9A93" }
+    },
+    "rust": { "500": { "$type": "color", "$value": "#C45C26" } },
+    "sage": { "600": { "$type": "color", "$value": "#3D7A4A" } },
+    "danger": { "500": { "$type": "color", "$value": "#C23B2E" } },
+    "white": { "$type": "color", "$value": "#FFFFFF" },
+    "black": { "$type": "color", "$value": "#000000" }
+  },
+  "color": {
+    "$description": "Collection Color / modes Light, Dark. Values are aliases to primitives.",
+    "bg": {
+      "app": { "light": "#FAF7F0", "dark": "#0C0F12", "css": "var(--background)" },
+      "chrome": { "light": "#0C0F12", "dark": "#0C0F12", "css": "var(--sidebar-background)" },
+      "sheet": { "light": "#F4EFE4", "dark": "#F4EFE4", "css": "var(--editor-sheet)" },
+      "surface": { "light": "#FFFFFF", "dark": "#1A1F24", "css": "var(--card)" },
+      "muted": { "light": "#EBE4D4", "dark": "#252B32", "css": "var(--muted)" }
+    },
+    "text": {
+      "primary": { "light": "#0C0F12", "dark": "#F4EFE4", "css": "var(--foreground)" },
+      "secondary": { "light": "#3A424A", "dark": "#C5C0B5" },
+      "muted": { "light": "#6B747C", "dark": "#6B747C", "css": "var(--muted-foreground)" },
+      "on-chrome": { "light": "#F4EFE4", "dark": "#F4EFE4" },
+      "accent": { "light": "#245753", "dark": "#4A9A93" }
+    },
+    "accent": { "light": "#2F6F6A", "dark": "#4A9A93", "css": "var(--accent)" },
+    "danger": { "light": "#C23B2E", "dark": "#C23B2E", "css": "var(--destructive)" },
+    "status": {
+      "idea": { "light": "#6B747C", "dark": "#6B747C" },
+      "planned": { "light": "#3A424A", "dark": "#C5C0B5" },
+      "draft": { "light": "#2F6F6A", "dark": "#4A9A93" },
+      "revision": { "light": "#C45C26", "dark": "#C45C26" },
+      "ready": { "light": "#3D7A4A", "dark": "#3D7A4A" }
+    }
+  },
+  "spacing": {
+    "2": { "$type": "dimension", "$value": "2px" },
+    "4": { "$type": "dimension", "$value": "4px" },
+    "8": { "$type": "dimension", "$value": "8px" },
+    "12": { "$type": "dimension", "$value": "12px" },
+    "16": { "$type": "dimension", "$value": "16px" },
+    "24": { "$type": "dimension", "$value": "24px" },
+    "32": { "$type": "dimension", "$value": "32px" },
+    "48": { "$type": "dimension", "$value": "48px" },
+    "64": { "$type": "dimension", "$value": "64px" }
+  },
+  "radius": {
+    "sm": { "$type": "dimension", "$value": "4px" },
+    "md": { "$type": "dimension", "$value": "8px" },
+    "lg": { "$type": "dimension", "$value": "16px" },
+    "xl": { "$type": "dimension", "$value": "24px" },
+    "full": { "$type": "dimension", "$value": "999px" }
+  },
+  "font": {
+    "sans": { "$type": "fontFamily", "$value": "Geist" },
+    "serif": { "$type": "fontFamily", "$value": "Instrument Serif" },
+    "prose": { "$type": "fontFamily", "$value": "Newsreader" },
+    "mono": { "$type": "fontFamily", "$value": "Geist Mono" }
+  }
+}

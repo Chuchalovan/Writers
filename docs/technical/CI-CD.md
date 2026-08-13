@@ -1,46 +1,122 @@
 # CI/CD
 
-GitHub Actions workflows for Manuscript.
+> **Норматив:** [ТЗ §7.1](../tz/TZ.md#71-техническое-обеспечение) TZ-ENV-04/06/07, [§7.4](../tz/TZ.md#74-надёжность-и-доступность) TZ-REL-03/05, [§9.4 DoD](../tz/TZ.md#94-критерии-готовности-изменения-definition-of-done)  
+> **Факт:** `.github/workflows/ci.yml`, `cd.yml`  
+> **Обновлено:** 13 августа 2026
 
-## Workflows
+CI на каждый PR: install → prisma generate → typecheck → lint → schema apply → build.  
+Деплой и ops (backup, мониторинг, preview/staging) — цель к Beta, сейчас placeholder.
 
-### CI (`ci.yml`)
+---
 
-Runs on every push and pull request to `main`:
+## Окружения (TZ-ENV-06)
 
-| Step | Description |
-|------|-------------|
+| Env | Назначение | Факт |
+|-----|------------|------|
+| `local` | `pnpm dev` + Postgres 16 (`docker-compose.yml`) | ✅ |
+| `preview` | деплой PR | ⬜ |
+| `staging` | замеры NFR, backup drill | ⬜ |
+| `production` | пилот / Beta | ⬜ CD job без провайдера |
+
+Версии lockfile: Node **≥20**, pnpm **9.15.0**, PostgreSQL **16**. CI: `node-version: 20`, `postgres:16-alpine`.
+
+---
+
+## CI (`ci.yml`)
+
+Триггер: push и pull_request в `main`. Concurrency: `cancel-in-progress` на одном ref.
+
+Env в workflow (только CI, не секреты продукта): `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ENCRYPTION_SECRET`, `NEXT_PUBLIC_APP_URL`.
+
+### Job `quality` — Lint, Typecheck & Build
+
+Сервис: Postgres 16, БД `manuscript_test`.
+
+| Step | Команда |
+|------|---------|
 | Install | `pnpm install --frozen-lockfile` |
-| Generate | Prisma Client generation |
-| Typecheck | TypeScript across all packages |
-| Lint | ESLint (Next.js config) |
-| DB sync | `prisma db push` against PostgreSQL service |
-| Build | Production Next.js build |
+| Generate | `pnpm db:generate` |
+| Typecheck | `pnpm typecheck` |
+| Lint | `pnpm lint` |
+| Schema | `prisma db push --skip-generate` на test DB |
+| Build | `pnpm build` |
 
-Pull requests additionally run **Migration Check** — validates that the Prisma schema can be applied to a fresh database.
+### Job `validate` — только PR
 
-### CD (`cd.yml`)
+`prisma validate`. Это проверка синтаксиса схемы, **не** прогон миграций на чистой БД и **не** `migrate diff`.
 
-Runs on push to `main` and manual trigger (`workflow_dispatch`):
+### Gap CI
 
-| Job | Description |
-|-----|-------------|
-| Build | Production build + artifact upload (`.next`, 7 days) |
-| Deploy | Placeholder — connect hosting provider |
+| Нужно к Alpha/Beta | Сейчас |
+|--------------------|--------|
+| Unit / component tests | нет job |
+| e2e критичного потока (регистрация → сцена) | нет |
+| `prisma migrate deploy` на копии prod-схемы (вместо только `db push`) | нет |
+| i18n check (сырые ключи) | нет |
+| Secret scan | нет |
 
-## Required secrets (for deployment)
+DoD ТЗ §9.4: «CI зелёный» = этот pipeline. Новые модули не обязаны иметь e2e, пока job не добавлен; typecheck+lint+build — обязательны.
 
-When ready to deploy to Vercel, add these repository secrets:
+---
 
-| Secret | Description |
-|--------|-------------|
-| `VERCEL_TOKEN` | Vercel API token |
-| `VERCEL_ORG_ID` | Organization ID |
-| `VERCEL_PROJECT_ID` | Project ID |
+## CD (`cd.yml`)
 
-Then uncomment the Vercel step in `.github/workflows/cd.yml`.
+Триггер: push в `main`, `workflow_dispatch`. `cancel-in-progress: false`.
 
-## Local commands (same as CI)
+| Job | Факт |
+|-----|------|
+| `build` | generate + `pnpm build`; артефакт `apps/web/.next`, 7 дней. **Без** Postgres service — build не гоняет schema push |
+| `deploy` | echo-placeholder; environment GitHub `production` |
+
+Подключение Vercel (когда будут secrets): раскомментировать шаг в `cd.yml`.
+
+```
+VERCEL_TOKEN
+VERCEL_ORG_ID
+VERCEL_PROJECT_ID
+```
+
+Альтернатива: Railway / VPS + Docker standalone. Архитектура не требует Vercel.
+
+### Норматив деплоя (ещё не сделано)
+
+- Миграции Prisma **только вперёд** совместимые на gate (TZ-REL-05).
+- Rollback приложения **без** затирания пользовательских данных.
+- Preview на PR — отдельный env, не prod DB.
+
+---
+
+## Секреты
+
+Шаблон: `.env.example`. В CI подставляются фиктивные значения.
+
+| Переменная | Где | Обязательность |
+|------------|-----|----------------|
+| `DATABASE_URL` | все env | да |
+| `BETTER_AUTH_SECRET` | все | да, ≥32 |
+| `BETTER_AUTH_URL` | все | да |
+| `ENCRYPTION_SECRET` | все | да (даже до BYOK) |
+| `NEXT_PUBLIC_APP_URL` | все | да |
+| SMTP / mail provider | staging, prod | Beta |
+| Platform AI key | staging, prod | P1; не в клиент |
+| `VERCEL_*` | GitHub secrets | если выбран Vercel |
+
+Секреты только в env, не в репозитории (TZ-ENV-07). Рукопись и AI-промпты не логировать (TZ-SEC-10) — проверить при подключении error tracker.
+
+---
+
+## Ops к Beta (TZ-REL-03)
+
+Не часть текущего workflow:
+
+- [ ] Ежедневный backup PostgreSQL (staging/prod)
+- [ ] Мониторинг ошибок клиента и сервера
+- [ ] Алерт `scene_autosave_failed`
+- [ ] Feature flags AI и импорта без деплоя кода (ТЗ §8.6)
+
+---
+
+## Локально (как CI)
 
 ```bash
 pnpm install
@@ -49,3 +125,16 @@ pnpm typecheck
 pnpm lint
 pnpm build
 ```
+
+Postgres: `docker compose up -d` (сервис `postgres`, порт 5432).  
+Миграции в разработке: `pnpm db:migrate`.  
+Схема на CI: `db push` — для prod использовать `migrate deploy`.
+
+---
+
+## Changelog
+
+| Дата | Изменение |
+|------|-----------|
+| 2026-08-04 | ci.yml / cd.yml: pnpm, Prisma, Postgres 16, build artifact |
+| 2026-08-13 | Документ сверен с ТЗ: env matrix, gap тестов/migrate/ops, уточнён job validate |

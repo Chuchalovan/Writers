@@ -1,5 +1,7 @@
 /**
  * Figma Plugin API script — sync Manuscript color variables from globals.css.
+ * ARCHIVED — targets old file 7vP03INYMrwQ3Q6qT7A2NT.
+ * Do not run on Ink Studio (DY4LOZnkponU6E1rmb34Fs): variables already exist there.
  * Run via Figma MCP use_figma on fileKey 7vP03INYMrwQ3Q6qT7A2NT.
  * Idempotent: safe to re-run.
  */

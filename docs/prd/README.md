@@ -15,6 +15,7 @@
 
 - [BRD](../brd/BRD.md) — бизнес-контекст  
 - [User Stories](../user-stories/) — сценарии из PRD  
+- [Use Cases](../user-stories/use-cases.md) — полный каталог use case  
 - [ТЗ](../tz/TZ.md) — техническая постановка  
 - [Roadmap](../roadmap/ROADMAP.md) — план реализации  
 - [MVP Scope Matrix](../roadmap/MVP-SCOPE-MATRIX.md) — P0/P1/P2  

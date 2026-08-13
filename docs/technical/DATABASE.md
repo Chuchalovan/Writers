@@ -1,9 +1,12 @@
 ﻿# Схема базы данных
 
-> **Источник реализации:** `apps/web/prisma/schema.prisma`  
-> **Норматив PRD:** [PRD v1.0 §9](../prd/archive/PRD-v1.0.md)  
+> **Норматив (целевая модель):** [ТЗ §6.5](../tz/TZ.md#65-модель-базы-данных)  
+> **Источник реализации (факт):** `apps/web/prisma/schema.prisma`  
+> **Норматив PRD (сущности):** [PRD v2.1 §9](../prd/PRD.md) / [PRD v1.0 §9](../prd/archive/PRD-v1.0.md)  
 > **Scope:** [MVP-SCOPE-MATRIX.md](../roadmap/MVP-SCOPE-MATRIX.md), [DEC-012](../roadmap/DECISION-LOG.md#dec-012-writinggoal--dailystat)  
-> **Обновлено:** 4 августа 2026
+> **Обновлено:** 13 августа 2026
+
+При расхождении **цель** = ТЗ §6.5; этот файл описывает **текущую** Prisma.
 
 ---
 
@@ -227,4 +230,5 @@ GoalType: daily | project
 
 | Дата | Изменение |
 |------|-----------|
+| 2026-08-13 | Норматив полей перенесён в ТЗ §6.5; этот файл = факт Prisma |
 | 2026-08-04 | Sync with Prisma: ManuscriptNode, SceneContent, Character, WorldArticle; PRD §9 matrix; removed stale Chapter draft |

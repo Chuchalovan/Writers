@@ -1,12 +1,15 @@
-# Figma Variables — Manuscript Design System
+# Figma Variables — Manuscript Ink Studio
 
-> **Figma file:** [Manuscript Design System](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System)  
-> **Page:** `00 Foundations`  
-> **Code source:** `apps/web/src/app/globals.css`  
-> **Token export:** `apps/web/design-tokens/manuscript-tokens.json`  
-> **Handoff:** [DESIGN-HANDOFF.md](./DESIGN-HANDOFF.md)
+> **Figma file:** [Manuscript — Ink Studio](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio)  
+> **File key:** `DY4LOZnkponU6E1rmb34Fs`  
+> **Page:** `00 Foundations` (`2:2`)  
+> **Handoff:** [DESIGN-HANDOFF.md](./DESIGN-HANDOFF.md)  
+> **Code (пока отстаёт):** `apps/web/src/app/globals.css`  
+> **Token dump:** `apps/web/design-tokens/ink-studio-tokens.json`
 
-Синхронизация design tokens между кодом и Figma. MVP: **light mode** в продукте; dark — в variables для будущего.
+Variables **уже созданы в Figma**. Этот документ описывает факт файла, не план импорта.
+
+Старый файл `7vP03INYMrwQ3Q6qT7A2NT` и скрипты `figma-sync-*.js` под его коллекции `Manuscript / Color` — **не запускать** на Ink Studio.
 
 ---
 
@@ -14,127 +17,162 @@
 
 | Шаг | Статус | Комментарий |
 |-----|--------|-------------|
-| Token spec из `globals.css` | ✅ | JSON + таблицы ниже |
-| Scene status tokens в CSS | ✅ | `--status-*` в `globals.css` |
-| Figma collection `Manuscript / Color` | ⬜ | MCP rate limit — scripts ready |
-| Figma collection `Manuscript / Radius` + Spacing | ⬜ | script ready |
-| Foundations swatch frame | ⬜ | `figma-foundations-swatches.js` |
-| Status tokens wired in code | ✅ | `manuscript-tree.tsx` → `text-status-*` |
-| Figma text styles (Inter, Source Serif 4) | ⬜ | После variables |
-| Re-bind UI Kit components to variables | ⬜ | После создания collections |
+| Collections в Figma | ✅ | Primitives, Color (Light/Dark), Spacing, Radius, Typeface |
+| Semantic Color aliases | ✅ | chrome / sheet / accent / status |
+| Text styles | ✅ | 11 styles, Geist / Instrument Serif / Newsreader / Geist Mono |
+| Foundations swatch frame | ✅ | page `00 Foundations` |
+| `globals.css` sync | 🔴 | код на старой HSL-палитре Inter / Source Serif 4 |
+| Re-bind components | ✅ | UI Kit на `01 Components` связан с variables |
+| Dark product mode | 🟡 | Dark aliases есть; MVP — Light. Sheet остаётся бумажным и в Dark |
 
 ---
 
-## Collections (целевая структура)
+## Collections (факт Figma)
 
-### 1. `Manuscript / Color`
+### 1. `Primitives` — raw palette
 
-**Modes:** `Light` (default) · `Dark`
+**Modes:** `Value`
 
-| Figma variable | CSS | Light hex | Scope |
-|----------------|-----|-----------|-------|
-| `color/background` | `--background` | `#FBFAF9` | FRAME_FILL, SHAPE_FILL |
-| `color/foreground` | `--foreground` | `#272320` | TEXT_FILL |
-| `color/card` | `--card` | `#FFFFFF` | FRAME_FILL, SHAPE_FILL |
-| `color/card/foreground` | `--card-foreground` | `#272320` | TEXT_FILL |
-| `color/primary` | `--primary` | `#272320` | FRAME_FILL, SHAPE_FILL |
-| `color/primary/foreground` | `--primary-foreground` | `#FBFAF9` | TEXT_FILL |
-| `color/secondary` | `--secondary` | `#F2F0ED` | FRAME_FILL, SHAPE_FILL |
-| `color/secondary/foreground` | `--secondary-foreground` | `#38322E` | TEXT_FILL |
-| `color/muted` | `--muted` | `#EEEBE8` | FRAME_FILL, SHAPE_FILL |
-| `color/muted/foreground` | `--muted-foreground` | `#7C746E` | TEXT_FILL |
-| `color/accent` | `--accent` | `#7C5B46` | FRAME_FILL, SHAPE_FILL, TEXT_FILL |
-| `color/accent/foreground` | `--accent-foreground` | `#FBFAF9` | TEXT_FILL |
-| `color/destructive` | `--destructive` | `#DC2828` | FRAME_FILL, SHAPE_FILL |
-| `color/destructive/foreground` | `--destructive-foreground` | `#FAFAFA` | TEXT_FILL |
-| `color/border` | `--border` | `#E5E2DC` | STROKE_COLOR |
-| `color/input` | `--input` | `#E5E2DC` | STROKE_COLOR |
-| `color/ring` | `--ring` | `#7C5B46` | STROKE_COLOR |
-| `color/sidebar/background` | `--sidebar-background` | `#F7F5F3` | FRAME_FILL |
-| `color/sidebar/foreground` | `--sidebar-foreground` | `#272320` | TEXT_FILL |
-| `color/sidebar/border` | `--sidebar-border` | `#E5E2DC` | STROKE_COLOR |
-| `color/sidebar/accent` | `--sidebar-accent` | `#EEECE7` | FRAME_FILL |
-| `color/status/idea` | `--status-idea` | `#7C746E` | TEXT_FILL |
-| `color/status/planned` | `--status-planned` | `#B8957F` | TEXT_FILL |
-| `color/status/draft` | `--status-draft` | `#7C5B46` | TEXT_FILL |
-| `color/status/revision` | `--status-revision` | `#D97706` | TEXT_FILL |
-| `color/status/ready` | `--status-ready` | `#16A34A` | TEXT_FILL |
+| Variable | Hex |
+|----------|-----|
+| `ink/950` | `#0C0F12` |
+| `ink/800` | `#1A1F24` |
+| `ink/700` | `#252B32` |
+| `ink/600` | `#3A424A` |
+| `ink/400` | `#6B747C` |
+| `ink/200` | `#C5C0B5` |
+| `paper/0` | `#FAF7F0` |
+| `paper/50` | `#F4EFE4` |
+| `paper/100` | `#EBE4D4` |
+| `teal/700` | `#245753` |
+| `teal/600` | `#2F6F6A` |
+| `teal/400` | `#4A9A93` |
+| `rust/500` | `#C45C26` |
+| `sage/600` | `#3D7A4A` |
+| `danger/500` | `#C23B2E` |
+| `white` | `#FFFFFF` |
+| `black` | `#000000` |
 
-**Code syntax (WEB):** `var(--background)`, `var(--accent)`, … — совпадает с именем CSS custom property.
+### 2. `Color` — semantic
 
-Dark mode hex — см. `manuscript-tokens.json`.
+**Modes:** `Light` (default) · `Dark`  
+Все значения — alias на Primitives.
 
-### 2. `Manuscript / Radius`
+| Variable | Light | Dark | Scope | Роль |
+|----------|-------|------|-------|------|
+| `color/bg/app` | paper/0 `#FAF7F0` | ink/950 | FRAME_FILL | страница вне chrome |
+| `color/bg/chrome` | ink/950 `#0C0F12` | ink/950 | FRAME_FILL | rail, navigator, inspector |
+| `color/bg/sheet` | paper/50 `#F4EFE4` | paper/50 | FRAME_FILL, SHAPE_FILL | лист рукописи (бумага в обоих режимах) |
+| `color/bg/surface` | white | ink/800 | FRAME_FILL, SHAPE_FILL | карточки, диалоги |
+| `color/bg/muted` | paper/100 | ink/700 | FRAME_FILL, SHAPE_FILL | вторичные поверхности |
+| `color/bg/inverse` | ink/950 | paper/50 | FRAME_FILL | инверсия |
+| `color/text/primary` | ink/950 | paper/50 | TEXT_FILL | основной текст на бумаге |
+| `color/text/secondary` | ink/600 | ink/200 | TEXT_FILL | вторичный |
+| `color/text/muted` | ink/400 | ink/400 | TEXT_FILL | подписи, meta |
+| `color/text/on-chrome` | paper/50 | paper/50 | TEXT_FILL | текст на тёмном chrome |
+| `color/text/accent` | teal/700 | teal/400 | TEXT_FILL | ссылки |
+| `color/text/inverse` | paper/50 | ink/950 | TEXT_FILL | на accent/inverse |
+| `color/border/subtle` | paper/100 | ink/700 | STROKE_COLOR | слабая граница |
+| `color/border/default` | ink/200 | ink/600 | STROKE_COLOR | граница контролов |
+| `color/accent` | teal/600 `#2F6F6A` | teal/400 | FRAME_FILL, SHAPE_FILL, STROKE | CTA |
+| `color/accent/fg` | white | ink/950 | TEXT_FILL | текст на accent |
+| `color/danger` | danger/500 `#C23B2E` | danger/500 | FRAME_FILL, SHAPE_FILL, TEXT | ошибки, удаление |
+| `color/status/idea` | ink/400 | ink/400 | SHAPE_FILL, TEXT_FILL | статус сцены |
+| `color/status/planned` | ink/600 | ink/200 | SHAPE_FILL, TEXT_FILL | |
+| `color/status/draft` | teal/600 | teal/400 | SHAPE_FILL, TEXT_FILL | |
+| `color/status/revision` | rust/500 | rust/500 | SHAPE_FILL, TEXT_FILL | |
+| `color/status/ready` | sage/600 | sage/600 | SHAPE_FILL, TEXT_FILL | |
 
-**Modes:** single (default)
+### 3. `Spacing`
 
-| Figma variable | CSS | Value | Scope |
-|----------------|-----|-------|-------|
-| `radius/base` | `--radius` | `6` | CORNER_RADIUS |
-| `radius/md` | calc | `4` | CORNER_RADIUS |
-| `radius/sm` | calc | `2` | CORNER_RADIUS |
+Scope: `WIDTH_HEIGHT`, `GAP`.
 
-### 3. `Manuscript / Spacing`
+| Variable | Value |
+|----------|-------|
+| `spacing/2` | 2 |
+| `spacing/4` | 4 |
+| `spacing/8` | 8 |
+| `spacing/12` | 12 |
+| `spacing/16` | 16 |
+| `spacing/24` | 24 |
+| `spacing/32` | 32 |
+| `spacing/48` | 48 |
+| `spacing/64` | 64 |
 
-| Variable | Value | Scope |
-|----------|-------|-------|
-| `spacing/xs` | 4 | GAP, WIDTH_HEIGHT |
-| `spacing/sm` | 8 | GAP, WIDTH_HEIGHT |
-| `spacing/md` | 16 | GAP, WIDTH_HEIGHT |
-| `spacing/lg` | 24 | GAP, WIDTH_HEIGHT |
-| `spacing/xl` | 32 | GAP, WIDTH_HEIGHT |
+### 4. `Radius`
 
-### 4. Text styles (не variables)
+Scope: `CORNER_RADIUS`.
 
-| Style name | Font | Size | Weight | Usage |
-|------------|------|------|--------|-------|
-| `UI/Body/SM` | Inter | 14 | Regular | Nav, forms |
-| `UI/Body/MD` | Inter | 16 | Regular | Body |
-| `UI/Label/XS` | Inter | 12 | Medium | Buttons, chips |
-| `Display/H1` | Source Serif 4 | 48 | Regular | Landing hero |
-| `Display/H2` | Source Serif 4 | 32 | Regular | Project titles |
-| `Mono/Status` | Inter (tabular) | 12 | Regular | Word count, timestamps |
+| Variable | Value |
+|----------|-------|
+| `radius/sm` | 4 |
+| `radius/md` | 8 |
+| `radius/lg` | 16 |
+| `radius/xl` | 24 |
+| `radius/full` | 999 |
 
----
+### 5. `Typeface`
 
-## Автосинхронизация (Figma MCP)
+Scope: `FONT_FAMILY`.
 
-**Порядок запуска** (когда MCP rate limit сброшен):
-
-| # | Script | Результат |
-|---|--------|-----------|
-| 1 | `apps/web/scripts/figma-sync-color-variables.js` | Collection `Manuscript / Color`, 29 vars, Light/Dark |
-| 2 | `apps/web/scripts/figma-sync-radius-spacing.js` | `Manuscript / Radius` + `Manuscript / Spacing` |
-| 3 | `apps/web/scripts/figma-foundations-swatches.js` | Frame `Color — Light mode` на `00 Foundations` |
-
-В Cursor: *«Run figma-sync-color-variables.js on file 7vP03INYMrwQ3Q6qT7A2NT»* — затем #2 и #3.
-
-**Без MCP:** импорт subset через [Tokens Studio for Figma](https://tokens.studio/) → `design-tokens/figma-import-subset.json` (8 ключевых цветов; полный набор — только через скрипт #1).
-
----
-
-## Ручной импорт в Figma
-
-1. Открыть [Manuscript Design System](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System)
-2. **Local variables** → Create collection `Manuscript / Color`
-3. Rename default mode → `Light`, add mode `Dark`
-4. Для каждой строки таблицы выше: Create variable (Color), paste hex, set WEB code syntax
-5. На page `00 Foundations`: frame **Color swatches** — строка 24×24 swatch + label на `color/background` … `color/status/ready`
-6. В UI Kit (`01 Components`): re-bind fills/strokes/text to variables (replace hardcoded `#272320` etc.)
+| Variable | Value |
+|----------|-------|
+| `family/sans` | Geist |
+| `family/serif` | Instrument Serif |
+| `family/prose` | Newsreader |
+| `family/mono` | Geist Mono |
 
 ---
 
-## Scene status (PRD §6.4)
+## Text styles
 
-PRD: статус **не только цвет** — icon + label (§8.4).
+| Style | Font | Size / LH | Usage |
+|-------|------|-----------|-------|
+| `Display/Hero` | Instrument Serif Regular | 56 / 64 | лендинг |
+| `Display/Title` | Instrument Serif Regular | 32 / 40 | название проекта, сцены |
+| `Display/H2` | Instrument Serif Regular | 24 / 32 | секции |
+| `Prose/Lead` | Newsreader Regular | 20 / 32 | лид |
+| `Prose/Body` | Newsreader Regular | 18 / 32 | текст сцены |
+| `UI/Body/MD` | Geist Regular | 16 / 24 | UI body |
+| `UI/Body` | Geist Regular | 14 / 20 | nav, формы |
+| `UI/Button` | Geist Medium | 14 / 20 | кнопки |
+| `UI/Label` | Geist Medium | 12 / 16 | chips, labels |
+| `UI/Caption` | Geist Regular | 12 / 16 | подписи |
+| `Mono/Meta` | Geist Mono Regular | 11 / 16 | sync, words, timestamps |
 
-| Status | Token | Icon | Chip in Figma |
-|--------|-------|------|---------------|
-| idea | `color/status/idea` | ○ | `Chip/Status` variant |
-| planned | `color/status/planned` | ◐ | |
-| draft | `color/status/draft` | ● | |
-| revision | `color/status/revision` | ↻ | |
-| ready | `color/status/ready` | ✓ | |
+---
+
+## Mapping → код (целевой)
+
+Пока `globals.css` не синхронизирован. Целевые CSS custom properties:
+
+| Figma | CSS (план) | Сегодня в коде |
+|-------|------------|----------------|
+| `color/bg/app` | `--background` | `#fbfaf9` (близко к paper/0) |
+| `color/bg/chrome` | `--sidebar-background` | светлый `#F7F5F3` — **сломать** |
+| `color/bg/sheet` | `--editor-sheet` | нет |
+| `color/text/primary` | `--foreground` | `#272320` |
+| `color/accent` | `--accent` | brown `#7C5B46` — **сломать** |
+| `family/sans` | `--font-sans` | Inter — **сломать** |
+| `family/serif` | `--font-serif` | Source Serif 4 — **сломать** |
+| `family/prose` | `--font-prose` | нет |
+| `family/mono` | `--font-mono` | system mono |
+
+Не подгонять Ink Studio под старый CSS. При реализации — код следует Figma.
+
+---
+
+## Scene status
+
+PRD: статус **не только цвет** — icon + label. Компонент: `Status Chip` (`3:21`).
+
+| Status | Token | Chip variant |
+|--------|-------|--------------|
+| idea | `color/status/idea` | `Status=idea` `3:6` |
+| planned | `color/status/planned` | `Status=planned` `3:9` |
+| draft | `color/status/draft` | `Status=draft` `3:12` |
+| revision | `color/status/revision` | `Status=revision` `3:15` |
+| ready | `color/status/ready` | `Status=ready` `3:18` |
 
 ---
 
@@ -142,4 +180,5 @@ PRD: статус **не только цвет** — icon + label (§8.4).
 
 | Дата | Изменение |
 |------|-----------|
-| 2026-08-04 | Radius/spacing scripts, swatches script, Tokens Studio subset, status colors in tree |
+| 2026-08-04 | Spec под старый file `7vP03INYMrwQ3Q6qT7A2NT` (скрипты импорта) |
+| 2026-08-13 | SoT → Ink Studio: факт collections, aliases, type ramp; код помечен как отстающий |

@@ -405,25 +405,27 @@ PRD §1.4: полноценное mobile app — non-goal. §11.4: read-only + l
 
 ### Контекст
 
-PRD §8.1: Figma — source of truth; design audit не выполнен (лимит Figma MCP на момент PRD).
+Визуальный SoT: [Manuscript — Ink Studio](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio) (`DY4LOZnkponU6E1rmb34Fs`). Старый UI Kit `7vP03INYMrwQ3Q6qT7A2NT` — архив. Код (`globals.css`) ещё на прежней палитре.
 
 ### Deliverables
 
 - [x] [DESIGN-HANDOFF.md](../technical/design/DESIGN-HANDOFF.md) — screen inventory, tokens, component map, audit checklist
-- [ ] Figma frame node-id column filled
+- [x] Figma frame node-id column filled (Ink Studio, 13 августа 2026)
 - [ ] Exported tokens synced with `globals.css`
 
 ### Рекомендация
 
-1. Design audit sprint (3–5 дней) — сопоставить §23–25 PRD с Figma
-2. Результат: [DESIGN-HANDOFF.md](../technical/design/DESIGN-HANDOFF.md) — frame → screen → component (node-id заполняет Design)
-3. Расхождения — fix in Figma **или** update PRD (не менять product logic без Product sign-off)
+1. Реализация экранов — от Ink Studio frames, не от старого UI Kit
+2. Расхождения поведения — PRD + Use Cases; пиксели — Figma
+3. Sync `globals.css` + шрифты (Geist / Newsreader / Instrument Serif) до Beta
 
 ### Критерий принятия
 
-- [x] §30 PRD: Figma-frame на ключевые P0 экраны — **partial** (10.07 + core set)
-- [ ] Полный набор P0/P1 + error states
-- [ ] Figma variables
+- [x] Figma-frame на ключевые P0 экраны + empty/loading/error
+- [x] P1 screens (plot, timeline, notes, AI, import, settings)
+- [x] Figma variables (5 collections, Light/Dark)
+- [ ] Tokens + type ramp в коде
+- [ ] Product sign-off
 
 ---
 

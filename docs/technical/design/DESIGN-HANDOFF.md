@@ -1,12 +1,16 @@
 ﻿# Design Handoff
 
-> **Figma:** [Manuscript Design System](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System)  
-> **PRD:** §8 (design system), §23–25 (screens)  
+> **Figma (SoT):** [Manuscript — Ink Studio](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio)  
+> **File key:** `DY4LOZnkponU6E1rmb34Fs`  
+> **PRD:** [v2.1](../../prd/PRD.md) — FR-ED / FR-PRJ / FR-KN / §7.8–7.9  
+> **ТЗ:** [§5 UI](../../tz/TZ.md#5-пользовательский-интерфейс)  
 > **Decision:** [DEC-011](../../roadmap/DECISION-LOG.md#dec-011-figma-design-handoff)  
 > **Scope:** [MVP-SCOPE-MATRIX.md](../../roadmap/MVP-SCOPE-MATRIX.md)  
-> **Обновлено:** 4 августа 2026 (Figma frames synced)
+> **Обновлено:** 13 августа 2026 (Ink Studio supersedes старый UI Kit)
 
-Handoff-документ для разработки: экран → Figma frame → route → компоненты → состояния → токены.
+Handoff для разработки: экран → Figma frame → route → компоненты → состояния → токены.
+
+Предыдущий файл [Manuscript Design System](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System) (`7vP03INYMrwQ3Q6qT7A2NT`) — **архив**. Не использовать для новой реализации.
 
 ---
 
@@ -14,318 +18,323 @@ Handoff-документ для разработки: экран → Figma frame
 
 | Проверка | Статус | Комментарий |
 |----------|--------|-------------|
-| Figma file доступен | 🟢 | File key `7vP03INYMrwQ3Q6qT7A2NT` |
-| Страницы / frames P0–P1 | 🟡 | **13 screen frames** на page `10 Screens — P0/P1`; auth на той же page (лимит Starter: 3 pages) |
-| Design system components | 🟡 | UI Kit: 11 components на `01 Components` |
-| Figma variables | 🟡 | Spec + script готовы — [FIGMA-VARIABLES.md](./FIGMA-VARIABLES.md); MCP publish blocked |
-| Code tokens (`globals.css`) | 🟢 | Source of truth + scene status tokens |
-| shadcn/ui base components | 🟢 | Button, Input, Card… в коде |
-| PRD screen specs | 🟢 | §23–25 нормативны |
-| Scene editor states | 🟡 | normal + empty + loading; conflict/error/read-only — TODO |
+| Figma file доступен | 🟢 | File key `DY4LOZnkponU6E1rmb34Fs` |
+| Страницы / frames P0–P1 | 🟢 | 9 pages; 52 screen frames включая empty/loading/error |
+| Design system components | 🟡 | Button, Input, Status Chip, Nav Rail Item, 6 icons |
+| Figma variables | 🟢 | 5 collections, Light/Dark semantic Color — [FIGMA-VARIABLES.md](./FIGMA-VARIABLES.md) |
+| Code tokens (`globals.css`) | 🔴 | Код ещё на старой палитре Inter / тёплый workspace |
+| shadcn/ui base components | 🟢 | Button, Input, Card… в коде — визуал не совпадает с Ink Studio |
+| PRD / ТЗ screen specs | 🟢 | Поведение — PRD + UC; визуал — этот файл |
+| Scene editor states | 🟢 | normal, empty, loading, focus, offline, conflict, versions, deleted |
+| Compact / mobile | 🟡 | Editor + dashboard compact; mobile read-only (DEC-008) |
 
-**Вывод:** основные P0/P1 frames **существуют в Figma** и привязаны ниже. Остаётся: variables, missing screens (Notes, Search, Settings…), error states, Code Connect publish (шаблоны готовы — см. [CODE-CONNECT.md](./CODE-CONNECT.md)).
+**Вывод:** визуальный SoT — **Ink Studio**. Код и CSS-токены **отстают**; реализация экранов должна идти от frames ниже, а не от старого UI Kit.
 
 ### Quick links (P0 critical)
 
 | Frame | Figma |
 |-------|-------|
-| **10.07 Scene Editor** | [Open](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=9-211) |
-| 10.07b Empty | [Open](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=14-2) |
-| 10.07c Loading | [Open](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=14-69) |
-| 10.02 Projects | [Open](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=9-2) |
-| Manuscript UI Kit | [Open](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=8-2) |
+| **E.01 Scene editor** | [Open](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=5-183) |
+| E.02 Empty scene | [Open](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=6-369) |
+| E.03 Loading | [Open](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-830) |
+| P.01 Dashboard | [Open](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=4-53) |
+| Foundations | [Open](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=2-2) |
+| Components | [Open](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=1-3) |
 
 ---
 
-## Figma file structure (фактическая)
+## Figma file structure
 
 ```
-Manuscript Design System (Starter plan — max 3 pages)
-├── 00 Foundations          page id: 0:1     ← пусто; tokens TODO
-├── 01 Components           page id: 6:82   ← Manuscript UI Kit (8:2)
-└── 10 Screens — P0/P1      page id: 6:83   ← все экраны + auth
+Manuscript — Ink Studio
+├── Cover                       page 0:1      Cover (2:54)
+├── 00 Foundations              page 1:2      токены, type ramp (2:2)
+├── 01 Components               page 1:3      Button, Input, Status Chip, Icons, Nav Rail
+├── 10 Auth                     page 1:4      landing + auth + ошибки
+├── 20 Projects                 page 1:5      dashboard, overview, create, search
+├── 30 Editor                   page 1:6      редактор и состояния
+├── 40 Knowledge                page 1:7      герои, мир, сюжет, таймлайн, заметки
+├── 50 IO · AI · Settings       page 1:8      export, import, AI, профиль
+└── 60 Responsive               page 13:637   compact 1024 + mobile 390
 ```
-
-> **Note:** отдельная page `12 Screens — Auth` недоступна на Starter plan. Auth frames (`12.01`, `12.02`) размещены на `10 Screens — P0/P1`.
 
 **Deep link template:**
 
 ```
-https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id={NODE_ID}
+https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id={NODE_ID}
 ```
 
-`{NODE_ID}`: двоеточие → дефис (`9:211` → `9-211`).
+`{NODE_ID}`: двоеточие → дефис (`5:183` → `5-183`).
+
+---
+
+## Визуальный язык
+
+Не копия старого светлого workspace. Два слоя:
+
+| Слой | Роль | Цвет |
+|------|------|------|
+| **Chrome** | Rail, навигатор, inspector, chrome dashboard | тёмный ink (`color/bg/chrome` `#0C0F12`) |
+| **Sheet** | Рукопись, карточки контента, лендинг-бумага | светлая бумага (`color/bg/sheet` `#F4EFE4`) |
+
+Sheet остаётся бумажным и в Dark mode: тёмнеет оболочка, не страница текста.
+
+**Шрифты**
+
+| Роль | Family | Text style | Где |
+|------|--------|------------|-----|
+| UI | Geist | `UI/Body`, `UI/Button`, `UI/Label` | nav, формы, кнопки |
+| Display | Instrument Serif | `Display/Hero`, `Display/Title`, `Display/H2` | лендинг, названия проекта/сцены |
+| Prose | Newsreader | `Prose/Body`, `Prose/Lead` | текст сцены в редакторе |
+| Mono | Geist Mono | `Mono/Meta` | статус синка, счётчик слов, timestamps |
+
+**Акцент:** teal (`#2F6F6A`), не тёплый brown старого UI Kit. Destructive: rust/danger `#C23B2E`.
 
 ---
 
 ## Breakpoints & layout shell
 
-Источник: PRD §8.2, [DEC-008](../../roadmap/DECISION-LOG.md#dec-008-глубина-mobile).
+Источник: ТЗ §5.2, [DEC-008](../../roadmap/DECISION-LOG.md#dec-008-глубина-mobile). Figma-канвасы — репрезентативные, не единственные ширины.
 
-| Token | Min width | Layout |
-|-------|-----------|--------|
-| `desktop` | 1280px | 3 columns: nav (240–280px) \| editor (flex) \| context (300–360px) |
-| `compact` | 900px | Side panels collapsible; editor priority |
-| `mobile` | &lt;900px | Read-only scene view; no rich-text editing |
+| Token | Figma canvas | Поведение |
+|-------|--------------|-----------|
+| `desktop` | 1440×900 | rail 64 \| navigator 260 \| sheet flex \| inspector 320 |
+| `compact` | 1024×768 | inspector скрыт, открывается по запросу |
+| `mobile` | 390×844 | **только чтение** сцены; rich-text выключен (DEC-008) |
 
-### App shell (dashboard routes)
+Продуктовые пороги ТЗ: desktop ≥1280, compact 900–1279, mobile <900. Figma рисует 1440 / 1024 / 390 как эталоны этих зон.
+
+### App shell (dashboard + editor)
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│ Header — breadcrumb, save status, actions, profile           │
-├──────────┬───────────────────────────────────┬───────────────┤
-│ Sidebar  │ Main content                      │ (optional)    │
-│ global   │ page-specific                     │ context panel │
-│ nav      │                                   │               │
-│ 240px    │ flex-1                            │ 320px         │
-└──────────┴───────────────────────────────────┴───────────────┘
+┌────┬──────────┬──────────────────────────────────┬─────────────┐
+│Rail│ Navigator│ Sheet (рукопись / контент)       │ Inspector   │
+│ 64 │ 260      │ flex                             │ 320         │
+│ink │ ink      │ paper                            │ ink         │
+└────┴──────────┴──────────────────────────────────┴─────────────┘
 ```
 
-**Code:** `apps/web/src/app/[locale]/(dashboard)/layout.tsx` — Sidebar + Header + main.  
-**Scene editor (Sprint 3):** заменит generic main на 3-column внутри route.
+**Figma:** [E.01](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=5-183)  
+**Код сегодня:** `apps/web/src/app/[locale]/(dashboard)/layout.tsx` — широкий sidebar, без rail. Заменить при реализации Ink Studio.
 
 ---
 
 ## Design tokens
 
-### Interim: code → Figma
+**SoT визуала:** Figma collections → [FIGMA-VARIABLES.md](./FIGMA-VARIABLES.md).  
+**SoT в коде (пока отстаёт):** `apps/web/src/app/globals.css`.
 
-**Source of truth:** `globals.css` → [FIGMA-VARIABLES.md](./FIGMA-VARIABLES.md) → Figma `Manuscript / Color` collection.
+Ключевые semantic (Light):
 
-#### Color (HSL CSS variables)
+| Token | Hex | Роль |
+|-------|-----|------|
+| `color/bg/app` | `#FAF7F0` | страница вне chrome |
+| `color/bg/chrome` | `#0C0F12` | rail / navigator / inspector |
+| `color/bg/sheet` | `#F4EFE4` | лист рукописи |
+| `color/text/primary` | `#0C0F12` | основной текст на бумаге |
+| `color/text/on-chrome` | `#F4EFE4` | текст на тёмном chrome |
+| `color/accent` | `#2F6F6A` | CTA, ссылки |
+| `color/danger` | `#C23B2E` | удаление, ошибки |
 
-| Token | Light | Role | Tailwind |
-|-------|-------|------|----------|
-| `background` | `40 25% 98%` | Page bg, calm neutral | `bg-background` |
-| `foreground` | `24 10% 14%` | Body text | `text-foreground` |
-| `primary` | `24 10% 14%` | Primary actions | `bg-primary` |
-| `secondary` | `38 18% 94%` | Secondary surfaces | `bg-secondary` |
-| `muted` | `38 15% 92%` | Subtle bg | `bg-muted` |
-| `muted-foreground` | `24 6% 46%` | Secondary text | `text-muted-foreground` |
-| `accent` | `24 28% 38%` | Links, highlights | `text-accent` |
-| `destructive` | `0 72% 51%` | Delete, errors | `bg-destructive` |
-| `border` | `38 14% 88%` | Borders | `border-border` |
-| `sidebar-background` | `38 20% 96%` | Nav panel | `bg-sidebar` |
+Статусы сцен — **иконка + подпись**, не один цвет (PRD §7.8, ТЗ §5.1):
 
-**File:** `apps/web/src/app/globals.css`  
-**Dark mode:** `.dark` variants defined — MVP: light only unless Design specifies otherwise.
-
-#### Typography
-
-| Role | Font | CSS | Usage |
-|------|------|-----|-------|
-| UI / body | Inter | `--font-sans` | Labels, nav, forms |
-| Display / hero | Source Serif 4 | `--font-serif` | Landing headings, project titles |
-| Mono labels | system mono | `.font-label` | Status, word count, timestamps |
-
-**File:** `apps/web/src/app/[locale]/layout.tsx`
-
-#### Radius & spacing
-
-| Token | Value | Notes |
-|-------|-------|-------|
-| `--radius` | `0.375rem` (6px) | Base; cards `rounded-lg` |
-| Button height | 36px (`h-9`) | shadcn default |
-| Content padding | 24px (`p-6`) | Dashboard main |
-
-#### Scene status colors
-
-PRD §6.4 — **icon + label**, не только цвет (§8.4).
-
-| Status | Token | Tailwind | Light HSL |
-|--------|-------|----------|-----------|
-| idea | `--status-idea` | `text-status-idea` | `24 6% 46%` |
-| planned | `--status-planned` | `text-status-planned` | `24 28% 62%` |
-| draft | `--status-draft` | `text-status-draft` | `24 28% 38%` |
-| revision | `--status-revision` | `text-status-revision` | `32 95% 44%` |
-| ready | `--status-ready` | `text-status-ready` | `142 76% 36%` |
-
-Figma: `color/status/*` — см. [FIGMA-VARIABLES.md](./FIGMA-VARIABLES.md).
+| Status | Token | Hex |
+|--------|-------|-----|
+| idea | `color/status/idea` | `#6B747C` |
+| planned | `color/status/planned` | `#3A424A` |
+| draft | `color/status/draft` | `#2F6F6A` |
+| revision | `color/status/revision` | `#C45C26` |
+| ready | `color/status/ready` | `#3D7A4A` |
 
 ---
 
 ## Component mapping
 
-PRD §8.3 → Figma `Manuscript UI Kit` → код.
+PRD / ТЗ → Figma `01 Components` → код.
 
-| PRD component | Figma component | node-id | Code | Code Connect | Status |
-|---------------|-----------------|---------|------|--------------|--------|
-| Button primary | `Button/Primary` | `8:6` | `@/components/ui/button` `default` | ✅ `button-primary.figma.ts` | 🟢 |
-| Button secondary | `Button/Secondary` | `8:8` | `secondary` | ✅ `button-secondary.figma.ts` | 🟢 |
-| Button tertiary | `Button/Ghost` | `8:10` | `ghost` | ✅ `button-ghost.figma.ts` | 🟢 |
-| Nav item | `Navigation Item/Active` / `Default` | `8:13` / `8:16` | `@/components/layout/sidebar` | ✅ `navigation-item*.figma.ts` | 🟡 custom |
-| Badge / chip | `Chip/POV`, `Chip/Location`, … | `8:20`–`8:29` | ⬜ | ⬜ | 🟡 Figma only |
-| Scene card | `Card/Scene` | `8:33` | `project-card.tsx` pattern | ✅ `project-card.figma.ts` | 🟡 |
-| AI block | `Panel/AI Review` | `8:36` | ⬜ | ⬜ | 🟡 Figma only |
-| Input | — | — | `@/components/ui/input` | ⬜ | 🔴 no Figma |
-| Tree item | embedded in `10.07` | `9:239` | `manuscript-tree.tsx` | ✅ `tree-item.figma.ts` | 🟡 |
-| Project card | embedded in `10.02` | `9:32` | `project-card.tsx` | ⬜ | 🟡 |
-| Character card | embedded in `10.08` | `9:306` | ⬜ | ⬜ | 🟡 |
-| Textarea, Select, Dialog, Toast… | — | — | ⬜ | ⬜ | 🔴 |
+| Product | Figma | node-id | Code | Code Connect | Status |
+|---------|-------|---------|------|--------------|--------|
+| Button primary | `Button` / `Variant=Primary` | `2:72` | `@/components/ui/button` `default` | 🟡 remap | код есть, визуал старый |
+| Button ghost | `Button` / `Variant=Ghost` | `2:74` | `ghost` | 🟡 remap | |
+| Button accent | `Button` / `Variant=Accent` | `2:76` | нет 1:1 (ближайший `secondary`) | 🟡 remap | |
+| Button destructive | `Button` / `Variant=Destructive` | `2:78` | `destructive` | ⬜ | |
+| Input | `Input` | `3:2` | `@/components/ui/input` | ⬜ | |
+| Status chip | `Status Chip` | `3:21` | ⬜ | ⬜ | Figma only |
+| Nav rail | `Nav Rail Item` Default / Active | `3:52` / `3:57` | sidebar (широкий) | 🟡 remap | код — старый sidebar |
+| Icons | `Icon/book` … `Icon/note` | `3:25`–`3:51` | lucide | ⬜ | |
+| Tree item | embedded in `E.01` Navigator | `5:215` | `manuscript-tree.tsx` | 🟡 stale | нет отдельного компонента |
+| Project card | embedded in `P.01` | `4:53` | `project-card.tsx` | 🟡 stale | нет отдельного компонента |
 
-**UI Kit:** [Manuscript UI Kit](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=8-2)
+**Components page:** [01 Components](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=1-3)
 
-### Button variant map (PRD → shadcn)
+### Button variant map (Figma → shadcn)
 
-| PRD | shadcn `variant` |
-|-----|------------------|
-| primary | `default` |
-| secondary | `secondary` |
-| tertiary | `ghost` or `outline` |
-| destructive | `destructive` |
-| icon | `size="icon"` + `ghost` |
+| Figma | shadcn `variant` |
+|-------|------------------|
+| Primary | `default` |
+| Ghost | `ghost` |
+| Accent | нет; временно `secondary` или новый `accent` |
+| Destructive | `destructive` |
 
 ---
 
 ## Screen inventory
 
-Обязательные состояния (PRD §8.5): **normal · empty · loading · error · no-access/deleted**.
+Обязательные состояния (PRD §7.8, ТЗ §5.4): **normal · empty · loading · error · no-access/deleted**.
 
-### P0 — Closed Alpha
+Ссылка: `https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=` + node-id с `-` вместо `:`.
 
-| Screen | PRD | Route | Figma frame | node-id | Sprint | States in Figma |
-|--------|-----|-------|-------------|---------|--------|-----------------|
-| Landing | — | `/[locale]` | [10.01 Landing](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=14-142) | `14:142` | 1 | normal |
-| Login | §6.1 | `/login` | [12.01 Login](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=14-192) | `14:192` | 1 | normal |
-| Register | §6.1 | `/register` | [12.02 Register](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=14-202) | `14:202` | 1 | normal |
-| Dashboard (projects) | §25.1 | `/projects` | [10.02 Dashboard — Projects](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=9-2) | `9:2` | 2 | normal |
-| Project overview | §25.2 | `/projects/[id]` | [10.05 Project Overview](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=9-65) | `9:65` | 2 | normal |
-| **Scene editor** | **§23** | `/projects/…/scenes/[id]` | **[10.07 Scene Editor](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=9-211)** | **`9:211`** | **3** | **normal** |
-| Scene editor empty | §23.5 | — | [10.07b Empty](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=14-2) | `14:2` | 3 | empty |
-| Scene editor loading | §23.5 | — | [10.07c Loading](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=14-69) | `14:69` | 3 | loading |
-| Characters list | §25.4 | `/projects/[id]/characters` | [10.08 Characters](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=9-278) | `9:278` | 4 | normal |
-| World list | §25.5 | `/projects/[id]/world` | [10.10 World](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=14-149) | `14:149` | 4 | normal |
-| Create project dialog | §5.1 | modal | ⬜ `10.03` | — | 2 | TODO |
-| Project onboarding | §22 | `/projects/[id]` | ⬜ `10.04` | — | 2 | TODO (code exists) |
-| Character detail | §6.7 | `/…/characters/[id]` | ⬜ `10.09` | — | 4 | TODO |
-| Export dialog | §25.9 | modal | ⬜ `10.11` | — | 6 | TODO |
+### P0 — Closed Alpha / Beta-gated auth
+
+| Screen | PRD / ТЗ | Route | Figma frame | node-id | Sprint | States in Figma |
+|--------|----------|-------|-------------|---------|--------|-----------------|
+| Landing | — | `/[locale]` | [A.01 Landing](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=9-21) | `9:21` | 1 | normal |
+| Login | FR-AUTH-02 | `/login` | [A.02 Login](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=4-2) | `4:2` | 1 | normal |
+| Login error | FR-AUTH-02 | `/login` | [A.02e Login error](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-24) | `12:24` | 1 | error |
+| Register | FR-AUTH-01 | `/register` | [A.03 Register](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=4-18) | `4:18` | 1 | normal |
+| Register validation | FR-AUTH-01 | `/register` | [A.03e Register validation](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-39) | `12:39` | 1 | error |
+| Forgot password | FR-AUTH-04 | `/forgot-password` | [A.04 Forgot password](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=4-34) | `4:34` | 6 | normal |
+| Reset password | FR-AUTH-04 | `/reset-password` | [A.05 Reset password](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-55) | `12:55` | 6 | normal |
+| Email confirmed | FR-AUTH-03 | `/verify` | [A.06 Email confirmed](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=9-31) | `9:31` | 6 | normal |
+| Email expired | FR-AUTH-03 | `/verify` | [A.07 Email expired](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-70) | `12:70` | 6 | error |
+| Dashboard | FR-PRJ-02 | `/projects` | [P.01 Dashboard](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=4-53) | `4:53` | 2 | normal |
+| Dashboard empty | FR-PRJ-02 | `/projects` | [P.01e empty](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=4-109) | `4:109` | 2 | empty |
+| Dashboard loading | FR-PRJ-02 | `/projects` | [P.01l loading](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-430) | `12:430` | 2 | loading |
+| Dashboard error | FR-PRJ-02 | `/projects` | [P.01x error](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-472) | `12:472` | 2 | error |
+| Create project | FR-PRJ-01 | modal | [P.02 Create project](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=5-123) | `5:123` | 2 | normal |
+| Project overview | FR-PRJ-06 | `/projects/[id]` | [P.03 Overview](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=5-74) | `5:74` | 2 | normal |
+| Overview empty | FR-PRJ-05 | `/projects/[id]` | [P.03e empty](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-512) | `12:512` | 2 | empty |
+| Overview error | FR-PRJ-06 | `/projects/[id]` | [P.03x error](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=13-776) | `13:776` | 2 | error |
+| Search empty | FR-KN-08 | overlay | [P.04 Search empty](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-558) | `12:558` | 4 | empty |
+| Confirm delete | FR-PRJ-04 | modal | [P.05 Confirm delete](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-599) | `12:599` | 2 | confirm |
+| **Scene editor** | **FR-ED-02** | `/projects/…/scenes/[id]` | **[E.01 Scene editor](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=5-183)** | **`5:183`** | **3** | **normal** |
+| Empty scene | FR-ED-01 | — | [E.02 Empty](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=6-369) | `6:369` | 3 | empty |
+| Loading | FR-ED-03 | — | [E.03 Loading](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-830) | `12:830` | 3 | loading |
+| Focus mode | FR-ED-07 | — | [E.04 Focus](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=6-373) | `6:373` | 3 | focus |
+| Offline | FR-ED-04 | — | [E.05 Offline](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=6-376) | `6:376` | 3 | local |
+| Conflict | FR-ED-08 | — | [E.06 Conflict](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-836) | `12:836` | 6 | conflict |
+| Versions | FR-ED-08 | — | [E.07 Versions](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-850) | `12:850` | 6 | normal |
+| Deleted scene | FR-MS-05 | — | [E.10 Deleted](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-867) | `12:867` | 3 | no-access |
+| Confirm delete node | FR-MS-05 | modal | [E.11 Confirm](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-875) | `12:875` | 3 | confirm |
+| Characters list | FR-KN-01 | `/projects/[id]/characters` | [K.01 Characters](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=6-2) | `6:2` | 4 | normal |
+| Characters empty | FR-KN-01 | — | [K.01e empty](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-692) | `12:692` | 4 | empty |
+| Character detail | FR-KN-01 | `/…/characters/[id]` | [K.02 detail](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=6-58) | `6:58` | 4 | normal |
+| Add relationship | FR-KN-10 | modal | [K.03 Add relationship](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-729) | `12:729` | 4 | normal |
+| World list | FR-KN-03 | `/projects/[id]/world` | [K.04 World](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=6-101) | `6:101` | 4 | normal |
+| Location detail | FR-KN-03 | `/…/world/[id]` | [K.05 Location](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-750) | `12:750` | 4 | normal |
+| Export | FR-IO-01 | modal | [I.01 Export](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=8-2) | `8:2` | 6 | normal |
 
 ### P1 — MVP Beta
 
 | Screen | PRD | Route | Figma frame | node-id | Sprint | States |
 |--------|-----|-------|-------------|---------|--------|--------|
-| Plot board | §25.3 | `/projects/[id]/plot` | [11.01 Plot Board](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=9-135) | `9:135` | 4 | normal |
-| Timeline | §25.6 | `/projects/[id]/timeline` | [11.02 Timeline](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=9-340) | `9:340` | 4 | normal |
-| AI panel | §23.7 | in editor | [11.05 AI Panel](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=9-427) | `9:427` | 5 | normal |
-| Notes / materials | §6.10 | `/projects/[id]/notes` | ⬜ `11.03` | — | 4 | TODO |
-| Global search | §25.7 | overlay | ⬜ `11.04` | — | 4 | TODO |
-| AI diff / accept | §23.7 | inline | ⬜ `11.06` | — | 5 | TODO |
-| Import wizard | §25.8 | modal | ⬜ `11.07` | — | 6 | TODO |
-| Settings | §6.1 | `/settings` | ⬜ `11.08` | — | 6 | TODO |
-| Project settings | §4 | `/projects/[id]/settings` | ⬜ `11.09` | — | 6 | TODO |
+| Command palette | FR-ED-09 | overlay | [E.08 Command palette](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=6-380) | `6:380` | 5 | normal |
+| Plot board | FR-KN-05 | `/projects/[id]/plot` | [K.06 Plot board](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=8-319) | `8:319` | 4 | normal |
+| Timeline | FR-KN-06 | `/projects/[id]/timeline` | [K.07 Timeline](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=8-385) | `8:385` | 4 | normal |
+| Notes | FR-KN-07 | `/projects/[id]/notes` | [K.08 Notes](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=8-430) | `8:430` | 4 | normal |
+| Import wizard | FR-IO-03 | modal | [I.02 Import](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=8-16) | `8:16` | 6 | normal |
+| AI context picker | FR-AI-01 | in editor | [AI.01 Context](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=8-26) | `8:26` | 5 | normal |
+| AI diff | FR-AI-02 | inline | [AI.02 Diff](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=8-34) | `8:34` | 5 | normal |
+| AI consent | FR-AI-04 | modal | [AI.03 Consent](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=13-19) | `13:19` | 5 | normal |
+| AI error | FR-AI-01 | — | [AI.04 error](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=13-28) | `13:28` | 5 | error |
+| Profile | FR-AUTH-05 | `/settings` | [S.01 Profile](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=8-47) | `8:47` | 6 | normal |
+| Delete account | FR-AUTH-06 | modal | [S.02 Delete account](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=8-56) | `8:56` | 6 | confirm |
+| Project settings | FR-PRJ-* | `/projects/[id]/settings` | [S.03 Project settings](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=13-36) | `13:36` | 6 | normal |
+| AI privacy | FR-AI-04 | `/settings` | [S.04 AI privacy](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=13-46) | `13:46` | 5 | normal |
 
 ### Responsive variants (DEC-008)
 
-| Screen | Desktop | Compact | Mobile read-only |
-|--------|---------|---------|------------------|
-| Scene editor | ✅ `9:211` | ⬜ TODO | ⬜ TODO |
-| Dashboard | ✅ `9:2` | ⬜ TODO | ⬜ TODO |
+| Screen | Desktop 1440 | Compact 1024 | Mobile 390 read-only |
+|--------|--------------|--------------|----------------------|
+| Scene editor | ✅ `5:183` | ✅ [E.01c](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=13-638) `13:638` | ✅ [E.01m](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=13-684) `13:684` |
+| Dashboard | ✅ `4:53` | ✅ [P.01c](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=13-692) `13:692` | ⬜ TODO |
 
 ---
 
 ## Screen spec: Scene Editor (P0 critical)
 
-**PRD §23** — главный экран. Figma: [10.07 Scene Editor](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=9-211) (`9:211`).
+**PRD FR-ED-02** — главный экран. Figma: [E.01 Scene editor](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=5-183) (`5:183`).
 
 ### Zones
 
 | Zone | Width | Content | PRD |
 |------|-------|---------|-----|
-| Top bar | 100% | breadcrumb, scene title, status, save, words, focus, versions, AI | §23.3 |
-| Left nav | 240–280px | tree, DnD, context menu, trash | §23.4 |
-| Editor | flex, max ~65ch | TipTap, floating toolbar | §23.5 |
-| Right panel | 300–360px | tabs: Scene / Characters / World / Links / Notes | §23.6 |
+| Rail | 64px | icon nav (книга, проекты, герои, мир, сюжет, заметки) | shell |
+| Navigator | 260px | дерево частей/глав/сцен, нераспределённые | FR-MS-02 |
+| Sheet | flex | заголовок сцены, Status Chip, sync + words, Newsreader prose | FR-ED-01 |
+| Inspector | 320px | вкладки Сцена / Герои / Мир; цель, конфликт, POV, локация, участники | FR-ED-06 |
 
 ### Save indicator states
 
-| State | Label (ru) | Visual |
-|-------|------------|--------|
-| saving | «Сохраняем…» | spinner |
-| saved | «Сохранено» | muted check |
-| local | «Сохранено на устройстве» | amber dot |
-| conflict | «Конфликт» | destructive, action |
-| error | «Ошибка — повторить» | destructive + retry |
+| State | Label (ru) | Figma |
+|-------|------------|-------|
+| saving | «Сохраняем…» | E.03 |
+| saved | «Сохранено» | E.01 (`Сохранено · 842 слова`) |
+| local | «Сохранено на устройстве» | E.05 Offline |
+| conflict | «Конфликт» | E.06 |
+| error | «Ошибка — повторить» | ⬜ отдельный frame нет; использовать E.06 pattern |
 
-### Editor center states (§23.5)
+### Editor center states
 
-- [x] empty — [10.07b](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=14-2)
-- [x] loading — [10.07c](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=14-69)
-- [ ] local newer — auto-restore + toast
-- [ ] read-only — reason shown
-- [ ] conflict — side-by-side, both kept
-- [ ] error — retry + local draft link
+- [x] empty — [E.02](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=6-369)
+- [x] loading — [E.03](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-830)
+- [x] focus — [E.04](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=6-373)
+- [x] offline / local newer — [E.05](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=6-376)
+- [x] conflict — [E.06](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-836)
+- [x] deleted / no-access — [E.10](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=12-867)
+- [ ] error retry + local draft link — нет отдельного кадра
 
-### Keyboard (§23.8)
+### Keyboard (PRD §7.9, ТЗ §5.5)
 
 | Shortcut | Action |
 |----------|--------|
 | Ctrl/Cmd+S | Force sync |
-| Ctrl/Cmd+Shift+F | Focus mode |
+| Ctrl/Cmd+Shift+F | Focus mode (E.04) |
 | Alt+↑/↓ | Prev/next scene |
-| Ctrl/Cmd+K | Command palette |
+| Ctrl/Cmd+K | Command palette (E.08, P1) |
 | Escape | Close overlays |
 
 ---
 
 ## Screen spec: Dashboard (P0)
 
-**PRD §25.1**
+**PRD FR-PRJ-02.** Figma: [P.01](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=4-53).
 
-### Project card anatomy
-
-```
-┌─────────────────────────────────┐
-│ [cover/placeholder]  Title      │
-│                      genre      │
-│                      word count │
-│                      last scene │
-│                      status     │
-└─────────────────────────────────┘
-```
-
-**Code today:** title, genre, word count, node count — **missing:** cover, last scene, continue CTA on dashboard.
-
-### Empty state copy direction
-
-- Headline: ценность («Ваша студия для книги»)
-- Primary: «Новый проект»
-- Secondary: «Импортировать» (P1 — hide until Sprint 6)
+Карточка проекта живёт внутри кадра (отдельного компонента нет). Empty: ценность + «Новый проект»; импорт — secondary до Sprint 6.
 
 ---
 
-## Accessibility checklist (PRD §8.4)
+## Accessibility checklist (PRD NFR-09)
 
 Применять к каждому P0/P1 frame:
 
-- [ ] Contrast ≥ WCAG AA (4.5:1 body, 3:1 large)
-- [ ] Focus ring visible on all interactives (`ring-ring`)
-- [ ] Icon buttons have `aria-label`
-- [ ] Status not color-only (icon + text)
+- [ ] Contrast ≥ WCAG AA (4.5:1 body, 3:1 large) — особенно `text/on-chrome` на ink
+- [ ] Focus ring visible on all interactives
+- [ ] Icon buttons / rail items have `aria-label`
+- [ ] Status not color-only (Status Chip = icon + label)
 - [ ] Modal focus trap + Escape
 - [ ] Tree: keyboard nav, DnD alternative
-- [ ] 200% zoom: editor usable at 1280px desktop
+- [ ] 200% zoom: editor usable at desktop 1280
 
 ---
 
 ## Design → Dev workflow
 
 ```
-1. Design creates/updates frame in Figma
-2. Paste node-id into this doc (Screen inventory)
-3. Dev calls get_design_context(fileKey, nodeId) before implementing
-4. Reuse @/components/ui/* ; extend only for domain components
-5. PRD § behavior wins if pixel vs logic conflict (PRD §8.1)
-6. Update Component mapping when new code component lands
+1. Design создаёт/обновляет frame в Ink Studio
+2. Node-id вписывается в Screen inventory
+3. Dev вызывает get_design_context(fileKey=DY4LOZnkponU6E1rmb34Fs, nodeId) до реализации
+4. Переиспользовать @/components/ui/* ; расширять только доменные компоненты
+5. Поведение: PRD + Use Cases; пиксели: этот файл (ТЗ §5.1)
+6. Component mapping обновляется, когда код догоняет Figma
 ```
 
 ### Sprint 3 handoff minimum
 
-Before Scene editor implementation:
-
-1. ✅ Figma frame `10.07` — desktop normal + empty + loading
-2. ⬜ Component instances: Tree item, Badge/status, Save indicator (top bar)
-3. ⬜ Figma variables synced with `globals.css`
-4. ⬜ Product sign-off DEC-011 partial acceptance
+1. ✅ Figma `E.01` desktop + empty + loading + focus + offline + conflict
+2. ⬜ Компоненты: Tree item, Status Chip, Save indicator — как instances, не только embedded
+3. ⬜ `globals.css` синхронизирован с Ink Studio variables
+4. ⬜ Product sign-off DEC-011
 
 ---
 
@@ -333,15 +342,15 @@ Before Scene editor implementation:
 
 | # | Task | Owner | Done |
 |---|------|-------|------|
-| 1 | Figma pages (3-page Starter limit) | Design | 🟡 3 pages; auth co-located |
-| 2 | Define color/type/spacing variables in Figma | Design | 🟡 spec ready — [FIGMA-VARIABLES.md](./FIGMA-VARIABLES.md) |
-| 3 | Build §8.3 component set | Design | 🟡 11 components in UI Kit |
-| 4 | Frame `10.07 Scene editor` + empty/loading | Design | ✅ |
-| 5 | Frames P0 screens (core set) | Design | 🟡 10/14 |
-| 6 | Frames P1 screens | Design | 🟡 3/9 |
-| 7 | Export variables → sync `globals.css` | Design + Eng | 🟡 CSS + status tokens done; Figma pending |
-| 8 | Fill node-id column in this doc | Design | ✅ |
-| 9 | Code Connect for Button, Card, Tree item | Eng | ✅ 7 templates; publish blocked on Starter |
+| 1 | Figma pages под P0/P1 | Design | ✅ 9 pages, Ink Studio |
+| 2 | Color/type/spacing variables в Figma | Design | ✅ [FIGMA-VARIABLES.md](./FIGMA-VARIABLES.md) |
+| 3 | Component set (кнопки, input, chips, rail) | Design | 🟡 базовый набор; нет Card/Tree как components |
+| 4 | Frame Scene editor + состояния | Design | ✅ |
+| 5 | Frames P0 screens | Design | ✅ включая error/empty/loading |
+| 6 | Frames P1 screens | Design | ✅ plot, timeline, notes, AI, import, settings |
+| 7 | Sync variables → `globals.css` | Design + Eng | 🔴 код на старой палитре |
+| 8 | Fill node-id column | Design | ✅ |
+| 9 | Code Connect remap на новые node-id | Eng | 🟡 URL обновлены; publish по-прежнему Starter-blocked |
 | 10 | Product sign-off DEC-011 | Product | ⬜ |
 
 ---
@@ -350,10 +359,9 @@ Before Scene editor implementation:
 
 | Дата | Изменение |
 |------|-----------|
-| 2026-08-04 | Initial handoff doc; Figma MCP audit — file appeared empty |
-| 2026-08-04 | Figma sync: renamed frames, added Landing/Auth/World, Scene empty+loading; node-ids linked |
-| 2026-08-04 | Code Connect: 7 parserless templates (+ tree item); parse OK |
-| 2026-08-04 | Figma variables spec, JSON export, sync script; scene status tokens in CSS |
+| 2026-08-04 | Initial handoff; старый file `7vP03INYMrwQ3Q6qT7A2NT` |
+| 2026-08-04 | Frames Landing/Auth/World, Code Connect, variables spec |
+| 2026-08-13 | **SoT → Manuscript — Ink Studio** (`DY4LOZnkponU6E1rmb34Fs`): rail + paper sheet, Geist/Newsreader/Instrument Serif, полный inventory P0/P1 + responsive |
 
 ---
 
@@ -361,7 +369,8 @@ Before Scene editor implementation:
 
 - [DECISION-LOG.md](../../roadmap/DECISION-LOG.md) — DEC-008, DEC-011
 - [MVP-SCOPE-MATRIX.md](../../roadmap/MVP-SCOPE-MATRIX.md)
-- [PRD v1.0 §8, §23–25](../../prd/archive/PRD-v1.0.md)
-- [Figma — Manuscript Design System](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System)
-- [FIGMA-VARIABLES.md](./FIGMA-VARIABLES.md) — tokens spec + Figma sync script
-- [CODE-CONNECT.md](./CODE-CONNECT.md) — Figma ↔ code mappings
+- [PRD v2.1](../../prd/PRD.md)
+- [ТЗ §5](../../tz/TZ.md#5-пользовательский-интерфейс)
+- [Figma — Manuscript Ink Studio](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio)
+- [FIGMA-VARIABLES.md](./FIGMA-VARIABLES.md)
+- [CODE-CONNECT.md](./CODE-CONNECT.md)

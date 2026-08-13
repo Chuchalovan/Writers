@@ -29,7 +29,7 @@
 
 ## Дизайн
 
-Визуальный источник истины: [Manuscript Design System](https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System) (Figma)
+Визуальный источник истины: [Manuscript — Ink Studio](https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio) (Figma). Handoff: [docs/technical/design/](./docs/technical/design/).
 
 ## Структура репозитория
 

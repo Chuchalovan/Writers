@@ -1,4 +1,4 @@
-// url=https://www.figma.com/design/7vP03INYMrwQ3Q6qT7A2NT/Manuscript-Design-System?node-id=8-16
+// url=https://www.figma.com/design/DY4LOZnkponU6E1rmb34Fs/Manuscript-Ink-Studio?node-id=3-52
 // source=src/components/layout/sidebar.tsx
 // component=Sidebar nav link pattern
 import figma from "figma";

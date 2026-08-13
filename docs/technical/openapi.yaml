@@ -1,0 +1,2187 @@
+openapi: 3.1.0
+info:
+  title: Manuscript API
+  version: 1.0.0
+  summary: Контракт HTTP API «Манускрипт»
+  description: |
+    Норматив: ТЗ §6.3–6.4, §8. Реализация CRUD — Next.js Server Actions
+    с теми же JSON-телами; стриминг AI и файлы — REST `/api/v1`.
+
+    Идентификаторы непрозрачные (`cuid` / Better Auth id).
+    Сессия — HTTP-only cookie. Сообщения ошибок на языке UI (`ru`/`en`).
+
+    Статус на 2026-08-13: реализованы Better Auth и часть Server Actions
+    (проекты, дерево узлов). Пути `/api/v1` ещё не существуют в коде.
+  contact:
+    name: Engineering
+  license:
+    name: Proprietary
+
+externalDocs:
+  description: Человекочитаемый справочник API.md
+  url: ./API.md
+
+servers:
+  - url: http://localhost:3000
+    description: local
+  - url: https://{host}
+    description: preview / staging / production
+    variables:
+      host:
+        default: localhost:3000
+
+tags:
+  - name: Auth
+    description: Better Auth. Факт — sign-up / sign-in / sign-out / session. Confirm и reset — Beta.
+  - name: Account
+    description: Профиль и удаление аккаунта (Beta).
+  - name: Projects
+    description: Проекты книги (P0).
+  - name: Manuscript
+    description: Дерево part / chapter / scene и текст сцены (P0).
+  - name: Knowledge
+    description: Герои, связи, мир, поиск по названиям (P0).
+  - name: Plot
+    description: Сюжетная доска, таймлайн, заметки (P1).
+  - name: Export
+    description: Выгрузка рукописи (P0 DOCX/TXT, P1 PDF/MD/ZIP).
+  - name: Import
+    description: Импорт (P1).
+  - name: AI
+    description: Контекстный ассистент (P1). Текст сцены не меняется без accept в UI.
+
+security:
+  - cookieAuth: []
+
+paths:
+  /api/auth/sign-up/email:
+    post:
+      tags: [Auth]
+      operationId: signUpEmail
+      summary: Регистрация email + пароль
+      x-gate: P0
+      x-status: implemented
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpRequest"
+      responses:
+        "200":
+          description: Сессия установлена (Set-Cookie)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthSessionResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  /api/auth/sign-in/email:
+    post:
+      tags: [Auth]
+      operationId: signInEmail
+      summary: Вход
+      x-gate: P0
+      x-status: implemented
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInRequest"
+      responses:
+        "200":
+          description: Сессия установлена
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthSessionResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  /api/auth/sign-out:
+    post:
+      tags: [Auth]
+      operationId: signOut
+      summary: Выход (инвалидация сессии)
+      x-gate: P0
+      x-status: implemented
+      responses:
+        "200":
+          description: Cookie сброшена
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ok"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/auth/get-session:
+    get:
+      tags: [Auth]
+      operationId: getSession
+      summary: Текущая сессия
+      x-gate: P0
+      x-status: implemented
+      security: []
+      responses:
+        "200":
+          description: Сессия или null
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/AuthSessionResponse"
+                  - type: "null"
+
+  /api/auth/forget-password:
+    post:
+      tags: [Auth]
+      operationId: forgetPassword
+      summary: Запрос сброса пароля
+      description: |
+        Enumeration запрещён (TZ-SEC-06): ответ одинаковый, есть аккаунт или нет.
+        TTL ссылки 1 час. Beta.
+      x-gate: P0-Beta
+      x-status: planned
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+                redirectTo:
+                  type: string
+                  format: uri
+      responses:
+        "200":
+          description: Если аккаунт есть — письмо отправлено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ok"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  /api/auth/reset-password:
+    post:
+      tags: [Auth]
+      operationId: resetPassword
+      summary: Новый пароль по токену
+      description: Успех инвалидирует все сессии пользователя.
+      x-gate: P0-Beta
+      x-status: planned
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, newPassword]
+              properties:
+                token:
+                  type: string
+                newPassword:
+                  type: string
+                  minLength: 8
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ok"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/me:
+    get:
+      tags: [Account]
+      operationId: getMe
+      summary: Профиль текущего пользователя
+      x-gate: P0-Beta
+      x-status: planned
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    patch:
+      tags: [Account]
+      operationId: updateMe
+      summary: Имя, аватар, locale
+      x-gate: P0-Beta
+      x-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMeRequest"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/EmailNotVerified"
+    delete:
+      tags: [Account]
+      operationId: deleteMe
+      summary: Удаление аккаунта
+      description: |
+        Не один клик. Тело подтверждает пароль или email.
+        Предлагается выгрузка ZIP. Если выгрузка не удалась — удаление
+        не выполняется, пока не выбран `deleteWithoutExport`.
+      x-gate: P0-Beta
+      x-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteAccountRequest"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ok"
+        "403":
+          $ref: "#/components/responses/EmailNotVerified"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/v1/projects:
+    get:
+      tags: [Projects]
+      operationId: listProjects
+      summary: Список проектов
+      x-gate: P0
+      x-status: partial
+      x-implementation: server-action
+      x-action: getProjectsAction
+      parameters:
+        - name: query
+          in: query
+          schema:
+            type: string
+        - name: includeArchived
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Project"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    post:
+      tags: [Projects]
+      operationId: createProject
+      summary: Создать проект (обязательно только title)
+      x-gate: P0
+      x-status: partial
+      x-implementation: server-action
+      x-action: createProjectAction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectRequest"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/v1/projects/{projectId}:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    get:
+      tags: [Projects]
+      operationId: getProject
+      summary: Проект
+      x-gate: P0
+      x-status: partial
+      x-implementation: server-action
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      tags: [Projects]
+      operationId: updateProject
+      summary: Обновить проект
+      x-gate: P0
+      x-status: partial
+      x-implementation: server-action
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProjectRequest"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      tags: [Projects]
+      operationId: deleteProject
+      summary: Удалить проект (cascade)
+      x-gate: P0
+      x-status: partial
+      x-implementation: server-action
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ok"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/projects/{projectId}/overview:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    get:
+      tags: [Projects]
+      operationId: getProjectOverview
+      summary: Обзор — continue scene, counts, next steps
+      x-gate: P0
+      x-status: planned
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectOverview"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/projects/{projectId}/archive:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    post:
+      tags: [Projects]
+      operationId: archiveProject
+      summary: Архив (скрыт в default-списке)
+      x-gate: P0
+      x-status: partial
+      x-implementation: server-action
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/projects/{projectId}/duplicate:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    post:
+      tags: [Projects]
+      operationId: duplicateProject
+      summary: Копия дерева и знаний; исходник не меняется
+      x-gate: P0
+      x-status: planned
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/projects/{projectId}/nodes:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    get:
+      tags: [Manuscript]
+      operationId: listNodes
+      summary: Дерево узлов (deletedAt IS NULL)
+      x-gate: P0
+      x-status: partial
+      x-implementation: server-action
+      parameters:
+        - name: includeDeleted
+          in: query
+          description: Корзина проекта
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ManuscriptNode"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      tags: [Manuscript]
+      operationId: createNode
+      summary: Создать part / chapter / scene
+      description: Сцена может быть без parentId (нераспределённая).
+      x-gate: P0
+      x-status: partial
+      x-implementation: server-action
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateNodeRequest"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManuscriptNode"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/v1/projects/{projectId}/nodes/reorder:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    post:
+      tags: [Manuscript]
+      operationId: reorderNodes
+      summary: Порядок сиблингов одного родителя
+      x-gate: P0
+      x-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReorderNodesRequest"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ManuscriptNode"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/nodes/{nodeId}:
+    parameters:
+      - $ref: "#/components/parameters/NodeId"
+    patch:
+      tags: [Manuscript]
+      operationId: updateNode
+      summary: Переименовать / synopsis
+      x-gate: P0
+      x-status: partial
+      x-implementation: server-action
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateNodeRequest"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManuscriptNode"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      tags: [Manuscript]
+      operationId: softDeleteNode
+      summary: Soft delete узла и детей
+      description: Повторный delete уже удалённого — 200, не 500.
+      x-gate: P0
+      x-status: partial
+      x-implementation: server-action
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ok"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/nodes/{nodeId}/move:
+    parameters:
+      - $ref: "#/components/parameters/NodeId"
+    post:
+      tags: [Manuscript]
+      operationId: moveNode
+      summary: Смена родителя и позиции
+      description: Нельзя сделать предка потомком себя.
+      x-gate: P0
+      x-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MoveNodeRequest"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManuscriptNode"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/nodes/{nodeId}/status:
+    parameters:
+      - $ref: "#/components/parameters/NodeId"
+    post:
+      tags: [Manuscript]
+      operationId: setSceneStatus
+      summary: Статус сцены (не блокирует редактирование)
+      x-gate: P0
+      x-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  $ref: "#/components/schemas/SceneStatus"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManuscriptNode"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/nodes/{nodeId}/restore:
+    parameters:
+      - $ref: "#/components/parameters/NodeId"
+    post:
+      tags: [Manuscript]
+      operationId: restoreNode
+      summary: Восстановить из корзины
+      x-gate: P0
+      x-status: planned
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManuscriptNode"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/scenes/{sceneId}/content:
+    parameters:
+      - $ref: "#/components/parameters/SceneId"
+    get:
+      tags: [Manuscript]
+      operationId: getSceneContent
+      summary: Текст и метаданные сцены
+      x-gate: P0
+      x-status: planned
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SceneBundle"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags: [Manuscript]
+      operationId: saveSceneContent
+      summary: Автосохранение с optimistic concurrency
+      description: |
+        Клиент шлёт `baseVersion`. При совпадении сервер пишет и делает version+1.
+        Иначе 409 CONFLICT. Debounce 2000 мс на клиенте; Ctrl+S — сразу.
+      x-gate: P0
+      x-status: planned
+      x-implementation: server-action
+      x-action: saveSceneContent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveSceneContentRequest"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SceneContent"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/scenes/{sceneId}/metadata:
+    parameters:
+      - $ref: "#/components/parameters/SceneId"
+    patch:
+      tags: [Manuscript]
+      operationId: updateSceneMetadata
+      summary: Цель, конфликт, POV, локация
+      x-gate: P0
+      x-status: planned
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SceneMetadata"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SceneMetadata"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/v1/projects/{projectId}/characters:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    get:
+      tags: [Knowledge]
+      operationId: listCharacters
+      summary: Герои проекта
+      x-gate: P0
+      x-status: planned
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Character"
+    post:
+      tags: [Knowledge]
+      operationId: createCharacter
+      summary: Создать героя (обязательно name)
+      x-gate: P0
+      x-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCharacterRequest"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Character"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/characters/{characterId}:
+    parameters:
+      - $ref: "#/components/parameters/CharacterId"
+    get:
+      tags: [Knowledge]
+      operationId: getCharacter
+      x-gate: P0
+      x-status: planned
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Character"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      tags: [Knowledge]
+      operationId: updateCharacter
+      x-gate: P0
+      x-status: planned
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCharacterRequest"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Character"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+    delete:
+      tags: [Knowledge]
+      operationId: deleteCharacter
+      summary: Soft delete; участники сцен снимаются, текст сцен не трогается
+      x-gate: P0
+      x-status: planned
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ok"
+
+  /api/v1/projects/{projectId}/relationships:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    get:
+      tags: [Knowledge]
+      operationId: listRelationships
+      x-gate: P0
+      x-status: planned
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CharacterRelationship"
+    put:
+      tags: [Knowledge]
+      operationId: upsertCharacterRelationship
+      summary: Создать или обновить связь (каноническая пара + type)
+      x-gate: P0
+      x-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpsertRelationshipRequest"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CharacterRelationship"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/relationships/{relationshipId}:
+    delete:
+      tags: [Knowledge]
+      operationId: deleteRelationship
+      summary: Удаление связи не удаляет героев
+      x-gate: P0
+      x-status: planned
+      parameters:
+        - name: relationshipId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/Id"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ok"
+
+  /api/v1/scenes/{sceneId}/participants:
+    parameters:
+      - $ref: "#/components/parameters/SceneId"
+    put:
+      tags: [Knowledge]
+      operationId: setSceneParticipants
+      summary: Состав участников сцены
+      x-gate: P0
+      x-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [characterIds]
+              properties:
+                characterIds:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Id"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ok"
+
+  /api/v1/projects/{projectId}/world:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    get:
+      tags: [Knowledge]
+      operationId: listWorldArticles
+      x-gate: P0
+      x-status: planned
+      parameters:
+        - name: type
+          in: query
+          schema:
+            $ref: "#/components/schemas/WorldArticleType"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WorldArticle"
+    post:
+      tags: [Knowledge]
+      operationId: createWorldArticle
+      summary: Статья мира; локация = type location
+      x-gate: P0
+      x-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWorldArticleRequest"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorldArticle"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+
+  /api/v1/world/{articleId}:
+    parameters:
+      - name: articleId
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/Id"
+    get:
+      tags: [Knowledge]
+      operationId: getWorldArticle
+      x-gate: P0
+      x-status: planned
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorldArticle"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      tags: [Knowledge]
+      operationId: updateWorldArticle
+      x-gate: P0
+      x-status: planned
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateWorldArticleRequest"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorldArticle"
+    delete:
+      tags: [Knowledge]
+      operationId: deleteWorldArticle
+      x-gate: P0
+      x-status: planned
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ok"
+
+  /api/v1/projects/{projectId}/search:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    get:
+      tags: [Knowledge]
+      operationId: searchByTitle
+      summary: Поиск по названиям в скоупе проекта (P0); full-text — P1 query param mode
+      x-gate: P0
+      x-status: planned
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - name: mode
+          in: query
+          schema:
+            type: string
+            enum: [title, fulltext]
+            default: title
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResponse"
+
+  /api/v1/projects/{projectId}/plot-method:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    put:
+      tags: [Plot]
+      operationId: setPlotMethod
+      summary: Метод сюжета; не удаляет текст сцен
+      x-gate: P1
+      x-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [plotMethod]
+              properties:
+                plotMethod:
+                  $ref: "#/components/schemas/PlotMethod"
+                reseatBeats:
+                  type: boolean
+                  default: false
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+
+  /api/v1/projects/{projectId}/beats:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    get:
+      tags: [Plot]
+      operationId: listBeats
+      x-gate: P1
+      x-status: planned
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StoryBeat"
+    post:
+      tags: [Plot]
+      operationId: createBeat
+      x-gate: P1
+      x-status: planned
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBeatRequest"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoryBeat"
+
+  /api/v1/projects/{projectId}/timeline:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    get:
+      tags: [Plot]
+      operationId: listTimeline
+      x-gate: P1
+      x-status: planned
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TimelineEvent"
+    post:
+      tags: [Plot]
+      operationId: createTimelineEvent
+      x-gate: P1
+      x-status: planned
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TimelineEvent"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TimelineEvent"
+
+  /api/v1/projects/{projectId}/notes:
+    parameters:
+      - $ref: "#/components/parameters/ProjectId"
+    get:
+      tags: [Plot]
+      operationId: listNotes
+      x-gate: P1
+      x-status: planned
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Note"
+    post:
+      tags: [Plot]
+      operationId: createNote
+      x-gate: P1
+      x-status: planned
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Note"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Note"
+
+  /api/v1/export:
+    post:
+      tags: [Export]
+      operationId: exportManuscript
+      summary: Скачать область проекта
+      description: |
+        Alpha: docx, txt. Beta: pdf, markdown, zip (manuscript-export v1).
+        Пустой набор sceneIds — валидация, файла нет.
+        Ошибка генерации — EXPORT_FAILED, данные целы.
+        До 200 сцен — синхронно; иначе jobId (P1).
+      x-gate: P0
+      x-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExportRequest"
+      responses:
+        "200":
+          description: Файл
+          content:
+            application/vnd.openxmlformats-officedocument.wordprocessingml.document:
+              schema:
+                type: string
+                format: binary
+            text/plain:
+              schema:
+                type: string
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+            text/markdown:
+              schema:
+                type: string
+            application/zip:
+              schema:
+                type: string
+                format: binary
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExportJob"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          description: EXPORT_FAILED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
+  /api/v1/import:
+    post:
+      tags: [Import]
+      operationId: importManuscript
+      summary: Preview или подтверждение импорта
+      description: |
+        Один подтверждённый импорт создаёт сущности один раз.
+        Повтор файла — новая копия только после confirm. Отмена preview не меняет проект.
+        Лимиты: DOCX/TXT/MD ≤ 10 МБ, ZIP ≤ 50 МБ.
+      x-gate: P1
+      x-status: planned
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                projectId:
+                  $ref: "#/components/schemas/Id"
+                confirm:
+                  type: boolean
+                  default: false
+                  description: false = preview, true = создать сущности
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImportPreview"
+        "201":
+          description: Импорт выполнен
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "413":
+          $ref: "#/components/responses/PayloadTooLarge"
+
+  /api/v1/ai/chat:
+    post:
+      tags: [AI]
+      operationId: aiChat
+      summary: Чат с выбранным контекстом
+      description: |
+        Сервер сам загружает текст сущностей. Клиентский blob всего проекта
+        не является источником истины. Timeout 30 с. Level 4–5 вне MVP.
+        Confirm email обязателен (EMAIL_NOT_VERIFIED).
+      x-gate: P1
+      x-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AiChatRequest"
+      responses:
+        "200":
+          description: SSE
+          content:
+            text/event-stream:
+              schema:
+                $ref: "#/components/schemas/AiSseEvent"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/EmailNotVerified"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+        "502":
+          description: AI_PROVIDER_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
+  /api/v1/ai/edit:
+    post:
+      tags: [AI]
+      operationId: aiEdit
+      summary: Предложение правки выделения
+      description: UI показывает diff. Текст сцены меняется только после Accept.
+      x-gate: P1
+      x-status: planned
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AiEditRequest"
+      responses:
+        "200":
+          description: SSE затем diff в UI
+          content:
+            text/event-stream:
+              schema:
+                $ref: "#/components/schemas/AiSseEvent"
+        "403":
+          $ref: "#/components/responses/EmailNotVerified"
+        "502":
+          description: AI_PROVIDER_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: better-auth.session_token
+      description: HTTP-only session cookie Better Auth. Имя cookie может отличаться в версии библиотеки.
+
+  parameters:
+    ProjectId:
+      name: projectId
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/Id"
+    NodeId:
+      name: nodeId
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/Id"
+    SceneId:
+      name: sceneId
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/Id"
+    CharacterId:
+      name: characterId
+      in: path
+      required: true
+      schema:
+        $ref: "#/components/schemas/Id"
+
+  responses:
+    Unauthorized:
+      description: UNAUTHORIZED — нет сессии
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+          example:
+            error:
+              code: UNAUTHORIZED
+              message: Unauthorized
+    Forbidden:
+      description: FORBIDDEN — чужой проект
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+    NotFound:
+      description: NOT_FOUND — нет сущности в скоупе пользователя
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+    ValidationError:
+      description: VALIDATION_ERROR
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+          example:
+            error:
+              code: VALIDATION_ERROR
+              message: Title is required
+              details:
+                - path: [title]
+                  message: Required
+    Conflict:
+      description: CONFLICT — SceneContent.version не совпал
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+    EmailNotVerified:
+      description: EMAIL_NOT_VERIFIED
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+    RateLimited:
+      description: RATE_LIMITED
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+    PayloadTooLarge:
+      description: PAYLOAD_TOO_LARGE
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+
+  schemas:
+    Id:
+      type: string
+      minLength: 1
+      description: Непрозрачный cuid / Better Auth id
+      examples: ["clxyz0123456789abcdefgh"]
+
+    Locale:
+      type: string
+      enum: [ru, en]
+
+    ProjectStatus:
+      type: string
+      enum: [draft, in_progress, completed, archived]
+
+    ManuscriptNodeType:
+      type: string
+      enum: [part, chapter, scene]
+
+    SceneStatus:
+      type: string
+      enum: [idea, planned, draft, revision, ready]
+
+    WorldArticleType:
+      type: string
+      enum: [location, organization, object, rule, culture, event, article]
+
+    RelationshipType:
+      type: string
+      enum: [family, ally, enemy, romantic, mentor, other]
+
+    PlotMethod:
+      type: string
+      enum: [blank, three-act, heros-journey, beat-sheet]
+      description: Must к Beta. Should-методы из plot-methods.md — позже.
+
+    ErrorCode:
+      type: string
+      enum:
+        - UNAUTHORIZED
+        - FORBIDDEN
+        - NOT_FOUND
+        - VALIDATION_ERROR
+        - CONFLICT
+        - EMAIL_NOT_VERIFIED
+        - EXPORT_FAILED
+        - AI_KEY_MISSING
+        - AI_PROVIDER_ERROR
+        - PAYLOAD_TOO_LARGE
+        - RATE_LIMITED
+
+    ApiError:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              $ref: "#/components/schemas/ErrorCode"
+            message:
+              type: string
+            details:
+              type: array
+              items:
+                type: object
+                properties:
+                  path:
+                    type: array
+                    items:
+                      type: string
+                  message:
+                    type: string
+
+    Ok:
+      type: object
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
+          const: true
+
+    User:
+      type: object
+      required: [id, email, name, emailVerified, locale]
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        image:
+          type: [string, "null"]
+        emailVerified:
+          type: boolean
+        locale:
+          $ref: "#/components/schemas/Locale"
+        aiConsentAt:
+          type: [string, "null"]
+          format: date-time
+
+    SignUpRequest:
+      type: object
+      required: [email, password, name]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        name:
+          type: string
+          minLength: 1
+        locale:
+          $ref: "#/components/schemas/Locale"
+        callbackURL:
+          type: string
+
+    SignInRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        rememberMe:
+          type: boolean
+        callbackURL:
+          type: string
+
+    AuthSessionResponse:
+      type: object
+      properties:
+        session:
+          type: object
+          additionalProperties: true
+        user:
+          $ref: "#/components/schemas/User"
+
+    UpdateMeRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        image:
+          type: [string, "null"]
+        locale:
+          $ref: "#/components/schemas/Locale"
+
+    DeleteAccountRequest:
+      type: object
+      properties:
+        password:
+          type: string
+        emailConfirmation:
+          type: string
+          format: email
+        exportFirst:
+          type: boolean
+          default: true
+        deleteWithoutExport:
+          type: boolean
+          default: false
+
+    Instant:
+      type: string
+      format: date-time
+
+    Project:
+      type: object
+      required:
+        - id
+        - userId
+        - title
+        - plotMethod
+        - totalWordCount
+        - status
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        userId:
+          $ref: "#/components/schemas/Id"
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        subtitle:
+          type: [string, "null"]
+          maxLength: 200
+        logline:
+          type: [string, "null"]
+          maxLength: 500
+        synopsis:
+          type: [string, "null"]
+        genre:
+          type: [string, "null"]
+          maxLength: 100
+        coverUrl:
+          type: [string, "null"]
+        plotMethod:
+          $ref: "#/components/schemas/PlotMethod"
+        targetWordCount:
+          type: [integer, "null"]
+          minimum: 1
+        totalWordCount:
+          type: integer
+          minimum: 0
+        status:
+          $ref: "#/components/schemas/ProjectStatus"
+        continueNodeId:
+          type: [string, "null"]
+        nodeCount:
+          type: integer
+        archivedAt:
+          type: [string, "null"]
+          format: date-time
+        createdAt:
+          $ref: "#/components/schemas/Instant"
+        updatedAt:
+          $ref: "#/components/schemas/Instant"
+
+    CreateProjectRequest:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+
+    UpdateProjectRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        subtitle:
+          type: [string, "null"]
+        logline:
+          type: [string, "null"]
+        synopsis:
+          type: [string, "null"]
+        genre:
+          type: [string, "null"]
+        targetWordCount:
+          type: [integer, "null"]
+        status:
+          $ref: "#/components/schemas/ProjectStatus"
+        plotMethod:
+          $ref: "#/components/schemas/PlotMethod"
+
+    ProjectOverview:
+      type: object
+      required: [project]
+      properties:
+        project:
+          $ref: "#/components/schemas/Project"
+        continueScene:
+          oneOf:
+            - $ref: "#/components/schemas/ManuscriptNode"
+            - type: "null"
+        counts:
+          type: object
+          properties:
+            parts:
+              type: integer
+            chapters:
+              type: integer
+            scenes:
+              type: integer
+            characters:
+              type: integer
+            locations:
+              type: integer
+        nextSteps:
+          type: array
+          items:
+            type: string
+            enum: [write, plan, materials]
+
+    ManuscriptNode:
+      type: object
+      required: [id, projectId, type, title, position, wordCount, createdAt, updatedAt]
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        projectId:
+          $ref: "#/components/schemas/Id"
+        parentId:
+          type: [string, "null"]
+        type:
+          $ref: "#/components/schemas/ManuscriptNodeType"
+        title:
+          type: string
+          maxLength: 200
+        position:
+          type: integer
+        status:
+          oneOf:
+            - $ref: "#/components/schemas/SceneStatus"
+            - type: "null"
+        synopsis:
+          type: [string, "null"]
+        wordCount:
+          type: integer
+          minimum: 0
+        contentVersion:
+          type: [integer, "null"]
+        deletedAt:
+          type: [string, "null"]
+          format: date-time
+        createdAt:
+          $ref: "#/components/schemas/Instant"
+        updatedAt:
+          $ref: "#/components/schemas/Instant"
+
+    CreateNodeRequest:
+      type: object
+      required: [type]
+      properties:
+        type:
+          $ref: "#/components/schemas/ManuscriptNodeType"
+        parentId:
+          type: [string, "null"]
+        title:
+          type: string
+          maxLength: 200
+
+    UpdateNodeRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        synopsis:
+          type: [string, "null"]
+
+    ReorderNodesRequest:
+      type: object
+      required: [orderedIds]
+      properties:
+        parentId:
+          type: [string, "null"]
+        orderedIds:
+          type: array
+          items:
+            $ref: "#/components/schemas/Id"
+
+    MoveNodeRequest:
+      type: object
+      required: [position]
+      properties:
+        newParentId:
+          type: [string, "null"]
+        position:
+          type: integer
+          minimum: 0
+
+    TipTapDoc:
+      type: object
+      description: TipTap JSON document (ТЗ §6.5.14)
+      additionalProperties: true
+      properties:
+        type:
+          type: string
+          example: doc
+        content:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+
+    SceneContent:
+      type: object
+      required: [sceneId, contentJson, version, updatedAt]
+      properties:
+        sceneId:
+          $ref: "#/components/schemas/Id"
+        contentJson:
+          $ref: "#/components/schemas/TipTapDoc"
+        plainText:
+          type: [string, "null"]
+        version:
+          type: integer
+          minimum: 1
+        wordCount:
+          type: integer
+        updatedAt:
+          $ref: "#/components/schemas/Instant"
+
+    SaveSceneContentRequest:
+      type: object
+      required: [contentJson, baseVersion]
+      properties:
+        contentJson:
+          $ref: "#/components/schemas/TipTapDoc"
+        plainText:
+          type: string
+        baseVersion:
+          type: integer
+          minimum: 1
+          description: Ожидаемый SceneContent.version
+
+    SceneMetadata:
+      type: object
+      properties:
+        goal:
+          type: [string, "null"]
+        conflict:
+          type: [string, "null"]
+        outcome:
+          type: [string, "null"]
+        povCharacterId:
+          type: [string, "null"]
+        locationId:
+          type: [string, "null"]
+
+    SceneBundle:
+      type: object
+      required: [node, content]
+      properties:
+        node:
+          $ref: "#/components/schemas/ManuscriptNode"
+        content:
+          $ref: "#/components/schemas/SceneContent"
+        metadata:
+          $ref: "#/components/schemas/SceneMetadata"
+        participants:
+          type: array
+          items:
+            $ref: "#/components/schemas/Character"
+
+    Character:
+      type: object
+      required: [id, projectId, name, createdAt, updatedAt]
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        projectId:
+          $ref: "#/components/schemas/Id"
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        role:
+          type: [string, "null"]
+          maxLength: 100
+        summary:
+          type: [string, "null"]
+        appearance:
+          type: [string, "null"]
+        motivation:
+          type: [string, "null"]
+        notes:
+          type: [string, "null"]
+        imageUrl:
+          type: [string, "null"]
+        createdAt:
+          $ref: "#/components/schemas/Instant"
+        updatedAt:
+          $ref: "#/components/schemas/Instant"
+
+    CreateCharacterRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        role:
+          type: string
+        summary:
+          type: string
+        appearance:
+          type: string
+        motivation:
+          type: string
+        notes:
+          type: string
+        imageUrl:
+          type: string
+
+    UpdateCharacterRequest:
+      allOf:
+        - $ref: "#/components/schemas/CreateCharacterRequest"
+      required: []
+
+    CharacterRelationship:
+      type: object
+      required: [id, projectId, fromCharacterId, toCharacterId, type, symmetric]
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        projectId:
+          $ref: "#/components/schemas/Id"
+        fromCharacterId:
+          $ref: "#/components/schemas/Id"
+        toCharacterId:
+          $ref: "#/components/schemas/Id"
+        type:
+          $ref: "#/components/schemas/RelationshipType"
+        label:
+          type: [string, "null"]
+          description: Обязателен при type=other
+        comment:
+          type: [string, "null"]
+        symmetric:
+          type: boolean
+
+    UpsertRelationshipRequest:
+      type: object
+      required: [fromCharacterId, toCharacterId, type]
+      properties:
+        fromCharacterId:
+          $ref: "#/components/schemas/Id"
+        toCharacterId:
+          $ref: "#/components/schemas/Id"
+        type:
+          $ref: "#/components/schemas/RelationshipType"
+        label:
+          type: string
+        comment:
+          type: string
+        symmetric:
+          type: boolean
+          default: true
+
+    WorldArticle:
+      type: object
+      required: [id, projectId, type, title, contentJson]
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        projectId:
+          $ref: "#/components/schemas/Id"
+        type:
+          $ref: "#/components/schemas/WorldArticleType"
+        title:
+          type: string
+          maxLength: 200
+        summary:
+          type: [string, "null"]
+        contentJson:
+          $ref: "#/components/schemas/TipTapDoc"
+        imageUrl:
+          type: [string, "null"]
+
+    CreateWorldArticleRequest:
+      type: object
+      required: [title]
+      properties:
+        type:
+          $ref: "#/components/schemas/WorldArticleType"
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        summary:
+          type: string
+        contentJson:
+          $ref: "#/components/schemas/TipTapDoc"
+
+    UpdateWorldArticleRequest:
+      allOf:
+        - $ref: "#/components/schemas/CreateWorldArticleRequest"
+      required: []
+
+    SearchHit:
+      type: object
+      required: [kind, id, title]
+      properties:
+        kind:
+          type: string
+          enum: [node, character, world, note, beat]
+        id:
+          $ref: "#/components/schemas/Id"
+        title:
+          type: string
+        snippet:
+          type: [string, "null"]
+
+    SearchResponse:
+      type: object
+      required: [hits]
+      properties:
+        hits:
+          type: array
+          items:
+            $ref: "#/components/schemas/SearchHit"
+
+    StoryBeat:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        projectId:
+          $ref: "#/components/schemas/Id"
+        storylineId:
+          type: [string, "null"]
+        sceneId:
+          type: [string, "null"]
+        templateKey:
+          type: [string, "null"]
+        title:
+          type: string
+        description:
+          type: [string, "null"]
+        position:
+          type: integer
+        status:
+          type: string
+
+    CreateBeatRequest:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        templateKey:
+          type: string
+        storylineId:
+          type: string
+        sceneId:
+          type: string
+        description:
+          type: string
+
+    TimelineEvent:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        projectId:
+          $ref: "#/components/schemas/Id"
+        title:
+          type: string
+        description:
+          type: [string, "null"]
+        dateMode:
+          type: string
+          enum: [relative, absolute]
+        absoluteStart:
+          type: [string, "null"]
+        absoluteEnd:
+          type: [string, "null"]
+        relativeOrder:
+          type: integer
+        locationId:
+          type: [string, "null"]
+        sceneId:
+          type: [string, "null"]
+
+    Note:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        projectId:
+          $ref: "#/components/schemas/Id"
+        parentId:
+          type: [string, "null"]
+        title:
+          type: string
+        contentJson:
+          $ref: "#/components/schemas/TipTapDoc"
+        url:
+          type: [string, "null"]
+
+    ExportFormat:
+      type: string
+      enum: [docx, txt, pdf, markdown, zip]
+      description: Alpha — docx, txt. Остальные — P1.
+
+    ExportRequest:
+      type: object
+      required: [projectId, format]
+      properties:
+        projectId:
+          $ref: "#/components/schemas/Id"
+        format:
+          $ref: "#/components/schemas/ExportFormat"
+        partId:
+          description: Одна часть
+          $ref: "#/components/schemas/Id"
+        sceneIds:
+          type: array
+          items:
+            $ref: "#/components/schemas/Id"
+          description: Набор сцен; пустой запрещён если нет project-wide и нет partId
+
+    ExportJob:
+      type: object
+      required: [jobId, status]
+      properties:
+        jobId:
+          $ref: "#/components/schemas/Id"
+        status:
+          type: string
+          enum: [queued, running, done, failed]
+        downloadUrl:
+          type: [string, "null"]
+
+    ImportPreview:
+      type: object
+      required: [summary]
+      properties:
+        summary:
+          type: object
+          properties:
+            parts:
+              type: integer
+            chapters:
+              type: integer
+            scenes:
+              type: integer
+            characters:
+              type: integer
+            world:
+              type: integer
+        warnings:
+          type: array
+          items:
+            type: string
+
+    AiContextLevel:
+      type: integer
+      minimum: 0
+      maximum: 3
+      description: 0 сообщение; 1 выделение; 2 сцена+мета; 3 связанные сущности. 4–5 = P2.
+
+    AiChatRequest:
+      type: object
+      required: [projectId, message, level]
+      properties:
+        projectId:
+          $ref: "#/components/schemas/Id"
+        message:
+          type: string
+          minLength: 1
+        level:
+          $ref: "#/components/schemas/AiContextLevel"
+        contextEntityIds:
+          type: array
+          items:
+            $ref: "#/components/schemas/Id"
+          default: []
+        conversationId:
+          type: [string, "null"]
+        sceneId:
+          type: [string, "null"]
+
+    AiEditRequest:
+      allOf:
+        - $ref: "#/components/schemas/AiChatRequest"
+        - type: object
+          required: [sceneId, selectionPlainText]
+          properties:
+            sceneId:
+              $ref: "#/components/schemas/Id"
+            selectionPlainText:
+              type: string
+            from:
+              type: integer
+            to:
+              type: integer
+
+    AiSseEvent:
+      type: object
+      required: [type]
+      properties:
+        type:
+          type: string
+          enum: [chunk, done, error]
+        content:
+          type: string
+        code:
+          $ref: "#/components/schemas/ErrorCode"

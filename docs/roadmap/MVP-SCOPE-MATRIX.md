@@ -112,10 +112,12 @@ Phase 4 ──► Этап 4: Post-MVP         ← P2 и backlog §15
 
 | Область | Возможность | P | Sprint | Release | PRD | Статус |
 |---------|-------------|---|--------|---------|-----|--------|
-| Characters | Карточки (имя обязательно, остальное опционально) | P0 | 4 | Alpha | §6.7, §27 | ⬜ |
-| Characters | Связи персонаж ↔ сцена | P0 | 4 | Alpha | §5.4 | ⬜ |
-| Characters | Граф отношений | P2 | — | Post-MVP | §15, §27 | ⬜ |
-| World | Локации и базовые статьи мира | P0 | 4 | Alpha | §6.8, §27 | ⬜ |
+| Characters | **Описание героев:** карточки (имя обязательно; роль, описание, внешность, мотивация, заметки — опционально) | P0 | 4 | Alpha | PRD FR-KN-01 | ⬜ |
+| Characters | Связи герой ↔ сцена | P0 | 4 | Alpha | PRD FR-KN-02 | ⬜ |
+| Characters | **Связи между героями** (тип + комментарий; список на карточке) | P0 | 4 | Alpha | PRD FR-KN-10 / BRD BR-FR-05b | ⬜ |
+| Characters | Визуальный граф отношений | P2 | — | Post-MVP | PRD §6.3 | ⬜ |
+| World | **Описание локаций** (название + текст; связь со сценами) | P0 | 4 | Alpha | PRD FR-KN-03 / BRD BR-FR-05a | ⬜ |
+| World | Прочие базовые статьи мира | P0 | 4 | Alpha | PRD FR-KN-03a | ⬜ |
 | World | Обратные ссылки (упоминания) | P1 | 4 | Beta | §25.5 | ⬜ |
 | Plot | Сюжетная доска (карточки, DnD) | P1 | 4 | Beta | §6.6, §27 | ⬜ |
 | Plot | Шаблоны (3-act, Hero's Journey, Save the Cat, пустой) | P1 | 4 | Beta | §6.6, §27 | ⬜ |
@@ -250,7 +252,9 @@ Phase 4 ──► Этап 4: Post-MVP         ← P2 и backlog §15
 Сюжетная доска · шаблоны · импорт DOCX · глобальный поиск по тексту · AI по текущей сцене · PDF/Markdown export · простая хронология · заметки · аналитика · command palette
 
 ### P2 — Post-MVP
-Графы отношений · профиль стиля · полный AI-анализ проекта · расширенные изображения · кастомные поля · совместная работа · BYOK (optional P1 — см. [DEC-005](./DECISION-LOG.md#dec-005-модель-ai-platform--byok--hybrid)) · WritingGoal/DailyStat (см. [DEC-012](./DECISION-LOG.md#dec-012-writinggoal--dailystat))
+Визуальный граф отношений · профиль стиля · полный AI-анализ проекта · расширенные изображения · кастомные поля · совместная работа · BYOK (optional P1 — см. [DEC-005](./DECISION-LOG.md#dec-005-модель-ai-platform--byok--hybrid)) · WritingGoal/DailyStat (см. [DEC-012](./DECISION-LOG.md#dec-012-writinggoal--dailystat))
+
+> **MVP (Alpha+):** описание героев, описание локаций и **связи между героями** (не визуальный граф) — P0; см. PRD v2.1 / BRD v1.1.
 
 ---
 
