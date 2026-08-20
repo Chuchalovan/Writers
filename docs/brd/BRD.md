@@ -133,7 +133,7 @@
 | C-1 | **Время:** поставка по фазам Roadmap; Beta не расширяется всеми Could-методами |
 | C-2 | **Бюджет / ROI:** численные лимиты **TBD** до DEC-004; до Launch — контроль стоимости AI |
 | C-3 | **Платформа:** desktop-first web; mobile — ограниченный режим (DEC-008) |
-| C-4 | **Стек:** Next.js, PostgreSQL/Prisma, Better Auth, next-intl (DEC-001) |
+| C-4 | **Стек:** Next.js, PostgreSQL/Drizzle, Better Auth, next-intl (DEC-001, DEC-013) |
 | C-5 | **Продукт:** AI не пишет книгу «за автора»; текст не меняется без явного принятия |
 | C-6 | **Данные:** рукопись не в событиях аналитики; согласие на AI (DEC-006) |
 | C-7 | **Контент методов:** точные биты/подсказки — до Sprint 4 (DEC-009), источник — [plot-methods.md](./plot-methods.md) |

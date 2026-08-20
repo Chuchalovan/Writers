@@ -3,7 +3,7 @@
 > **Норматив:** [ТЗ §6.1](../tz/TZ.md#61-архитектура), [§7](../tz/TZ.md#7-нефункциональные-требования), [DEC-001](../roadmap/DECISION-LOG.md#dec-001-технологическая-платформа)  
 > **Продукт:** [PRD v2.1](../prd/PRD.md)  
 > **Данные:** [DATABASE.md](./DATABASE.md) · **контракты:** [API.md](./API.md) · **UI:** [design/](./design/)  
-> **Обновлено:** 13 августа 2026
+> **Обновлено:** 20 августа 2026
 
 При расхождении **цель** = ТЗ; этот файл описывает **слои кода как сейчас** и gap до норматива.
 
@@ -25,7 +25,7 @@ Fullstack Next.js 15: браузер рисует UI; сервер хранит 
 │  Middleware (locale) · actions/ · lib/ · Better Auth         │
 └───────────────┬───────────────────────────────┬──────────────┘
                 │                               │
-        PostgreSQL+Prisma              packages/ai (заглушка)
+        PostgreSQL + Drizzle              packages/ai (заглушка)
                 │                      packages/shared (Zod)
                 ▼
          SMTP / AI / S3 — по gate ТЗ §6.6
@@ -45,7 +45,7 @@ Fullstack Next.js 15: браузер рисует UI; сервер хранит 
 | Auth guard | Middleware + session | Locale middleware only; dashboard layout редиректит на `/login` |
 | Ошибки | `{ error: { code, message, details } }` | Часто `throw new Error(...)` |
 | Экспорт | DOCX/TXT Alpha; job если не укладывается в timeout | Нет |
-| Статистика / цели | P2, DEC-012 | Страница `/stats`, `lib/stats` пустой; модели в Prisma |
+| Статистика / цели | P2, DEC-012 | Страница `/stats`, `lib/stats` пустой; модели в схеме |
 | Шифрование BYOK | AES-256-GCM, P2 | `lib/crypto` — TODO |
 | UI shell | Ink Studio: rail \| navigator \| sheet \| inspector | Широкий sidebar, старые токены |
 
@@ -61,7 +61,7 @@ manuscript/
 │   ├── src/components/       # UI по feature
 │   ├── src/lib/              # сервисы
 │   ├── src/i18n/             # next-intl
-│   └── prisma/               # schema + migrations
+│   └── drizzle/              # SQL-миграции Drizzle
 ├── packages/shared/          # Zod, types, constants
 ├── packages/ai/              # провайдеры + промпты (не реализованы)
 ├── docs/
@@ -97,7 +97,7 @@ manuscript/
 ```
 lib/
 ├── auth/         # Better Auth + session helpers     ✅
-├── db/           # Prisma singleton                   ✅
+├── db/           # Drizzle Pool + schema                 ✅
 ├── projects/     # CRUD проектов, assertProjectOwner  ✅
 ├── manuscript/   # дерево ManuscriptNode + soft delete ✅
 ├── chapters/     # re-export manuscript (legacy alias)
@@ -135,9 +135,9 @@ lib/
 
 Одна кодовая база, SSR лендинга, Server Actions для CRUD, Docker/Vercel на выбор.
 
-### 2. PostgreSQL 16 + Prisma
+### 2. PostgreSQL 16 + Drizzle
 
-Дерево `Project → ManuscriptNode` (part/chapter/scene), не модель `Chapter`. Схема: [DATABASE.md](./DATABASE.md), норматив полей — [ТЗ §6.5](../tz/TZ.md#65-модель-базы-данных).
+Дерево `Project → ManuscriptNode` (part/chapter/scene), не модель `Chapter`. Схема: [DATABASE.md](./DATABASE.md), норматив полей — [ТЗ §6.5](../tz/TZ.md#65-модель-базы-данных). ORM — [DEC-013](../roadmap/DECISION-LOG.md#dec-013-orm-drizzle).
 
 ### 3. AI: platform для Beta (DEC-005 Proposed)
 
@@ -222,4 +222,5 @@ Better Auth, email+пароль ≥8. Cookie HTTP-only, SameSite=Lax, Secure в 
 | Дата | Изменение |
 |------|-----------|
 | — | Первичный обзор (главы, BYOK как основной AI, DailyStat в ядре) |
+| 2026-08-20 | ORM: Prisma → Drizzle (DEC-013) |
 | 2026-08-13 | Согласование с ТЗ v1.2 / PRD v2.1: ManuscriptNode, platform AI, gap-таблица, Ink Studio как UI SoT |

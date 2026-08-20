@@ -55,17 +55,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Generate Prisma Client
-        run: pnpm db:generate
-
       - name: Typecheck
         run: pnpm typecheck
 
       - name: Lint
         run: pnpm lint
 
-      - name: Sync database schema
-        run: pnpm --filter @manuscript/web exec prisma db push --skip-generate
+      - name: Apply database migrations
+        run: pnpm db:migrate
 
       - name: Build
         run: pnpm build
@@ -93,5 +90,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Validate Prisma schema
-        run: pnpm --filter @manuscript/web exec prisma validate
+      - name: Check Drizzle migrations
+        run: pnpm --filter @manuscript/web exec drizzle-kit check

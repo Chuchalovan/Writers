@@ -14,8 +14,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Globe, LogOut } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export function Header() {
+export function HeaderAccount({ compact = false }: { compact?: boolean }) {
   const t = useTranslations("header");
   const tAuth = useTranslations("auth");
   const locale = useLocale();
@@ -23,12 +24,13 @@ export function Header() {
   const pathname = usePathname();
   const { data: session } = useSession();
 
-  const initials = session?.user?.name
-    ?.split(" ")
-    .map((n: string) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase() ?? "?";
+  const initials =
+    session?.user?.name
+      ?.split(" ")
+      .map((n: string) => n[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() ?? "?";
 
   async function handleSignOut() {
     await signOut();
@@ -40,57 +42,75 @@ export function Header() {
   }
 
   return (
-    <header className="flex h-16 items-center justify-between border-b bg-background px-6">
-      <div />
+    <div className={cn("flex items-center gap-1", compact && "flex-col")}>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(compact && "text-chrome-muted hover:bg-chrome-accent hover:text-chrome-foreground")}
+            aria-label={t("language")}
+          >
+            <Globe className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" side={compact ? "right" : "bottom"}>
+          <DropdownMenuLabel>{t("language")}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => switchLocale("ru")}
+            className={locale === "ru" ? "bg-accent" : ""}
+          >
+            Русский
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => switchLocale("en")}
+            className={locale === "en" ? "bg-accent" : ""}
+          >
+            English
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
-      <div className="flex items-center gap-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <Globe className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>{t("language")}</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => switchLocale("ru")}
-              className={locale === "ru" ? "bg-accent" : ""}
-            >
-              Русский
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => switchLocale("en")}
-              className={locale === "en" ? "bg-accent" : ""}
-            >
-              English
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className={cn(
+              "relative h-9 w-9 rounded-full",
+              compact && "text-chrome-foreground hover:bg-chrome-accent"
+            )}
+            aria-label={tAuth("logout")}
+          >
+            <Avatar className="h-8 w-8">
+              <AvatarFallback className={cn(compact && "bg-chrome-accent text-chrome-foreground")}>
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" side={compact ? "right" : "bottom"} className="w-56">
+          <DropdownMenuLabel>
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-medium">{session?.user?.name}</p>
+              <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleSignOut}>
+            <LogOut className="mr-2 h-4 w-4" />
+            {tAuth("logout")}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  );
+}
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-              <Avatar className="h-9 w-9">
-                <AvatarFallback>{initials}</AvatarFallback>
-              </Avatar>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>
-              <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium">{session?.user?.name}</p>
-                <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleSignOut}>
-              <LogOut className="mr-2 h-4 w-4" />
-              {tAuth("logout")}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+export function Header() {
+  return (
+    <header className="flex h-16 items-center justify-end border-b bg-background px-6">
+      <HeaderAccount />
     </header>
   );
 }

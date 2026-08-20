@@ -1,12 +1,12 @@
 ﻿# Схема базы данных
 
 > **Норматив (целевая модель):** [ТЗ §6.5](../tz/TZ.md#65-модель-базы-данных)  
-> **Источник реализации (факт):** `apps/web/prisma/schema.prisma`  
+> **Источник реализации (факт):** `apps/web/src/lib/db/schema.ts`  
 > **Норматив PRD (сущности):** [PRD v2.1 §9](../prd/PRD.md) / [PRD v1.0 §9](../prd/archive/PRD-v1.0.md)  
-> **Scope:** [MVP-SCOPE-MATRIX.md](../roadmap/MVP-SCOPE-MATRIX.md), [DEC-012](../roadmap/DECISION-LOG.md#dec-012-writinggoal--dailystat)  
-> **Обновлено:** 13 августа 2026
+> **Scope:** [MVP-SCOPE-MATRIX.md](../roadmap/MVP-SCOPE-MATRIX.md), [DEC-012](../roadmap/DECISION-LOG.md#dec-012-writinggoal--dailystat), [DEC-013](../roadmap/DECISION-LOG.md#dec-013-orm-drizzle)  
+> **Обновлено:** 20 августа 2026
 
-При расхождении **цель** = ТЗ §6.5; этот файл описывает **текущую** Prisma.
+При расхождении **цель** = ТЗ §6.5; этот файл описывает **текущую** схему Drizzle.
 
 ---
 
@@ -25,21 +25,21 @@
      └──1:N── DailyStat / WritingGoal
 ```
 
-**Не в Prisma (PRD §9, post-MVP или Sprint 4+):**  
-`ProjectMember`, `SceneMetadata`, `Storyline`, `StoryBeat`, `TimelineEvent`, `EntityLink`, `Note`, `AIConversation`, `AIMessage`, `Version`.
+**Не в схеме (PRD §9, post-MVP или Sprint 4+):**  
+`ProjectMember`, `Storyline`, `StoryBeat`, `TimelineEvent`, `EntityLink`, `Note`, `AIConversation`, `AIMessage`, `Version`.
 
 ---
 
-## PRD §9 ↔ Prisma sync matrix
+## PRD §9 ↔ schema sync matrix
 
-| PRD §9 | Prisma model | Sprint / Release | Статус | Заметки |
+| PRD §9 | Drizzle table | Sprint / Release | Статус | Заметки |
 |--------|--------------|------------------|--------|---------|
 | 9.1 User | `User` | 1 | 🟡 Partial | Better Auth: `name`, `image`, `emailVerified`; нет `timezone`, `deleted_at` |
 | 9.2 Project | `Project` | 2 | 🟢 MVP | `subtitle`, `logline`, `synopsis`, `coverUrl`, `templateId`, `archivedAt` ✅ |
 | 9.3 ProjectMember | — | Post-MVP | ⬜ | Архитектура PRD; UI collab не в MVP |
 | 9.4 ManuscriptNode | `ManuscriptNode` | 2–3 | 🟢 MVP | `type`, `position`, `status`, `synopsis`, `deletedAt` ✅ |
 | 9.5 SceneContent | `SceneContent` | 3 | 🟡 Partial | Нет `updated_by` (PRD §9.5) |
-| 9.6 SceneMetadata | — | 4 | ⬜ | POV, location, goal/conflict/outcome — Sprint 4 / editor panel |
+| 9.6 SceneMetadata | `SceneMetadata` | 4 | 🟢 MVP | POV, location, goal/conflict/outcome |
 | 9.7 Character | `Character` | 4 | 🟡 Partial | Только `name`, `role`, `summary`, `imageUrl`; PRD поля — post-MVP или JSON |
 | 9.8 WorldArticle | `WorldArticle` | 4 | 🟢 MVP | `type`, `contentJson`, `summary` ✅ |
 | 9.9 Storyline | — | 4 (P1) | ⬜ | Plot board |
@@ -53,7 +53,7 @@
 | — | `DailyStat` | P2 | 🟡 Schema | [DEC-012](../roadmap/DECISION-LOG.md#dec-012-writinggoal--dailystat) |
 | — | `WritingGoal` | P2 | 🟡 Schema | [DEC-012](../roadmap/DECISION-LOG.md#dec-012-writinggoal--dailystat) |
 
-**Правило при расхождении:** для MVP реализация следует **Prisma + MVP-SCOPE-MATRIX**; PRD §9 — целевая полная модель.
+**Правило при расхождении:** для MVP реализация следует **схеме Drizzle + MVP-SCOPE-MATRIX**; PRD §9 — целевая полная модель.
 
 ---
 
@@ -189,11 +189,12 @@ Better Auth managed. Таблица `user`.
 
 ## Enums
 
-```prisma
+```
 ProjectStatus: draft | in_progress | completed | archived
 ManuscriptNodeType: part | chapter | scene
 SceneStatus: idea | planned | draft | revision | ready
 WorldArticleType: location | organization | object | rule | culture | event | article
+RelationshipType: family | ally | enemy | romantic | mentor | other
 GoalType: daily | project
 ```
 
@@ -230,5 +231,6 @@ GoalType: daily | project
 
 | Дата | Изменение |
 |------|-----------|
-| 2026-08-13 | Норматив полей перенесён в ТЗ §6.5; этот файл = факт Prisma |
-| 2026-08-04 | Sync with Prisma: ManuscriptNode, SceneContent, Character, WorldArticle; PRD §9 matrix; removed stale Chapter draft |
+| 2026-08-20 | Источник схемы: Drizzle `src/lib/db/schema.ts` (DEC-013); Prisma удалена |
+| 2026-08-13 | Норматив полей перенесён в ТЗ §6.5; этот файл = факт схемы |
+| 2026-08-04 | Sync: ManuscriptNode, SceneContent, Character, WorldArticle; PRD §9 matrix; removed stale Chapter draft |

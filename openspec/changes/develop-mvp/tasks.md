@@ -3,7 +3,7 @@
 - [x] 1.1 Add shared error codes and `{ error: { code, message, details } }` helper used by Server Actions and `/api/v1` routes
 - [x] 1.2 Align Zod schemas in `@manuscript/shared` with ТЗ (incl. `baseVersion` on scene save, `parentId` on move, AI `{ projectId, level, contextEntityIds, message }`); remove Chapter and grammar/continue/ideas as normative
 - [x] 1.3 Add Unicode word-count util in `@manuscript/shared` and unit tests
-- [x] 1.4 Prisma migration: `SceneMetadata`, `SceneParticipant`, `Character` optional fields, `CharacterRelationship`, `plotMethod` default `blank`; do not expose WritingGoal/DailyStat/UserApiKey in UI
+- [x] 1.4 Drizzle schema: `SceneMetadata`, `SceneParticipant`, `Character` optional fields, `CharacterRelationship`, `plotMethod` default `blank`; do not expose WritingGoal/DailyStat/UserApiKey in UI
 - [x] 1.5 Enforce `requireSession` + `assertProjectOwner` / `getNodeWithAuth` on every project-scoped mutation; map foreign ids to `FORBIDDEN`/`NOT_FOUND`
 - [x] 1.6 Add login rate limit (5 failures / 10 min / IP+email → `RATE_LIMITED`)
 - [x] 1.7 Hide or unroute `/stats` from MVP navigation
@@ -30,15 +30,15 @@
 
 ## 4. Scene editor (Alpha)
 
-- [ ] 4.1 Ink Studio shell: rail | navigator | sheet | inspector; compact hides inspector; `<900px` does not mount editor
+- [x] 4.1 Ink Studio shell: rail | navigator | sheet | inspector; compact hides inspector; `<900px` does not mount editor
 - [x] 4.2 TipTap editor with paragraphs, bold/italic/strike, lists, undo/redo; shared document schema module
 - [x] 4.3 `saveSceneContent` with `contentJson`, `plainText`, `baseVersion`; increment version; server word counts
 - [x] 4.4 Debounce 2000 ms autosave, Ctrl/Cmd+S and blur flush, non-blocking input, status indicator (saving/saved/saved on device/conflict/error)
 - [x] 4.5 IndexedDB buffer per `sceneId`; restore after reload/offline; flush on reconnect
 - [x] 4.6 Conflict 409 UI: load from server vs keep mine (no silent overwrite)
 - [x] 4.7 Live word/character count in the sheet
-- [ ] 4.8 Scene metadata fields and inspector tabs (scene / characters / world); link/unlink character without deleting text
-- [ ] 4.9 Focus mode and shortcuts (S, Shift+F, Alt+Up/Down, Escape)
+- [x] 4.8 Scene metadata fields and inspector tabs (scene / characters / world); link/unlink character without deleting text
+- [x] 4.9 Focus mode and shortcuts (S, Shift+F, Alt+Up/Down, Escape)
 - [x] 4.10 Editor empty/loading/error/deleted states
 
 ## 5. Knowledge base (Alpha)
@@ -88,7 +88,7 @@
 - [ ] 9.7 PostgreSQL FTS + GIN on scene/knowledge plain text; highlight; ≤1 s on fixture
 - [ ] 9.8 Command palette Ctrl/Cmd+K (commands + entities)
 - [ ] 9.9 Backlinks on character/location detail
-- [ ] 9.10 Prisma migration for Storyline, StoryBeat, TimelineEvent, Note, StoredFile, SceneVersion
+- [ ] 9.10 Drizzle migration for Storyline, StoryBeat, TimelineEvent, Note, StoredFile, SceneVersion
 
 ## 10. Extended IO (Beta)
 

@@ -88,7 +88,7 @@
 | `createProjectAction` | `FormData.title` | `{ project }` \| `{ error: "invalid_title" }` | title 1…200 |
 | `updateProjectAction` | `{ id, title?, … }` | `Project` | Zod `UpdateProjectSchema` |
 | `archiveProjectAction` | `projectId` | void | `archivedAt` + status `archived` |
-| `deleteProjectAction` | `projectId` | void | hard delete cascade Prisma |
+| `deleteProjectAction` | `projectId` | void | hard delete cascade |
 
 **Цель (нет в коде):** `duplicateProject`, `listProjects({ query, includeArchived })`, `getProjectOverview`.
 

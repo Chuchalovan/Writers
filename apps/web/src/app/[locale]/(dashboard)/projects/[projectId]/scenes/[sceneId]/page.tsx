@@ -1,10 +1,19 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Link } from "@/i18n/routing";
-import { ArrowLeft } from "lucide-react";
 import { getProjectAction } from "@/actions/projects";
-import { getSceneAction } from "@/actions/manuscript";
+import {
+  getDeletedNodesAction,
+  getNodesAction,
+  getSceneAction,
+  getSceneContextAction,
+  listProjectCharactersAction,
+  listProjectWorldAction,
+} from "@/actions/manuscript";
 import { SceneEditor } from "@/components/editor/scene-editor";
+import { SceneInspector } from "@/components/editor/scene-inspector";
+import { ManuscriptTree } from "@/components/manuscript/manuscript-tree";
+import { StudioWorkspace } from "@/components/layout/studio-workspace";
+import { sceneIdsInNavigatorOrder } from "@/lib/manuscript";
 
 export default async function ScenePage({
   params,
@@ -33,45 +42,102 @@ export default async function ScenePage({
     notFound();
   }
 
-  if (scene.node.deletedAt) {
-    return (
-      <div className="mx-auto max-w-3xl">
-        <Link
-          href={`/projects/${projectId}`}
-          className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-          {project.title}
-        </Link>
-        <p className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
-          {t("deleted")}
-        </p>
-      </div>
-    );
-  }
+  const [nodes, deletedNodes, context, characters, world] = await Promise.all([
+    getNodesAction(projectId),
+    getDeletedNodesAction(projectId),
+    getSceneContextAction(sceneId),
+    listProjectCharactersAction(projectId),
+    listProjectWorldAction(projectId),
+  ]);
+
+  const order = sceneIdsInNavigatorOrder(nodes);
+  const index = order.indexOf(sceneId);
+  const previousSceneHref =
+    index > 0 ? `/projects/${projectId}/scenes/${order[index - 1]}` : null;
+  const nextSceneHref =
+    index >= 0 && index < order.length - 1
+      ? `/projects/${projectId}/scenes/${order[index + 1]}`
+      : null;
 
   const json =
     scene.content?.contentJson && typeof scene.content.contentJson === "object"
       ? (scene.content.contentJson as Record<string, unknown>)
       : null;
 
-  return (
-    <div className="mx-auto max-w-3xl">
-      <Link
-        href={`/projects/${projectId}`}
-        className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-        {project.title}
-      </Link>
+  const inspector = (
+    <SceneInspector
+      sceneId={sceneId}
+      metadata={
+        context.metadata
+          ? {
+              goal: context.metadata.goal,
+              conflict: context.metadata.conflict,
+              outcome: context.metadata.outcome,
+              povCharacterId: context.metadata.povCharacterId,
+              locationId: context.metadata.locationId,
+              storyTime: context.metadata.storyTime,
+            }
+          : null
+      }
+      participants={context.participants.map((item) => item.character)}
+      characters={characters}
+      locations={world}
+    />
+  );
 
-      <h1 className="mb-4 font-display text-xl font-medium">{scene.node.title}</h1>
-      <SceneEditor
-        sceneId={sceneId}
-        initialJson={json}
-        initialPlainText={scene.content?.plainText ?? ""}
-        initialVersion={scene.content?.version ?? 1}
+  if (scene.node.deletedAt) {
+    return (
+      <StudioWorkspace
+        navigator={
+          <ManuscriptTree
+            projectId={projectId}
+            nodes={nodes}
+            deletedNodes={deletedNodes}
+            currentNodeId={sceneId}
+            variant="chrome"
+          />
+        }
+        sheet={
+          <div className="flex h-full items-center justify-center p-8">
+            <p className="rounded-lg border border-dashed border-chrome-border bg-background/40 p-8 text-center text-muted-foreground">
+              {t("deleted")}
+            </p>
+          </div>
+        }
+        inspector={inspector}
       />
-    </div>
+    );
+  }
+
+  return (
+    <StudioWorkspace
+      navigator={
+        <ManuscriptTree
+          projectId={projectId}
+          nodes={nodes}
+          deletedNodes={deletedNodes}
+          currentNodeId={sceneId}
+          variant="chrome"
+        />
+      }
+      sheet={
+        <div className="mx-auto flex min-h-full max-w-[72ch] flex-col px-10 py-8">
+          <p className="mb-1 text-xs text-muted-foreground">{project.title}</p>
+          <h1 className="mb-6 font-display text-2xl font-medium text-foreground">
+            {scene.node.title}
+          </h1>
+          <SceneEditor
+            sceneId={sceneId}
+            initialJson={json}
+            initialPlainText={scene.content?.plainText ?? ""}
+            initialVersion={scene.content?.version ?? 1}
+            embedded
+          />
+        </div>
+      }
+      inspector={inspector}
+      previousSceneHref={previousSceneHref}
+      nextSceneHref={nextSceneHref}
+    />
   );
 }

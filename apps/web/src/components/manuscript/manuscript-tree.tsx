@@ -25,7 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import type { ManuscriptNodeWithContent } from "@/lib/manuscript";
-import type { ManuscriptNode, ManuscriptNodeType, SceneStatus } from "@prisma/client";
+import type { ManuscriptNode, ManuscriptNodeType, SceneStatus } from "@manuscript/shared";
 
 const TYPE_ICONS = {
   part: Layers,
@@ -62,6 +62,7 @@ function TreeNode({
   childMap,
   query,
   onError,
+  currentNodeId,
 }: {
   node: ManuscriptNodeWithContent;
   projectId: string;
@@ -69,6 +70,7 @@ function TreeNode({
   childMap: Map<string | null, ManuscriptNodeWithContent[]>;
   query: string;
   onError: (message: string) => void;
+  currentNodeId?: string;
 }) {
   const t = useTranslations("manuscript");
   const router = useRouter();
@@ -129,7 +131,10 @@ function TreeNode({
   return (
     <div>
       <div
-        className="group flex items-center gap-1 rounded-md py-1 pr-2 hover:bg-secondary/60"
+        className={cn(
+          "group flex items-center gap-1 rounded-md py-1 pr-2 hover:bg-secondary/60",
+          currentNodeId === node.id && "bg-secondary/80"
+        )}
         style={{ paddingLeft: `${depth * 16 + 4}px` }}
         draggable
         onDragStart={(event) => {
@@ -159,7 +164,10 @@ function TreeNode({
         {node.type === "scene" ? (
           <Link
             href={`/projects/${projectId}/scenes/${node.id}`}
-            className="min-w-0 flex-1 truncate text-sm hover:text-accent"
+            className={cn(
+              "min-w-0 flex-1 truncate text-sm hover:text-accent",
+              currentNodeId === node.id && "font-medium text-accent"
+            )}
           >
             {node.title}
           </Link>
@@ -200,6 +208,7 @@ function TreeNode({
             childMap={childMap}
             query={query}
             onError={onError}
+            currentNodeId={currentNodeId}
           />
         ))}
     </div>
@@ -210,10 +219,14 @@ export function ManuscriptTree({
   projectId,
   nodes,
   deletedNodes = [],
+  currentNodeId,
+  variant = "card",
 }: {
   projectId: string;
   nodes: ManuscriptNodeWithContent[];
   deletedNodes?: ManuscriptNode[];
+  currentNodeId?: string;
+  variant?: "card" | "chrome";
 }) {
   const t = useTranslations("manuscript");
   const router = useRouter();
@@ -235,8 +248,18 @@ export function ManuscriptTree({
   }
 
   return (
-    <div className="rounded-lg border border-border bg-card">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
+    <div
+      className={cn(
+        variant === "card" && "rounded-lg border border-border bg-card",
+        variant === "chrome" && "flex h-full min-h-0 flex-col bg-transparent"
+      )}
+    >
+      <div
+        className={cn(
+          "flex flex-wrap items-center justify-between gap-2 px-4 py-3",
+          variant === "card" ? "border-b border-border" : "border-b border-chrome-border"
+        )}
+      >
         <h2 className="text-sm font-medium">{t("title")}</h2>
         <div className="flex flex-wrap gap-1">
           {(["part", "chapter", "scene"] as const).map((type) => (
@@ -255,16 +278,20 @@ export function ManuscriptTree({
           ))}
         </div>
       </div>
-      <div className="border-b border-border px-4 py-2">
+      <div className={cn("px-4 py-2", variant === "card" ? "border-b border-border" : "border-b border-chrome-border")}>
         <Input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder={t("searchTitles")}
           aria-label={t("searchTitles")}
+          className={cn(
+            variant === "chrome" &&
+              "border-chrome-border bg-chrome-accent text-chrome-foreground placeholder:text-chrome-muted"
+          )}
         />
       </div>
       {error && <p className="px-4 py-2 text-sm text-destructive">{error}</p>}
-      <div className="p-2">
+      <div className={cn("p-2", variant === "chrome" && "min-h-0 flex-1 overflow-y-auto")}>
         {structuredRoots.length === 0 && unassigned.length === 0 ? (
           <p className="px-2 py-6 text-center text-sm text-muted-foreground">{t("empty")}</p>
         ) : (
@@ -278,6 +305,7 @@ export function ManuscriptTree({
                 childMap={childMap}
                 query={query}
                 onError={setError}
+                currentNodeId={currentNodeId}
               />
             ))}
             {unassigned.length > 0 && (
@@ -294,6 +322,7 @@ export function ManuscriptTree({
                     childMap={childMap}
                     query={query}
                     onError={setError}
+                    currentNodeId={currentNodeId}
                   />
                 ))}
               </div>
@@ -302,7 +331,12 @@ export function ManuscriptTree({
         )}
       </div>
       {deletedNodes.length > 0 && (
-        <div className="border-t border-border px-4 py-3">
+        <div
+          className={cn(
+            "px-4 py-3",
+            variant === "card" ? "border-t border-border" : "border-t border-chrome-border"
+          )}
+        >
           <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{t("trash")}</h3>
           <ul className="mt-2 space-y-1">
             {deletedNodes.map((node) => (

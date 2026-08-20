@@ -2,9 +2,9 @@
 
 > **Норматив:** [ТЗ §7.1](../tz/TZ.md#71-техническое-обеспечение) TZ-ENV-04/06/07, [§7.4](../tz/TZ.md#74-надёжность-и-доступность) TZ-REL-03/05, [§9.4 DoD](../tz/TZ.md#94-критерии-готовности-изменения-definition-of-done)  
 > **Факт:** `.github/workflows/ci.yml`, `cd.yml`  
-> **Обновлено:** 13 августа 2026
+> **Обновлено:** 20 августа 2026
 
-CI на каждый PR: install → prisma generate → typecheck → lint → schema apply → build.  
+CI на каждый PR: install → typecheck → lint → drizzle migrate → build.  
 Деплой и ops (backup, мониторинг, preview/staging) — цель к Beta, сейчас placeholder.
 
 ---
@@ -35,15 +35,14 @@ Env в workflow (только CI, не секреты продукта): `DATABA
 | Step | Команда |
 |------|---------|
 | Install | `pnpm install --frozen-lockfile` |
-| Generate | `pnpm db:generate` |
 | Typecheck | `pnpm typecheck` |
 | Lint | `pnpm lint` |
-| Schema | `prisma db push --skip-generate` на test DB |
+| Schema | `pnpm db:migrate` (`drizzle-kit migrate`) на test DB |
 | Build | `pnpm build` |
 
 ### Job `validate` — только PR
 
-`prisma validate`. Это проверка синтаксиса схемы, **не** прогон миграций на чистой БД и **не** `migrate diff`.
+`drizzle-kit check`. Сверка TypeScript-схемы с SQL-миграциями, **не** прогон на живой БД.
 
 ### Gap CI
 
@@ -51,7 +50,7 @@ Env в workflow (только CI, не секреты продукта): `DATABA
 |--------------------|--------|
 | Unit / component tests | нет job |
 | e2e критичного потока (регистрация → сцена) | нет |
-| `prisma migrate deploy` на копии prod-схемы (вместо только `db push`) | нет |
+| `drizzle-kit migrate` на копии prod-схемы | нет (CI гоняет migrate на пустой test DB) |
 | i18n check (сырые ключи) | нет |
 | Secret scan | нет |
 
@@ -65,7 +64,7 @@ DoD ТЗ §9.4: «CI зелёный» = этот pipeline. Новые модул
 
 | Job | Факт |
 |-----|------|
-| `build` | generate + `pnpm build`; артефакт `apps/web/.next`, 7 дней. **Без** Postgres service — build не гоняет schema push |
+| `build` | `pnpm build`; артефакт `apps/web/.next`, 7 дней. **Без** Postgres service — build не гоняет migrate |
 | `deploy` | echo-placeholder; environment GitHub `production` |
 
 Подключение Vercel (когда будут secrets): раскомментировать шаг в `cd.yml`.
@@ -80,7 +79,7 @@ VERCEL_PROJECT_ID
 
 ### Норматив деплоя (ещё не сделано)
 
-- Миграции Prisma **только вперёд** совместимые на gate (TZ-REL-05).
+- Миграции Drizzle **только вперёд** совместимые на gate (TZ-REL-05).
 - Rollback приложения **без** затирания пользовательских данных.
 - Preview на PR — отдельный env, не prod DB.
 
@@ -120,15 +119,14 @@ VERCEL_PROJECT_ID
 
 ```bash
 pnpm install
-pnpm db:generate
 pnpm typecheck
 pnpm lint
 pnpm build
 ```
 
 Postgres: `docker compose up -d` (сервис `postgres`, порт 5432).  
-Миграции в разработке: `pnpm db:migrate`.  
-Схема на CI: `db push` — для prod использовать `migrate deploy`.
+Миграции в разработке: `pnpm db:migrate` или `pnpm db:push`.  
+Схема на CI: `drizzle-kit migrate`. Production start: `drizzle-kit migrate` перед `next start`.
 
 ---
 
@@ -136,5 +134,6 @@ Postgres: `docker compose up -d` (сервис `postgres`, порт 5432).
 
 | Дата | Изменение |
 |------|-----------|
+| 2026-08-20 | Prisma → Drizzle: generate убран, CI migrate, validate = drizzle-kit check |
 | 2026-08-04 | ci.yml / cd.yml: pnpm, Prisma, Postgres 16, build artifact |
 | 2026-08-13 | Документ сверен с ТЗ: env matrix, gap тестов/migrate/ops, уточнён job validate |

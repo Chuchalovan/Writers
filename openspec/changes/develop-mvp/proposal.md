@@ -40,7 +40,7 @@
 
 ## Impact
 
-- **Код:** `apps/web` (App Router, Server Actions, `lib/`, TipTap, i18n), `packages/shared` (Zod/типы), `packages/ai` (провайдеры), `apps/web/prisma` (миграции под ТЗ §6.5).
+- **Код:** `apps/web` (App Router, Server Actions, `lib/`, TipTap, i18n), `packages/shared` (Zod/типы), `packages/ai` (провайдеры), `apps/web/drizzle` (миграции под ТЗ §6.5).
 - **API:** целевые Server Actions и REST `/api/v1/ai/*`, `/api/v1/export` по [docs/technical/API.md](../../docs/technical/API.md) и [openapi.yaml](../../docs/technical/openapi.yaml).
 - **Интеграции:** Better Auth (уже), transactional email (Beta), platform AI (Beta), object storage для вложений/крупных ZIP (P1 по мере Notes/Export).
 - **UI:** Figma Ink Studio + [DESIGN-HANDOFF](../../docs/technical/design/DESIGN-HANDOFF.md); текущий широкий sidebar заменить на rail \| navigator \| sheet \| inspector.

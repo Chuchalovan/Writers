@@ -21,7 +21,7 @@
 | UI | Tailwind CSS, shadcn/ui |
 | Редактор | TipTap |
 | База данных | PostgreSQL |
-| ORM | Prisma |
+| ORM | Drizzle |
 | i18n | next-intl |
 | Auth | Better Auth |
 | AI | Контекстный ассистент с выбором scope |
@@ -83,6 +83,8 @@ npx pnpm@9.15.0 install
 
 # Миграции БД
 npx pnpm@9.15.0 db:migrate
+# Если БД уже создавалась Prisma: один раз `npx pnpm@9.15.0 db:push`
+# (схема совпадает, повторный CREATE не нужен) или пересоздайте базу.
 
 # Запуск dev-сервера
 npx pnpm@9.15.0 dev

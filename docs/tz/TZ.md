@@ -32,7 +32,7 @@
 | Состав релиза, P0/P1/P2 | MVP Scope Matrix |
 | Поведение для пользователя | PRD + Use Cases |
 | Как реализовать, контракты, политики, НФТ с числами | **это ТЗ** |
-| Фактическая схема/код «как сейчас» | Prisma / `technical/` — с пометкой «факт» |
+| Фактическая схема/код «как сейчас» | Drizzle / `technical/` — с пометкой «факт» |
 
 Утверждения без метки — **норматив ТЗ** (как должно быть). Расхождение с текущим кодом — backlog реализации, не отмена требования.
 
@@ -113,7 +113,7 @@
 
 ### 1.5. Стек (факт, DEC-001 Accepted)
 
-Next.js 15 (App Router) · TypeScript · PostgreSQL · Prisma · Better Auth · TipTap (DEC-002 Proposed → целевой редактор) · next-intl · Tailwind · shadcn/ui · pnpm monorepo (`apps/web`, `packages/shared`, `packages/ai`).
+Next.js 15 (App Router) · TypeScript · PostgreSQL · Drizzle · Better Auth · TipTap (DEC-002 Proposed → целевой редактор) · next-intl · Tailwind · shadcn/ui · pnpm monorepo (`apps/web`, `packages/shared`, `packages/ai`).
 
 ---
 
@@ -405,7 +405,7 @@ flowchart TB
   end
 
   subgraph Data
-    PG[(PostgreSQL + Prisma)]
+    PG[(PostgreSQL + Drizzle)]
     Shared["packages/shared: Zod, types"]
     AIPkg["packages/ai: providers"]
   end
@@ -545,9 +545,9 @@ P1: plot method, beats, timeline, notes, FTS — отдельные actions по
 
 ### 6.5. Модель базы данных
 
-Норматив схемы для реализации (IEEE 830: logical database requirements). Живой снимок кода: [DATABASE.md](../technical/DATABASE.md) и `apps/web/prisma/schema.prisma`. Если Prisma отстаёт — это gap, не отмена ТЗ.
+Норматив схемы для реализации (IEEE 830: logical database requirements). Живой снимок кода: [DATABASE.md](../technical/DATABASE.md) и `apps/web/src/lib/db/schema.ts`. Если схема отстаёт — это gap, не отмена ТЗ.
 
-СУБД: **PostgreSQL 16**. ORM: **Prisma**. Идентификаторы доменных сущностей: `cuid` (`TEXT`). Время: `TIMESTAMPTZ`. JSON документов: `JSONB`.
+СУБД: **PostgreSQL 16**. ORM: **Drizzle** ([DEC-013](../roadmap/DECISION-LOG.md#dec-013-orm-drizzle)). Идентификаторы доменных сущностей: `cuid` (`TEXT`). Время: `TIMESTAMPTZ`. JSON документов: `JSONB`.
 
 #### 6.5.1. Соглашения
 
@@ -561,7 +561,7 @@ P1: plot method, beats, timeline, notes, FTS — отдельные actions по
 | Строки | `title` / `name` — `VARCHAR(200)`; длинный текст — `TEXT` с лимитом в Zod |
 | Счётчики | `INTEGER CHECK (>= 0)` |
 | Порядок сиблингов | `position INTEGER`; гепы допустимы; сортировка `position, id` |
-| Имена в Prisma | PascalCase-модель; в БД `@@map` snake_case, кроме таблиц Better Auth (`user`, `session`, …) |
+| Имена таблиц | PascalCase для доменных (`Project`, `ManuscriptNode`); Better Auth — `user`, `session`, `account`, `verification` |
 
 **Легенда колонок:** Null = может быть NULL; Req = обязательна при INSERT; FK / PK / UQ — ключи.
 
@@ -658,11 +658,11 @@ erDiagram
 | createdAt | TIMESTAMPTZ | нет | now() | | |
 | updatedAt | TIMESTAMPTZ | нет | now() | | |
 
-`session` / `account` / `verification` — как в текущей Prisma (токены, пароль-хеш в `account.password`, TTL верификации). Продуктовые TTL ссылок — [§8.1](#81-аутентификация-и-аккаунт); хранение — `verification.expiresAt`.
+`session` / `account` / `verification` — как в текущей схеме (токены, пароль-хеш в `account.password`, TTL верификации). Продуктовые TTL ссылок — [§8.1](#81-аутентификация-и-аккаунт); хранение — `verification.expiresAt`.
 
 #### 6.5.7. Проект
 
-**`Project`** — одна книга. `description` из текущей Prisma **не использовать** в новом коде: писать в `synopsis`.
+**`Project`** — одна книга. `description` из текущей схемы **не использовать** в новом коде: писать в `synopsis`.
 
 | Поле | Тип | Null | Default | Ключ | Описание |
 |------|-----|------|---------|------|----------|
@@ -945,7 +945,7 @@ CHECK: `type <> 'other' OR label IS NOT NULL`.
 
 **`ProjectMember`:** `projectId`, `userId`, `role` (`owner|editor|commenter`), `invitedAt`, `acceptedAt`. Unique `(projectId, userId)`.
 
-**`UserApiKey`:** как в текущей Prisma: `userId`, `provider`, `encryptedKey` (AES-256-GCM), `keyHint`, `model`. Unique `(userId, provider)`.
+**`UserApiKey`:** как в текущей схеме: `userId`, `provider`, `encryptedKey` (AES-256-GCM), `keyHint`, `model`. Unique `(userId, provider)`.
 
 **`DailyStat`:** unique `(userId, projectId, date)`; `wordsWritten`. Не обновлять в Alpha.
 
@@ -977,9 +977,9 @@ Round-trip: edit → save → reload → эквивалентный JSON (ста
 
 `ON DELETE` для FK на soft-delete сущности: **SET NULL** или запрет, не hard CASCADE сцены из-за удаления героя.
 
-#### 6.5.16. Gap относительно текущей Prisma
+#### 6.5.16. Gap относительно текущей схемы
 
-| Требование ТЗ | Факт schema.prisma (на дату) |
+| Требование ТЗ | Факт `schema.ts` (на дату) |
 |---------------|------------------------------|
 | Character: appearance, motivation, notes, extra | нет |
 | CharacterRelationship, SceneMetadata, SceneParticipant | нет |
@@ -1062,9 +1062,9 @@ Round-trip: edit → save → reload → эквивалентный JSON (ста
 | TZ-REL-02 | Конфликт версий не затирает молча (Beta): UI merge / выбор версии |
 | NFR-06 / TZ-REL-03 | К Beta: ежедневный backup БД; мониторинг ошибок клиента/сервера; алерт `scene_autosave_failed` |
 | TZ-REL-04 | Ошибка экспорта/AI не портит `SceneContent` |
-| TZ-REL-05 | Деплой: rollback без затирания пользовательских данных; миграции Prisma только вперёд совместимые на gate |
+| TZ-REL-05 | Деплой: rollback без затирания пользовательских данных; миграции Drizzle только вперёд совместимые на gate |
 
-CI на каждый PR: install, prisma generate, typecheck, lint, schema apply, build — [CI-CD.md](../technical/CI-CD.md).
+CI на каждый PR: install, typecheck, lint, schema apply, build — [CI-CD.md](../technical/CI-CD.md).
 
 ### 7.5. Доступность, i18n, приватность
 
@@ -1265,7 +1265,7 @@ meta/scenes/{sceneId}.json
 3. Состояния empty/loading/error для затронутого экрана.  
 4. i18n ru/en.  
 5. CI зелёный.  
-6. При изменении модели — миграция Prisma и правка [DATABASE.md](../technical/DATABASE.md).  
+6. При изменении модели — миграция Drizzle и правка [DATABASE.md](../technical/DATABASE.md).  
 7. При изменении контракта — правка [API.md](../technical/API.md).
 
 ---
@@ -1300,7 +1300,7 @@ meta/scenes/{sceneId}.json
 | [Roadmap](../roadmap/ROADMAP.md) | Когда |
 | [Decision Log](../roadmap/DECISION-LOG.md) | Открытые решения |
 | [ARCHITECTURE](../technical/ARCHITECTURE.md) | Факт слоёв кода; норматив — [§6.1](#61-архитектура) |
-| [DATABASE](../technical/DATABASE.md) | Факт Prisma; норматив полей — [§6.5](#65-модель-базы-данных) |
+| [DATABASE](../technical/DATABASE.md) | Факт Drizzle; норматив полей — [§6.5](#65-модель-базы-данных) |
 | [API](../technical/API.md) | Факт actions + целевые контракты [§6.3–6.4](#63-api-общие-правила) |
 | [openapi.yaml](../technical/openapi.yaml) | Машиночитаемый контракт (OpenAPI 3.1) |
 | [CI-CD](../technical/CI-CD.md) | Pipeline; норматив env/ops — [§7.1](#71-техническое-обеспечение), [§7.4](#74-надёжность-и-доступность) |
@@ -1317,4 +1317,5 @@ meta/scenes/{sceneId}.json
 | 2026-08-13 | 1.0 | Полноценное ТЗ по IEEE 830 / Хабр |
 | 2026-08-13 | 1.1 | Модель БД: таблицы, поля, ключи, enum, каскады, gap vs Prisma |
 | 2026-08-13 | **1.2** | UI SoT → Ink Studio: rail + paper sheet, Geist/Newsreader/Instrument Serif |
+| 2026-08-20 | 1.2 | ORM: Prisma → Drizzle (DEC-013); схема — `src/lib/db/schema.ts` |
 | 2026-08-13 | 1.2 | Ссылки: ARCHITECTURE / API / CI-CD как факт кода vs норматив ТЗ |

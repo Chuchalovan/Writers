@@ -1,7 +1,9 @@
-import type { ManuscriptNode, ManuscriptNodeType, SceneStatus, Prisma } from "@prisma/client";
+import type { ManuscriptNode, ManuscriptNodeType, SceneStatus } from "@/lib/db";
 import { AppError, ERROR_CODES, collectSubtreeIds, countWords, wouldCreateCycle } from "@manuscript/shared";
-import { prisma } from "@/lib/db";
+import { db } from "@/lib/db";
+import { manuscriptNode, project, sceneContent } from "@/lib/db/schema";
 import { assertProjectOwner } from "@/lib/projects/ownership";
+import { and, asc, desc, eq, inArray, isNotNull, isNull, sum } from "drizzle-orm";
 
 export type ManuscriptNodeWithContent = ManuscriptNode & {
   content: { sceneId: string; version: number } | null;
@@ -12,11 +14,21 @@ export async function getNodesForProject(
   projectId: string
 ): Promise<ManuscriptNodeWithContent[]> {
   await assertProjectOwner(userId, projectId);
-  return prisma.manuscriptNode.findMany({
-    where: { projectId, deletedAt: null },
-    orderBy: [{ position: "asc" }],
-    include: { content: { select: { sceneId: true, version: true } } },
-  });
+  const rows = await db
+    .select({
+      node: manuscriptNode,
+      contentSceneId: sceneContent.sceneId,
+      contentVersion: sceneContent.version,
+    })
+    .from(manuscriptNode)
+    .leftJoin(sceneContent, eq(sceneContent.sceneId, manuscriptNode.id))
+    .where(and(eq(manuscriptNode.projectId, projectId), isNull(manuscriptNode.deletedAt)))
+    .orderBy(asc(manuscriptNode.position));
+
+  return rows.map((row) => ({
+    ...row.node,
+    content: row.contentSceneId ? { sceneId: row.contentSceneId, version: row.contentVersion ?? 1 } : null,
+  }));
 }
 
 export async function createNode(
@@ -31,8 +43,12 @@ export async function createNode(
   await assertProjectOwner(userId, data.projectId);
 
   if (data.parentId) {
-    const parent = await prisma.manuscriptNode.findFirst({
-      where: { id: data.parentId, projectId: data.projectId, deletedAt: null },
+    const parent = await db.query.manuscriptNode.findFirst({
+      where: and(
+        eq(manuscriptNode.id, data.parentId),
+        eq(manuscriptNode.projectId, data.projectId),
+        isNull(manuscriptNode.deletedAt)
+      ),
     });
     if (!parent) throw new AppError(ERROR_CODES.NOT_FOUND, "Parent node not found");
   }
@@ -40,28 +56,27 @@ export async function createNode(
   const position = await nextPosition(data.projectId, data.parentId ?? null);
   const title = data.title?.trim() || "Untitled";
 
-  const node = await prisma.manuscriptNode.create({
-    data: {
+  const [node] = await db
+    .insert(manuscriptNode)
+    .values({
       projectId: data.projectId,
       parentId: data.parentId ?? null,
       type: data.type,
       title,
       position,
       status: data.type === "scene" ? "draft" : null,
-    },
-  });
+    })
+    .returning();
 
   if (data.type === "scene") {
-    await prisma.sceneContent.create({
-      data: { sceneId: node.id, contentJson: {}, updatedAt: new Date() },
+    await db.insert(sceneContent).values({
+      sceneId: node.id,
+      contentJson: {},
+      updatedAt: new Date(),
     });
   }
 
-  await prisma.project.update({
-    where: { id: data.projectId },
-    data: { updatedAt: new Date() },
-  });
-
+  await touchProject(data.projectId);
   return node;
 }
 
@@ -77,20 +92,22 @@ export async function updateNode(
   }
 ): Promise<ManuscriptNode> {
   const node = await getNodeWithAuth(userId, nodeId);
-  return prisma.manuscriptNode.update({
-    where: { id: node.id },
-    data,
-  });
+  const [updated] = await db
+    .update(manuscriptNode)
+    .set({ ...data, updatedAt: new Date() })
+    .where(eq(manuscriptNode.id, node.id))
+    .returning();
+  return updated;
 }
 
 export async function deleteNode(userId: string, nodeId: string): Promise<void> {
   const node = await getNodeWithAuth(userId, nodeId);
   if (node.deletedAt) return;
 
-  const all = await prisma.manuscriptNode.findMany({
-    where: { projectId: node.projectId },
-    select: { id: true, parentId: true },
-  });
+  const all = await db
+    .select({ id: manuscriptNode.id, parentId: manuscriptNode.parentId })
+    .from(manuscriptNode)
+    .where(eq(manuscriptNode.projectId, node.projectId));
   const childrenByParent = new Map<string | null, string[]>();
   for (const item of all) {
     const key = item.parentId;
@@ -99,22 +116,23 @@ export async function deleteNode(userId: string, nodeId: string): Promise<void> 
   }
   const ids = collectSubtreeIds(node.id, childrenByParent);
   const now = new Date();
-  await prisma.manuscriptNode.updateMany({
-    where: { id: { in: ids }, projectId: node.projectId },
-    data: { deletedAt: now },
-  });
-  await prisma.project.update({
-    where: { id: node.projectId },
-    data: { updatedAt: now },
-  });
+  await db
+    .update(manuscriptNode)
+    .set({ deletedAt: now, updatedAt: now })
+    .where(and(inArray(manuscriptNode.id, ids), eq(manuscriptNode.projectId, node.projectId)));
+  await touchProject(node.projectId, now);
 }
 
 export async function restoreNode(userId: string, nodeId: string): Promise<ManuscriptNode> {
   const node = await getNodeWithAuth(userId, nodeId);
-  const all = await prisma.manuscriptNode.findMany({
-    where: { projectId: node.projectId },
-    select: { id: true, parentId: true, deletedAt: true },
-  });
+  const all = await db
+    .select({
+      id: manuscriptNode.id,
+      parentId: manuscriptNode.parentId,
+      deletedAt: manuscriptNode.deletedAt,
+    })
+    .from(manuscriptNode)
+    .where(eq(manuscriptNode.projectId, node.projectId));
   const childrenByParent = new Map<string | null, string[]>();
   for (const item of all) {
     const key = item.parentId;
@@ -122,23 +140,27 @@ export async function restoreNode(userId: string, nodeId: string): Promise<Manus
     childrenByParent.get(key)!.push(item.id);
   }
   const ids = collectSubtreeIds(node.id, childrenByParent);
-  await prisma.manuscriptNode.updateMany({
-    where: { id: { in: ids }, projectId: node.projectId },
-    data: { deletedAt: null },
+  await db
+    .update(manuscriptNode)
+    .set({ deletedAt: null, updatedAt: new Date() })
+    .where(and(inArray(manuscriptNode.id, ids), eq(manuscriptNode.projectId, node.projectId)));
+  await touchProject(node.projectId);
+  const restored = await db.query.manuscriptNode.findFirst({
+    where: eq(manuscriptNode.id, node.id),
   });
-  await prisma.project.update({
-    where: { id: node.projectId },
-    data: { updatedAt: new Date() },
-  });
-  return prisma.manuscriptNode.findUniqueOrThrow({ where: { id: node.id } });
+  if (!restored) {
+    throw new AppError(ERROR_CODES.NOT_FOUND, "Node not found");
+  }
+  return restored;
 }
 
 export async function getDeletedNodes(userId: string, projectId: string) {
   await assertProjectOwner(userId, projectId);
-  return prisma.manuscriptNode.findMany({
-    where: { projectId, deletedAt: { not: null } },
-    orderBy: { deletedAt: "desc" },
-  });
+  return db
+    .select()
+    .from(manuscriptNode)
+    .where(and(eq(manuscriptNode.projectId, projectId), isNotNull(manuscriptNode.deletedAt)))
+    .orderBy(desc(manuscriptNode.deletedAt));
 }
 
 export async function reorderNodes(
@@ -148,19 +170,27 @@ export async function reorderNodes(
   orderedIds: string[]
 ): Promise<void> {
   await assertProjectOwner(userId, projectId);
-  const siblings = await prisma.manuscriptNode.findMany({
-    where: { projectId, parentId, deletedAt: null },
-    select: { id: true },
-  });
+  const siblings = await db
+    .select({ id: manuscriptNode.id })
+    .from(manuscriptNode)
+    .where(
+      and(
+        eq(manuscriptNode.projectId, projectId),
+        parentId === null ? isNull(manuscriptNode.parentId) : eq(manuscriptNode.parentId, parentId),
+        isNull(manuscriptNode.deletedAt)
+      )
+    );
   const siblingIds = new Set(siblings.map((item) => item.id));
   if (orderedIds.length !== siblingIds.size || orderedIds.some((id) => !siblingIds.has(id))) {
     throw new AppError(ERROR_CODES.VALIDATION_ERROR, "Reorder must include all siblings of the same parent");
   }
-  await prisma.$transaction(
-    orderedIds.map((id, index) =>
-      prisma.manuscriptNode.update({ where: { id }, data: { position: index } })
-    )
-  );
+  await db.transaction(async (tx) => {
+    await Promise.all(
+      orderedIds.map((id, index) =>
+        tx.update(manuscriptNode).set({ position: index, updatedAt: new Date() }).where(eq(manuscriptNode.id, id))
+      )
+    );
+  });
 }
 
 export async function moveNode(
@@ -175,29 +205,31 @@ export async function moveNode(
   }
 
   if (newParentId) {
-    const parent = await prisma.manuscriptNode.findFirst({
-      where: { id: newParentId, projectId: node.projectId, deletedAt: null },
+    const parent = await db.query.manuscriptNode.findFirst({
+      where: and(
+        eq(manuscriptNode.id, newParentId),
+        eq(manuscriptNode.projectId, node.projectId),
+        isNull(manuscriptNode.deletedAt)
+      ),
     });
     if (!parent) throw new AppError(ERROR_CODES.NOT_FOUND, "Parent node not found");
   }
 
-  const all = await prisma.manuscriptNode.findMany({
-    where: { projectId: node.projectId, deletedAt: null },
-    select: { id: true, parentId: true },
-  });
+  const all = await db
+    .select({ id: manuscriptNode.id, parentId: manuscriptNode.parentId })
+    .from(manuscriptNode)
+    .where(and(eq(manuscriptNode.projectId, node.projectId), isNull(manuscriptNode.deletedAt)));
   const parentById = new Map(all.map((item) => [item.id, item.parentId]));
   if (wouldCreateCycle(node.id, newParentId, parentById)) {
     throw new AppError(ERROR_CODES.VALIDATION_ERROR, "Cannot move a node under its descendant");
   }
 
-  const updated = await prisma.manuscriptNode.update({
-    where: { id: node.id },
-    data: { parentId: newParentId, position },
-  });
-  await prisma.project.update({
-    where: { id: node.projectId },
-    data: { updatedAt: new Date() },
-  });
+  const [updated] = await db
+    .update(manuscriptNode)
+    .set({ parentId: newParentId, position, updatedAt: new Date() })
+    .where(eq(manuscriptNode.id, node.id))
+    .returning();
+  await touchProject(node.projectId);
   return updated;
 }
 
@@ -210,10 +242,12 @@ export async function setSceneStatus(
   if (node.type !== "scene") {
     throw new AppError(ERROR_CODES.VALIDATION_ERROR, "Status can only be set on a scene");
   }
-  return prisma.manuscriptNode.update({
-    where: { id: node.id },
-    data: { status },
-  });
+  const [updated] = await db
+    .update(manuscriptNode)
+    .set({ status, updatedAt: new Date() })
+    .where(eq(manuscriptNode.id, node.id))
+    .returning();
+  return updated;
 }
 
 export async function getSceneWithContent(userId: string, sceneId: string) {
@@ -221,8 +255,10 @@ export async function getSceneWithContent(userId: string, sceneId: string) {
   if (node.type !== "scene") {
     throw new AppError(ERROR_CODES.NOT_FOUND, "Scene not found");
   }
-  const content = await prisma.sceneContent.findUnique({ where: { sceneId } });
-  return { node, content };
+  const content = await db.query.sceneContent.findFirst({
+    where: eq(sceneContent.sceneId, sceneId),
+  });
+  return { node, content: content ?? null };
 }
 
 export async function saveSceneContent(
@@ -242,7 +278,9 @@ export async function saveSceneContent(
     throw new AppError(ERROR_CODES.NOT_FOUND, "Scene not found");
   }
 
-  const existing = await prisma.sceneContent.findUnique({ where: { sceneId: input.sceneId } });
+  const existing = await db.query.sceneContent.findFirst({
+    where: eq(sceneContent.sceneId, input.sceneId),
+  });
   if (!existing) {
     throw new AppError(ERROR_CODES.NOT_FOUND, "Scene content not found");
   }
@@ -251,54 +289,79 @@ export async function saveSceneContent(
   }
 
   const wordCount = countWords(input.plainText);
-  const updated = await prisma.sceneContent.update({
-    where: { sceneId: input.sceneId },
-    data: {
-      contentJson: input.contentJson as Prisma.InputJsonValue,
+  const [updated] = await db
+    .update(sceneContent)
+    .set({
+      contentJson: input.contentJson,
       plainText: input.plainText,
-      version: { increment: 1 },
-    },
-  });
-  await prisma.manuscriptNode.update({
-    where: { id: input.sceneId },
-    data: { wordCount },
-  });
-  const totals = await prisma.manuscriptNode.aggregate({
-    where: { projectId: node.projectId, type: "scene", deletedAt: null },
-    _sum: { wordCount: true },
-  });
-  await prisma.project.update({
-    where: { id: node.projectId },
-    data: {
-      totalWordCount: totals._sum.wordCount ?? 0,
+      version: existing.version + 1,
+      updatedAt: new Date(),
+    })
+    .where(eq(sceneContent.sceneId, input.sceneId))
+    .returning();
+  await db
+    .update(manuscriptNode)
+    .set({ wordCount, updatedAt: new Date() })
+    .where(eq(manuscriptNode.id, input.sceneId));
+  const [totals] = await db
+    .select({ total: sum(manuscriptNode.wordCount) })
+    .from(manuscriptNode)
+    .where(
+      and(
+        eq(manuscriptNode.projectId, node.projectId),
+        eq(manuscriptNode.type, "scene"),
+        isNull(manuscriptNode.deletedAt)
+      )
+    );
+  await db
+    .update(project)
+    .set({
+      totalWordCount: Number(totals?.total ?? 0),
       continueNodeId: input.sceneId,
       updatedAt: new Date(),
-    },
-  });
+    })
+    .where(eq(project.id, node.projectId));
   return updated;
 }
 
 export async function getNodeWithAuth(userId: string, nodeId: string) {
-  const node = await prisma.manuscriptNode.findFirst({
-    where: { id: nodeId },
-    include: { project: { select: { userId: true } } },
-  });
-  if (!node) {
+  const row = await db
+    .select({
+      node: manuscriptNode,
+      ownerId: project.userId,
+    })
+    .from(manuscriptNode)
+    .innerJoin(project, eq(project.id, manuscriptNode.projectId))
+    .where(eq(manuscriptNode.id, nodeId))
+    .limit(1)
+    .then((rows) => rows[0]);
+  if (!row) {
     throw new AppError(ERROR_CODES.NOT_FOUND, "Node not found");
   }
-  if (node.project.userId !== userId) {
+  if (row.ownerId !== userId) {
     throw new AppError(ERROR_CODES.FORBIDDEN, "Forbidden");
   }
-  return node;
+  return row.node;
 }
 
 async function nextPosition(projectId: string, parentId: string | null): Promise<number> {
-  const last = await prisma.manuscriptNode.findFirst({
-    where: { projectId, parentId, deletedAt: null },
-    orderBy: { position: "desc" },
-    select: { position: true },
-  });
+  const [last] = await db
+    .select({ position: manuscriptNode.position })
+    .from(manuscriptNode)
+    .where(
+      and(
+        eq(manuscriptNode.projectId, projectId),
+        parentId === null ? isNull(manuscriptNode.parentId) : eq(manuscriptNode.parentId, parentId),
+        isNull(manuscriptNode.deletedAt)
+      )
+    )
+    .orderBy(desc(manuscriptNode.position))
+    .limit(1);
   return (last?.position ?? -1) + 1;
+}
+
+async function touchProject(projectId: string, at = new Date()) {
+  await db.update(project).set({ updatedAt: at }).where(eq(project.id, projectId));
 }
 
 export function buildNodeTree(nodes: ManuscriptNodeWithContent[]) {
@@ -312,4 +375,25 @@ export function buildNodeTree(nodes: ManuscriptNodeWithContent[]) {
     group.sort((a, b) => a.position - b.position);
   }
   return byParent;
+}
+
+export function sceneIdsInNavigatorOrder(nodes: ManuscriptNodeWithContent[]): string[] {
+  const byParent = buildNodeTree(nodes);
+  const ids: string[] = [];
+  function walk(parentId: string | null) {
+    const children = byParent.get(parentId) ?? [];
+    const sequence =
+      parentId === null
+        ? [
+            ...children.filter((node) => node.type !== "scene"),
+            ...children.filter((node) => node.type === "scene"),
+          ]
+        : children;
+    for (const child of sequence) {
+      if (child.type === "scene") ids.push(child.id);
+      walk(child.id);
+    }
+  }
+  walk(null);
+  return ids;
 }

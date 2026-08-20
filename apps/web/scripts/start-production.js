@@ -39,7 +39,7 @@ function run(bin, args) {
 }
 
 async function main() {
-  await run(resolveBin("prisma"), ["migrate", "deploy"]);
+  await run(resolveBin("drizzle-kit"), ["migrate"]);
   await run(resolveBin("next"), [
     "start",
     "--hostname",

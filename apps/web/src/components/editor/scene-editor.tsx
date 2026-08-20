@@ -25,11 +25,13 @@ export function SceneEditor({
   initialJson,
   initialPlainText,
   initialVersion,
+  embedded = false,
 }: {
   sceneId: string;
   initialJson: Record<string, unknown> | null;
   initialPlainText: string | null;
   initialVersion: number;
+  embedded?: boolean;
 }) {
   const t = useTranslations("editor");
   const versionRef = useRef(initialVersion);
@@ -91,7 +93,9 @@ export function SceneEditor({
     content: (initialJson as object) ?? EMPTY_DOC,
     editorProps: {
       attributes: {
-        class: "min-h-[60vh] max-w-[65ch] font-serif text-lg leading-relaxed outline-none",
+        class: embedded
+          ? "min-h-[50vh] max-w-[65ch] font-serif text-lg leading-relaxed outline-none"
+          : "min-h-[60vh] max-w-[65ch] font-serif text-lg leading-relaxed outline-none",
       },
     },
     onUpdate: ({ editor: instance }) => {
@@ -153,7 +157,7 @@ export function SceneEditor({
 
   if (narrow) {
     return (
-      <div className="rounded-lg border bg-card p-6 text-sm text-muted-foreground">
+      <div className="text-sm text-muted-foreground">
         <p className="whitespace-pre-wrap font-serif text-base text-foreground">{initialPlainText}</p>
         <p className="mt-4">{t("mobileReadOnly")}</p>
       </div>
@@ -162,7 +166,7 @@ export function SceneEditor({
 
   return (
     <div>
-      <div className="mb-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+      <div className="mb-3 flex flex-wrap items-center gap-3 font-label text-xs text-muted-foreground">
         <span>{t("saveStatus", { status })}</span>
         <span>{t("wordCount", { count: wordCount })}</span>
         <span>{t("charCount", { count: charCount })}</span>
@@ -206,7 +210,7 @@ export function SceneEditor({
           </Button>
         )}
       </div>
-      <div className="rounded-lg border bg-background p-8 shadow-sm">
+      <div className={embedded ? "bg-transparent py-2" : "rounded-lg border bg-background p-8 shadow-sm"}>
         <EditorContent editor={editor} />
       </div>
     </div>

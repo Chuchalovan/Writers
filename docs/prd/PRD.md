@@ -490,7 +490,7 @@
 
 | Ограничение | Тип |
 |-------------|-----|
-| Стек: Next.js, PostgreSQL/Prisma, Better Auth, next-intl, monorepo | **Факт** / DEC-001 Accepted |
+| Стек: Next.js, PostgreSQL/Drizzle, Better Auth, next-intl, monorepo | **Факт** / DEC-001 + DEC-013 Accepted |
 | Desktop-first; полный offline всего проекта — вне MVP | **Решение** |
 | Figma Starter: publish Code Connect ограничен | **Факт** (design) |
 

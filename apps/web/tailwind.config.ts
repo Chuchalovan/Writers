@@ -49,6 +49,14 @@ const config: Config = {
           border: "hsl(var(--sidebar-border))",
           accent: "hsl(var(--sidebar-accent))",
         },
+        chrome: {
+          DEFAULT: "hsl(var(--chrome))",
+          foreground: "hsl(var(--chrome-foreground))",
+          muted: "hsl(var(--chrome-muted))",
+          border: "hsl(var(--chrome-border))",
+          accent: "hsl(var(--chrome-accent))",
+        },
+        sheet: "hsl(var(--sheet))",
         status: {
           idea: "hsl(var(--status-idea))",
           planned: "hsl(var(--status-planned))",

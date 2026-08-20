@@ -1,7 +1,7 @@
 ﻿# Decision Log
 
 > Закрывает [PRD v1.0 §17](../prd/archive/PRD-v1.0.md) и дополняет [MVP-SCOPE-MATRIX.md](./MVP-SCOPE-MATRIX.md)  
-> **Обновлено:** 4 августа 2026
+> **Обновлено:** 20 августа 2026
 
 Журнал продуктовых и технических решений. Каждая запись должна иметь **владельца** и **deadline** до перевода в `Accepted`.
 
@@ -40,6 +40,7 @@
 | [DEC-010](#dec-010-лимиты-файлов-и-изображений) | Лимиты файлов | ⬜ Open | Product + Eng | Sprint 4 start | Sprint 4 |
 | [DEC-011](#dec-011-figma-design-handoff) | Figma tokens & handoff | ⬜ Open | Design | MVP Beta gate | Beta |
 | [DEC-012](#dec-012-writinggoaldailystat) | WritingGoal / DailyStat | 🟡 Proposed | Product | Sprint 6 start | — |
+| [DEC-013](#dec-013-orm-drizzle) | ORM: Drizzle вместо Prisma | ✅ Accepted | Engineering | — | — |
 
 ---
 
@@ -60,7 +61,7 @@
 |------|-------|
 | App | Next.js 15 (App Router), TypeScript |
 | UI | Tailwind CSS, shadcn/ui |
-| DB | PostgreSQL + Prisma |
+| DB | PostgreSQL + Drizzle ([DEC-013](#dec-013-orm-drizzle)) |
 | Auth | Better Auth (email/password) |
 | i18n | next-intl (ru/en) |
 | Monorepo | pnpm workspaces |
@@ -73,7 +74,7 @@
 ### Последствия
 
 - Server Actions + API routes для AI-стриминга
-- Миграции через Prisma
+- Миграции через Drizzle Kit (ранее Prisma — [DEC-013](#dec-013-orm-drizzle))
 
 **Ссылки:** [ARCHITECTURE.md](../technical/ARCHITECTURE.md), [README.md](../../README.md)
 
@@ -438,7 +439,7 @@ PRD §1.4: полноценное mobile app — non-goal. §11.4: read-only + l
 
 ### Контекст
 
-Prisma уже содержит `WritingGoal`, `DailyStat`. PRD §6.5 — «цель по словам» на уровне сцены; PRD §6.3 — прогресс на overview. Нет явного daily writing goal.
+Схема уже содержит `WritingGoal`, `DailyStat` (Drizzle, [DEC-013](#dec-013-orm-drizzle)). PRD §6.5 — «цель по словам» на уровне сцены; PRD §6.3 — прогресс на overview. Нет явного daily writing goal.
 
 ### Варианты
 
@@ -459,6 +460,43 @@ Prisma уже содержит `WritingGoal`, `DailyStat`. PRD §6.5 — «це�
 
 ---
 
+## DEC-013: ORM — Drizzle вместо Prisma
+
+**Статус:** ✅ Accepted  
+**Owner:** Engineering  
+**Deadline:** — (принято 2026-08-20)  
+**Связано:** [DEC-001](#dec-001-технологическая-платформа)
+
+### Контекст
+
+DEC-001 фиксировал PostgreSQL + Prisma. Prisma ORM остаётся Apache-2.0, но продукт Prisma Inc. (Postgres / Accelerate / Compute) и generate/бинарный клиент создают вендорную зависимость. Нужен type-safe доступ к той же PostgreSQL без экосистемы Prisma.
+
+### Решение
+
+| Слой | Выбор |
+|------|-------|
+| ORM | Drizzle ORM + Drizzle Kit |
+| Драйвер | `pg` (node-postgres) |
+| Auth adapter | Better Auth `drizzleAdapter` (`provider: "pg"`) |
+| Схема | TypeScript в `apps/web/src/lib/db/schema.ts` |
+| Миграции | `apps/web/drizzle/` |
+
+Таблицы и имена колонок сохранены 1:1 с прежней Prisma-схемой (`user` / `session` / PascalCase доменных таблиц).
+
+### Обоснование
+
+Drizzle — Apache-2.0, схема в TypeScript без generate, официальный адаптер Better Auth, SQL-миграции. Kysely отвергнут: нет своей схемы/миграций как источника истины.
+
+### Последствия
+
+- `pnpm db:migrate` / `db:push` / `db:studio` — Drizzle Kit
+- CI применяет `drizzle-kit migrate` на пустой Postgres 16
+- Новые таблицы (Storyline, Note, …) добавляются через Drizzle, не Prisma
+
+**Ссылки:** [DATABASE.md](../technical/DATABASE.md), [ARCHITECTURE.md](../technical/ARCHITECTURE.md)
+
+---
+
 ## Процесс обновления
 
 1. **Новое решение** — добавить строку в сводку + полную секцию DEC-XXX
@@ -472,6 +510,8 @@ Prisma уже содержит `WritingGoal`, `DailyStat`. PRD §6.5 — «це�
 
 | Дата | ID | Изменение |
 |------|-----|-----------|
+| 2026-08-20 | DEC-013 | Accepted: ORM Drizzle вместо Prisma |
+| 2026-08-20 | DEC-001 | DB-строка обновлена на PostgreSQL + Drizzle (см. DEC-013) |
 | 2026-08-04 | DEC-001 | Accepted (зафиксировано по текущему стеку) |
 | 2026-08-04 | ALL | Initial decision log created from PRD §17 |
 

@@ -50,7 +50,8 @@
   },
   "nav": {
     "projects": "Projects",
-    "settings": "Settings"
+    "settings": "Settings",
+    "manuscript": "Manuscript"
   },
   "header": {
     "language": "Language"
@@ -145,7 +146,25 @@
     "keepMine": "Keep mine",
     "retry": "Retry",
     "mobileReadOnly": "Editing is available on a wider screen. This view is read-only.",
-    "deleted": "This scene is in the trash."
+    "deleted": "This scene is in the trash.",
+    "inspector": "Context",
+    "toggleInspector": "Show or hide context panel",
+    "exitFocus": "Exit focus",
+    "tabScene": "Scene",
+    "tabCharacters": "Characters",
+    "tabWorld": "World",
+    "goal": "Goal",
+    "conflict": "Conflict",
+    "pov": "Point of view",
+    "location": "Location",
+    "none": "Not set",
+    "noParticipants": "No characters linked to this scene.",
+    "noCharacters": "No character cards yet — linking will be available once you add a character.",
+    "noLocations": "No locations yet. Create them in the world bible.",
+    "worldHint": "Choose a location on the Scene tab. Linking does not change scene text.",
+    "linkCharacter": "Link a character",
+    "link": "Link",
+    "unlink": "Unlink"
   },
   "stats": {
     "title": "Statistics",

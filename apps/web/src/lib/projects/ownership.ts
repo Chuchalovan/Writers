@@ -1,15 +1,17 @@
 import { AppError, ERROR_CODES } from "@manuscript/shared";
-import { prisma } from "@/lib/db";
+import { db } from "@/lib/db";
+import { project } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 export async function assertProjectOwner(userId: string, projectId: string): Promise<void> {
-  const project = await prisma.project.findFirst({
-    where: { id: projectId },
-    select: { id: true, userId: true },
+  const row = await db.query.project.findFirst({
+    where: eq(project.id, projectId),
+    columns: { id: true, userId: true },
   });
-  if (!project) {
+  if (!row) {
     throw new AppError(ERROR_CODES.NOT_FOUND, "Project not found");
   }
-  if (project.userId !== userId) {
+  if (row.userId !== userId) {
     throw new AppError(ERROR_CODES.FORBIDDEN, "Forbidden");
   }
 }

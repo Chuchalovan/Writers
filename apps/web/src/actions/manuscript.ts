@@ -9,6 +9,8 @@ import {
   SetSceneStatusSchema,
   UpdateManuscriptNodeSchema,
   UpdateSceneContentSchema,
+  UpdateSceneMetadataSchema,
+  LinkCharacterToSceneSchema,
 } from "@manuscript/shared";
 import { requireSession } from "@/lib/auth/session";
 import { validationError } from "@/lib/errors";
@@ -26,7 +28,15 @@ import {
   setSceneStatus,
   updateNode,
 } from "@/lib/manuscript";
-import type { ManuscriptNodeType } from "@prisma/client";
+import {
+  getSceneContext,
+  linkCharacterToScene,
+  listCharacters,
+  listWorldArticles,
+  saveSceneMetadata,
+  unlinkCharacterFromScene,
+} from "@/lib/knowledge";
+import type { ManuscriptNodeType } from "@manuscript/shared";
 
 async function defaultNodeTitle(type: ManuscriptNodeType): Promise<string> {
   const t = await getTranslations("manuscript");
@@ -170,3 +180,61 @@ export async function saveSceneContentAction(input: unknown) {
     throw error;
   }
 }
+
+export async function getSceneContextAction(sceneId: string) {
+  const session = await requireSession();
+  return getSceneContext(session.user.id, sceneId);
+}
+
+export async function listProjectCharactersAction(projectId: string) {
+  const session = await requireSession();
+  return listCharacters(session.user.id, projectId);
+}
+
+export async function listProjectWorldAction(projectId: string) {
+  const session = await requireSession();
+  return listWorldArticles(session.user.id, projectId);
+}
+
+export async function saveSceneMetadataAction(input: unknown) {
+  const session = await requireSession();
+  const parsed = UpdateSceneMetadataSchema.safeParse(input);
+  if (!parsed.success) return validationError(parsed.error).toEnvelope();
+  try {
+    const result = await saveSceneMetadata(session.user.id, parsed.data);
+    revalidatePath(`/projects/${result.projectId}/scenes/${parsed.data.sceneId}`);
+    return result.metadata;
+  } catch (error) {
+    if (isAppError(error)) return error.toEnvelope();
+    throw error;
+  }
+}
+
+export async function linkCharacterToSceneAction(input: unknown) {
+  const session = await requireSession();
+  const parsed = LinkCharacterToSceneSchema.safeParse(input);
+  if (!parsed.success) return validationError(parsed.error).toEnvelope();
+  try {
+    const result = await linkCharacterToScene(session.user.id, parsed.data.sceneId, parsed.data.characterId);
+    revalidatePath(`/projects/${result.projectId}/scenes/${parsed.data.sceneId}`);
+    return { ok: true };
+  } catch (error) {
+    if (isAppError(error)) return error.toEnvelope();
+    throw error;
+  }
+}
+
+export async function unlinkCharacterFromSceneAction(input: unknown) {
+  const session = await requireSession();
+  const parsed = LinkCharacterToSceneSchema.safeParse(input);
+  if (!parsed.success) return validationError(parsed.error).toEnvelope();
+  try {
+    const result = await unlinkCharacterFromScene(session.user.id, parsed.data.sceneId, parsed.data.characterId);
+    revalidatePath(`/projects/${result.projectId}/scenes/${parsed.data.sceneId}`);
+    return { ok: true };
+  } catch (error) {
+    if (isAppError(error)) return error.toEnvelope();
+    throw error;
+  }
+}
+

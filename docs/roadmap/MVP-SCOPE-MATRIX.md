@@ -1,12 +1,14 @@
 ﻿# MVP Scope Matrix
 
-> **PRD:** [PRD v2.0](../prd/PRD.md)  
-> **Источник приоритетов:** PRD v1.0 §27 → матрица; в v2.0 — §6  
-> **Спринты:** [ROADMAP.md](./ROADMAP.md) Phase 1  
-> **Релизы:** PRD v2.0 §12–§13  
-> **Обновлено:** 11 августа 2026
+> **PRD:** [PRD v2.1](../prd/PRD.md)  
+> **BRD:** [BRD v1.1](../brd/BRD.md)  
+> **ТЗ:** [TZ v1.2](../tz/TZ.md) §9  
+> **Источник приоритетов:** PRD v1.0 §27 → матрица; в v2.1 — §6  
+> **Спринты:** [ROADMAP.md](./ROADMAP.md)  
+> **Релизы:** PRD v2.1 §12–§13  
+> **Обновлено:** 20 августа 2026
 
-Этот документ — **единый источник истины** для scope. При противоречии между PRD v2.0 §6, архивным PRD §13/§14 и ROADMAP побеждает эта матрица.
+Этот документ — **единый источник истины** для scope. При противоречии между PRD v2.1 §6, архивным PRD §13/§14 и ROADMAP побеждает эта матрица.
 
 ---
 
@@ -46,7 +48,7 @@ Phase 4 ──► Этап 4: Post-MVP         ← P2 и backlog §15
 | §6.1 все auth-функции «MVP», Sprint 6 — password recovery | Core auth → Sprint 1; password reset + email confirm → **Sprint 6, но gate Beta** (до публичного запуска) |
 | Поиск в §13 «в MVP», §27 P0 только по названиям | **Split:** по названиям P0; полнотекст P1 |
 | Экспорт в §13 все форматы, §27 P0 только DOCX/TXT | **Split:** DOCX/TXT P0; PDF/Markdown/ZIP P1 |
-| DATABASE/Prisma: UserApiKey, WritingGoal, DailyStat | **Post-MVP (P2)** до [DEC-012](./DECISION-LOG.md#dec-012-writinggoal--dailystat) |
+| DATABASE/Drizzle: UserApiKey, WritingGoal, DailyStat | **Post-MVP (P2)** до [DEC-012](./DECISION-LOG.md#dec-012-writinggoal--dailystat) |
 
 ---
 
@@ -73,11 +75,11 @@ Phase 4 ──► Этап 4: Post-MVP         ← P2 и backlog §15
 | Область | Возможность | P | Sprint | Release | PRD | Статус |
 |---------|-------------|---|--------|---------|-----|--------|
 | Projects | CRUD (создание только по названию) | P0 | 2 | Alpha | §5.1, §6.2 | ✅ |
-| Projects | Карточки, архив, сортировка | P0 | 2 | Alpha | §6.2 | 🟡 частично |
-| Projects | Поиск и фильтр на dashboard | P0 | 2 | Alpha | §6.2 | ⬜ |
-| Projects | Дублирование, переименование, удаление | P0 | 2 | Alpha | §6.2 | 🟡 частично |
+| Projects | Карточки, архив, сортировка | P0 | 2 | Alpha | §6.2 | ✅ |
+| Projects | Поиск и фильтр на dashboard | P0 | 2 | Alpha | §6.2 | ✅ |
+| Projects | Дублирование, переименование, удаление | P0 | 2 | Alpha | §6.2 | ✅ |
 | Projects | Onboarding «Начать писать / Спланировать / Материалы» | P0 | 2 | Alpha | §22 | ✅ |
-| Projects | Обзор проекта (continue, прогресс, next step) | P0 | 2 | Alpha | §6.3 | 🟡 частично |
+| Projects | Обзор проекта (continue, прогресс, next step) | P0 | 2 | Alpha | §6.3 | ✅ |
 | Projects | Onboarding v2 (улучшенный) | P2 | — | Launch | §14 Э3 | ⬜ |
 
 ### Manuscript Structure
@@ -86,26 +88,26 @@ Phase 4 ──► Этап 4: Post-MVP         ← P2 и backlog §15
 |---------|-------------|---|--------|---------|-----|--------|
 | Manuscript | Части → главы → сцены (CRUD) | P0 | 2 | Alpha | §6.4 | ✅ |
 | Manuscript | Дерево навигатора, статусы сцены | P0 | 2 | Alpha | §6.4 | ✅ |
-| Manuscript | Drag-and-drop порядка | P0 | 2 | Alpha | §5.2, §6.4 | ⬜ |
+| Manuscript | Drag-and-drop порядка | P0 | 2 | Alpha | §5.2, §6.4 | ✅ |
 | Manuscript | Сворачивание уровней, контекстное меню | P0 | 2 | Alpha | §6.4 | 🟡 частично |
-| Manuscript | Нераспределённые сцены | P0 | 2 | Alpha | §5.2 | ⬜ |
-| Manuscript | Soft delete + корзина | P0 | 3 | Alpha | §23.4, §24.1 | ⬜ |
-| Manuscript | Поиск по названиям в навигаторе | P0 | 2 | Alpha | §6.4 | ⬜ |
+| Manuscript | Нераспределённые сцены | P0 | 2 | Alpha | §5.2 | ✅ |
+| Manuscript | Soft delete + корзина | P0 | 3 | Alpha | §23.4, §24.1 | ✅ |
+| Manuscript | Поиск по названиям в навигаторе | P0 | 2 | Alpha | §6.4 | ✅ |
 
 ### Scene Editor (ядро продукта)
 
 | Область | Возможность | P | Sprint | Release | PRD | Статус |
 |---------|-------------|---|--------|---------|-----|--------|
-| Editor | TipTap, базовое форматирование | P0 | 3 | Alpha | §6.5 | ⬜ |
-| Editor | Трёхколоночный layout (нав \| текст \| контекст) | P0 | 3 | Alpha | §23 | ⬜ |
-| Editor | Автосохранение | P0 | 3 | Alpha | §6.5 | ⬜ |
-| Editor | Локальный буфер при потере сети | P0 | 3 | Alpha | §5.3, §6.5 | ⬜ |
-| Editor | Подсчёт слов, цель по словам | P0 | 3 | Alpha | §6.5 | ⬜ |
-| Editor | Режим фокуса, горячие клавиши | P0 | 3 | Alpha | §6.5, §23.8 | ⬜ |
+| Editor | TipTap, базовое форматирование | P0 | 3 | Alpha | §6.5 | ✅ |
+| Editor | Трёхколоночный layout (нав \| текст \| контекст) | P0 | 3 | Alpha | §23 | ✅ |
+| Editor | Автосохранение | P0 | 3 | Alpha | §6.5 | ✅ |
+| Editor | Локальный буфер при потере сети | P0 | 3 | Alpha | §5.3, §6.5 | ✅ |
+| Editor | Подсчёт слов, цель по словам | P0 | 3 | Alpha | §6.5 | 🟡 частично |
+| Editor | Режим фокуса, горячие клавиши | P0 | 3 | Alpha | §6.5, §23.8 | ✅ |
 | Editor | История версий сцен | P0 | 3 | Beta | §6.5, §27 | ⬜ |
-| Editor | Конфликт версий (merge UX) | P0 | 3 | Beta | §23.5 | ⬜ |
-| Editor | Метаданные сцены (цель, конфликт, POV, локация) | P0 | 3 | Alpha | §6.5 | ⬜ |
-| Editor | Контекстная панель (вкладки Сцена/Персонажи/Мир) | P0 | 3 | Alpha | §23.6 | ⬜ |
+| Editor | Конфликт версий (merge UX) | P0 | 3 | Beta | §23.5 | 🟡 частично |
+| Editor | Метаданные сцены (цель, конфликт, POV, локация) | P0 | 3 | Alpha | §6.5 | ✅ |
+| Editor | Контекстная панель (вкладки Сцена/Персонажи/Мир) | P0 | 3 | Alpha | §23.6 | ✅ |
 | Editor | Command palette (Ctrl+K) | P1 | 4 | Beta | §25.7 | ⬜ |
 
 ### Knowledge Base
@@ -191,10 +193,10 @@ Phase 4 ──► Этап 4: Post-MVP         ← P2 и backlog §15
 | Must-have P0 | Sprint |
 |--------------|--------|
 | Auth (register/login) | 1 ✅ |
-| Projects + onboarding | 2 |
-| Manuscript tree + DnD | 2 |
-| Scene editor + autosave + offline buffer | 3 |
-| Scene metadata + context panel | 3 |
+| Projects + onboarding | 2 ✅ |
+| Manuscript tree + DnD | 2 ✅ |
+| Scene editor + autosave + offline buffer | 3 ✅ |
+| Scene metadata + context panel | 3 ✅ |
 | Characters (basic) + locations | 4 |
 | Export DOCX/TXT | 6 |
 
@@ -232,13 +234,13 @@ Phase 4 ──► Этап 4: Post-MVP         ← P2 и backlog §15
 | Sprint | Фокус | Release gate |
 |--------|-------|--------------|
 | 1 ✅ | Foundation | Phase 0 |
-| 2 | Projects + manuscript structure | → Alpha |
-| 3 | Scene editor | → Alpha |
-| 4 | Knowledge base (P0 chars/world + P1 plot/search) | → Alpha (P0) / Beta (P1) |
+| 2 ✅ | Projects + manuscript structure | → Alpha |
+| 3 ✅ | Scene editor (ядро); версии/merge → Beta | → Alpha |
+| 4 | Knowledge base (P0 chars/world/links + P1 plot/search) | → Alpha (P0) / Beta (P1) |
 | 5 | AI assistant | → Beta |
-| 6 | Import/export + polish + auth completion | → Beta |
-| Phase 2 | Billing infra, search indexing, sync reliability | → Beta hardening |
-| Phase 3 | Tariffs, OAuth, help, onboarding v2 | → Launch |
+| 6 | P0: DOCX/TXT → Alpha; P1: import + PDF/MD/ZIP + auth polish | split |
+| Phase 2 | FTS, sync reliability, analytics, ops, P1 polish | → Beta |
+| Phase 3 | Tariffs, OAuth, help, onboarding v2, legal | → Launch |
 | Phase 4 | P2 backlog | → Post-MVP |
 
 ---
@@ -260,8 +262,16 @@ Phase 4 ──► Этап 4: Post-MVP         ← P2 и backlog §15
 
 ## Связанные документы
 
-- [PRD v1.0](../prd/archive/PRD-v1.0.md) — нормативные требования
-- [DECISION-LOG.md](./DECISION-LOG.md) — открытые решения §17
+- [PRD v2.1](../prd/PRD.md) — что и зачем; [архив v1.0](../prd/archive/PRD-v1.0.md) — первоисточник §27
+- [BRD v1.1](../brd/BRD.md) — бизнес-цели и Must знаний
+- [ТЗ v1.2](../tz/TZ.md) — контракты и приёмка
+- [DECISION-LOG.md](./DECISION-LOG.md) — открытые решения
 - [DESIGN-HANDOFF.md](../technical/design/DESIGN-HANDOFF.md) — Figma ↔ code handoff
 - [ROADMAP.md](./ROADMAP.md) — спринтовый трекер (статусы задач)
-- [DATABASE.md](../technical/DATABASE.md) — схема данных (синхронизирована с Prisma + PRD §9 matrix)
+- [DATABASE.md](../technical/DATABASE.md) — схема данных (синхронизирована с Drizzle + PRD §9 matrix)
+
+### Changelog статусов
+
+| Дата | Что |
+|------|-----|
+| 2026-08-20 | Статусы Sprint 2 и ядра Sprint 3 выровнены с кодом / OpenSpec `develop-mvp`. Phase 2 больше не содержит billing (Launch / DEC-004). |

@@ -2,7 +2,7 @@
 
 See `proposal.md` for motivation. Product SoT remains [MVP Scope Matrix](../../docs/roadmap/MVP-SCOPE-MATRIX.md), behavior [PRD](../../docs/prd/PRD.md) / [Use Cases](../../docs/user-stories/use-cases.md), contracts [ТЗ](../../docs/tz/TZ.md).
 
-**Fact today:** pnpm monorepo, Next.js 15 App Router, Prisma + PostgreSQL 16, Better Auth email/password, next-intl ru/en, CI quality job. Implemented: landing, login/register, project CRUD (no duplicate/search/overview), manuscript node create/update/soft-delete without reorder/move/restore cascade, scene route stub. Missing: TipTap autosave, knowledge modules, export/import, AI routes, unified error envelope, Ink Studio shell.
+**Fact today:** pnpm monorepo, Next.js 15 App Router, Drizzle + PostgreSQL 16, Better Auth email/password, next-intl ru/en, CI quality job. Implemented: landing, login/register, project CRUD (no duplicate/search/overview), manuscript node create/update/soft-delete without reorder/move/restore cascade, scene route stub. Missing: TipTap autosave, knowledge modules, export/import, AI routes, unified error envelope, Ink Studio shell.
 
 Constraints: DEC-001 Accepted (this stack). DEC-002/003 Proposed — treat TipTap + ProseMirror JSON as the document. DEC-005 Proposed — platform AI for Beta, BYOK P2. DEC-012 — do not implement WritingGoal/DailyStat. UI SoT: Figma Ink Studio.
 
@@ -11,7 +11,7 @@ Constraints: DEC-001 Accepted (this stack). DEC-002/003 Proposed — treat TipTa
 **Goals:**
 
 - Close the gap from current code to Alpha then Beta using existing packages (`apps/web`, `@manuscript/shared`, `@manuscript/ai`) rather than a new service.
-- Align Prisma with ТЗ §6.5 tables for P0/P1; keep P2 tables unused in UI.
+- Align Drizzle schema with ТЗ §6.5 tables for P0/P1; keep P2 tables unused in UI.
 - One ownership check + Zod boundary on every mutation; REST only for SSE and file download.
 - Ship in sprint order (2 remainder → 3 → 4 P0 → 6 export → 4 P1 / 5 AI / 6 polish) so Alpha is demoable before Beta features.
 
@@ -34,7 +34,7 @@ Constraints: DEC-001 Accepted (this stack). DEC-002/003 Proposed — treat TipTa
 
 ### 2. Error envelope and auth helpers
 
-**Choice:** Normalize Action/REST errors to `{ error: { code, message, details } }` with i18n messages. Centralize `requireSession`, `assertProjectOwner`, `getNodeWithAuth`. Map Prisma not-found in scope to `NOT_FOUND`, cross-user to `FORBIDDEN`.
+**Choice:** Normalize Action/REST errors to `{ error: { code, message, details } }` with i18n messages. Centralize `requireSession`, `assertProjectOwner`, `getNodeWithAuth`. Map not-found in scope to `NOT_FOUND`, cross-user to `FORBIDDEN`.
 
 **Why:** Specs require a stable contract; current `throw new Error` / `{ error: "invalid_title" }` cannot be tested uniformly.
 
@@ -44,7 +44,7 @@ Constraints: DEC-001 Accepted (this stack). DEC-002/003 Proposed — treat TipTa
 
 **Choice:** Add/complete `SceneMetadata`, `SceneParticipant`, `CharacterRelationship`, `SceneVersion` (Beta), `Storyline`/`StoryBeat`, `TimelineEvent`, `Note`, `StoredFile`, `AIConversation`/`AIMessage`. Extend `Character` optional fields. Keep `UserApiKey`, `DailyStat`, `WritingGoal` in schema if already present but unused by UI. Catalog of plot methods lives in `@manuscript/shared` JSON, not a DB table; `Project.plotMethod` stores the id.
 
-**Why:** Specs need those entities; Prisma is already the SoT for implementation. Forward-only migrations on release gates.
+**Why:** Specs need those entities; Drizzle schema is the SoT for implementation. Forward-only migrations on release gates.
 
 **Alternatives:** JSON blobs on `Project` for knowledge — cheaper now, blocks search, relationships, and ZIP export.
 
@@ -82,7 +82,7 @@ Constraints: DEC-001 Accepted (this stack). DEC-002/003 Proposed — treat TipTa
 
 ### 9. AI
 
-**Choice:** Implement `packages/ai` `stream` against one platform provider (OpenAI-compatible). Server loads entities by `level` + `contextEntityIds`. Feature flag `AI_ENABLED`. Quota counter per user per UTC day in DB or Redis later; start with a Prisma counter table or reuse a small `AiUsage` model (not BYOK). Consent stored on user. Unverified email short-circuits before provider.
+**Choice:** Implement `packages/ai` `stream` against one platform provider (OpenAI-compatible). Server loads entities by `level` + `contextEntityIds`. Feature flag `AI_ENABLED`. Quota counter per user per UTC day in DB or Redis later; start with a Drizzle counter table or reuse a small `AiUsage` model (not BYOK). Consent stored on user. Unverified email short-circuits before provider.
 
 **Why:** DEC-005 platform default; specs forbid client-trusted blobs and auto-apply.
 
@@ -109,7 +109,7 @@ Constraints: DEC-001 Accepted (this stack). DEC-002/003 Proposed — treat TipTa
 
 ## Migration Plan
 
-1. Prisma migrations additive (new tables/columns, indexes). Do not rename Better Auth tables.
+1. Drizzle migrations additive (new tables/columns, indexes). Do not rename Better Auth tables.
 2. Backfill: `SceneContent.plainText` / `wordCount` from existing JSON if any; `plotMethod = blank`.
 3. Deploy app then migrate (expand) — new columns optional or defaulted. Rollback = previous app revision; do not down-migrate data on gate.
 4. Feature-flag AI and import off until Beta staging checks pass.
