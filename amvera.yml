@@ -1,0 +1,13 @@
+# Next.js — серверное Node.js-приложение (не статика).
+meta:
+  environment: node
+  toolchain:
+    name: npm
+    version: 20
+
+build:
+  additionalCommands: NODE_OPTIONS=--max-old-space-size=2048 npm run build
+
+run:
+  command: npm run start
+  containerPort: 3000

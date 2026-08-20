@@ -65,6 +65,7 @@
     "loginDesc": "Sign in to your account",
     "registerDesc": "Create an account to get started",
     "loginError": "Invalid email or password",
+    "rateLimited": "Too many login attempts. Try again in 10 minutes.",
     "registerError": "Could not create account",
     "hasAccount": "Already have an account?",
     "noAccount": "Don't have an account?",
@@ -89,7 +90,26 @@
     "wordCount": "{count, plural, one {# word} other {# words}}",
     "nodeCount": "{count, plural, one {# item} other {# items}}",
     "backToList": "Back to projects",
-    "onboardingDesc": "Choose where to start — you can change your path anytime."
+    "onboardingDesc": "Choose where to start — you can change your path anytime.",
+    "searchPlaceholder": "Search by title",
+    "includeArchived": "Show archived",
+    "searchEmpty": "No projects match this search",
+    "searchEmptyHint": "Try another title or show archived projects.",
+    "actions": "Project actions",
+    "rename": "Rename",
+    "duplicate": "Duplicate",
+    "archive": "Archive",
+    "archiveConfirm": "Archive this project? It will be hidden from the default list.",
+    "deleteConfirm": "Delete this project? This cannot be undone from the app.",
+    "archivedBadge": "Archived",
+    "continueLabel": "Continue writing",
+    "continueAction": "Continue",
+    "noFakeProgress": "No volume goal yet — progress percent is hidden.",
+    "progress": "{percent}% of word goal",
+    "next_continue": "Continue the last scene",
+    "next_write": "Write the next scene",
+    "next_structure": "Add parts, chapters, or scenes",
+    "next_character": "Describe a character"
   },
   "manuscript": {
     "title": "Manuscript",
@@ -108,12 +128,24 @@
     "status_planned": "Planned",
     "status_draft": "Draft",
     "status_revision": "In revision",
-    "status_ready": "Ready"
+    "status_ready": "Ready",
+    "searchTitles": "Filter by title",
+    "unassigned": "Unassigned scenes",
+    "trash": "Trash",
+    "restore": "Restore",
+    "reorderError": "Could not save order — the tree was restored."
   },
   "editor": {
     "wordCount": "{count} words",
+    "charCount": "{count} characters",
     "focusMode": "Focus mode",
-    "comingSoon": "Scene editor — coming in Sprint 3. Structure and navigation work now."
+    "comingSoon": "Scene editor — coming in Sprint 3. Structure and navigation work now.",
+    "saveStatus": "{status, select, saved {Saved} saving {Saving…} device {Saved on device} conflict {Conflict} error {Save failed — retry} other {Saved}}",
+    "loadServer": "Load from server",
+    "keepMine": "Keep mine",
+    "retry": "Retry",
+    "mobileReadOnly": "Editing is available on a wider screen. This view is read-only.",
+    "deleted": "This scene is in the trash."
   },
   "stats": {
     "title": "Statistics",

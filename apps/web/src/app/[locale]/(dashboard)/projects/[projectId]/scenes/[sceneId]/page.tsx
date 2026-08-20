@@ -3,8 +3,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import { ArrowLeft } from "lucide-react";
 import { getProjectAction } from "@/actions/projects";
-import { getNodeWithAuth } from "@/lib/manuscript";
-import { requireSession } from "@/lib/auth/session";
+import { getSceneAction } from "@/actions/manuscript";
+import { SceneEditor } from "@/components/editor/scene-editor";
 
 export default async function ScenePage({
   params,
@@ -22,17 +22,38 @@ export default async function ScenePage({
     notFound();
   }
 
-  const session = await requireSession();
   let scene;
   try {
-    scene = await getNodeWithAuth(session.user.id, sceneId);
+    scene = await getSceneAction(sceneId);
   } catch {
     notFound();
   }
 
-  if (scene.projectId !== projectId || scene.type !== "scene") {
+  if (scene.node.projectId !== projectId || scene.node.type !== "scene") {
     notFound();
   }
+
+  if (scene.node.deletedAt) {
+    return (
+      <div className="mx-auto max-w-3xl">
+        <Link
+          href={`/projects/${projectId}`}
+          className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+          {project.title}
+        </Link>
+        <p className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
+          {t("deleted")}
+        </p>
+      </div>
+    );
+  }
+
+  const json =
+    scene.content?.contentJson && typeof scene.content.contentJson === "object"
+      ? (scene.content.contentJson as Record<string, unknown>)
+      : null;
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -44,10 +65,13 @@ export default async function ScenePage({
         {project.title}
       </Link>
 
-      <h1 className="font-display text-xl font-medium">{scene.title}</h1>
-      <p className="mt-6 rounded-lg border border-dashed border-border bg-secondary/30 p-8 text-center text-muted-foreground">
-        {t("comingSoon")}
-      </p>
+      <h1 className="mb-4 font-display text-xl font-medium">{scene.node.title}</h1>
+      <SceneEditor
+        sceneId={sceneId}
+        initialJson={json}
+        initialPlainText={scene.content?.plainText ?? ""}
+        initialVersion={scene.content?.version ?? 1}
+      />
     </div>
   );
 }

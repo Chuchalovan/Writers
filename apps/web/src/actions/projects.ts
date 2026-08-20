@@ -3,9 +3,11 @@
 import { revalidatePath } from "next/cache";
 import {
   CreateProjectSchema,
+  ListProjectsSchema,
   UpdateProjectSchema,
 } from "@manuscript/shared";
 import { requireSession } from "@/lib/auth/session";
+import { validationError } from "@/lib/errors";
 import {
   archiveProject,
   createProject,
@@ -14,17 +16,19 @@ import {
   getProjectsForUser,
   updateProject,
 } from "@/lib/projects";
+import { duplicateProject } from "@/lib/projects/duplicate";
+import { getProjectOverview } from "@/lib/projects/overview";
 
-export async function getProjectsAction() {
+export async function getProjectsAction(input: unknown = {}) {
   const session = await requireSession();
-  return getProjectsForUser(session.user.id);
+  const parsed = ListProjectsSchema.safeParse(input ?? {});
+  if (!parsed.success) throw validationError(parsed.error);
+  return getProjectsForUser(session.user.id, parsed.data);
 }
 
 export async function getProjectAction(projectId: string) {
   const session = await requireSession();
-  const project = await getProjectForUser(session.user.id, projectId);
-  if (!project) throw new Error("Project not found");
-  return project;
+  return getProjectForUser(session.user.id, projectId);
 }
 
 export type ProjectActionResult = Awaited<ReturnType<typeof getProjectAction>>;
@@ -35,7 +39,7 @@ export async function createProjectAction(formData: FormData) {
     title: formData.get("title"),
   });
   if (!parsed.success) {
-    return { error: "invalid_title" as const };
+    return validationError(parsed.error).toEnvelope();
   }
 
   const project = await createProject(session.user.id, parsed.data.title);
@@ -46,7 +50,7 @@ export async function createProjectAction(formData: FormData) {
 export async function updateProjectAction(input: unknown) {
   const session = await requireSession();
   const parsed = UpdateProjectSchema.safeParse(input);
-  if (!parsed.success) throw new Error("Invalid input");
+  if (!parsed.success) throw validationError(parsed.error);
 
   const { id, ...data } = parsed.data;
   const project = await updateProject(session.user.id, id, data);
@@ -65,4 +69,16 @@ export async function deleteProjectAction(projectId: string) {
   const session = await requireSession();
   await deleteProject(session.user.id, projectId);
   revalidatePath("/projects");
+}
+
+export async function duplicateProjectAction(projectId: string) {
+  const session = await requireSession();
+  const project = await duplicateProject(session.user.id, projectId);
+  revalidatePath("/projects");
+  return project;
+}
+
+export async function getProjectOverviewAction(projectId: string) {
+  const session = await requireSession();
+  return getProjectOverview(session.user.id, projectId);
 }

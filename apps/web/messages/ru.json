@@ -65,6 +65,7 @@
     "loginDesc": "Войдите в свой аккаунт",
     "registerDesc": "Создайте аккаунт для начала работы",
     "loginError": "Неверный email или пароль",
+    "rateLimited": "Слишком много попыток входа. Повторите через 10 минут.",
     "registerError": "Не удалось создать аккаунт",
     "hasAccount": "Уже есть аккаунт?",
     "noAccount": "Нет аккаунта?",
@@ -89,7 +90,26 @@
     "wordCount": "{count, plural, one {# слово} few {# слова} many {# слов} other {# слов}}",
     "nodeCount": "{count, plural, one {# элемент} few {# элемента} many {# элементов} other {# элементов}}",
     "backToList": "К проектам",
-    "onboardingDesc": "Выберите, с чего начать — можно изменить путь в любой момент."
+    "onboardingDesc": "Выберите, с чего начать — можно изменить путь в любой момент.",
+    "searchPlaceholder": "Поиск по названию",
+    "includeArchived": "Показать архив",
+    "searchEmpty": "Нет проектов по этому запросу",
+    "searchEmptyHint": "Попробуйте другое название или включите архив.",
+    "actions": "Действия с проектом",
+    "rename": "Переименовать",
+    "duplicate": "Дублировать",
+    "archive": "В архив",
+    "archiveConfirm": "Архивировать проект? Он скроется из списка по умолчанию.",
+    "deleteConfirm": "Удалить проект? Из приложения это необратимо.",
+    "archivedBadge": "В архиве",
+    "continueLabel": "Продолжить письмо",
+    "continueAction": "Продолжить",
+    "noFakeProgress": "Цели по объёму нет — процент готовности не показываем.",
+    "progress": "{percent}% от цели по словам",
+    "next_continue": "Продолжить последнюю сцену",
+    "next_write": "Написать следующую сцену",
+    "next_structure": "Добавить части, главы или сцены",
+    "next_character": "Описать героя"
   },
   "manuscript": {
     "title": "Рукопись",
@@ -108,12 +128,24 @@
     "status_planned": "Запланирована",
     "status_draft": "Черновик",
     "status_revision": "На редактуре",
-    "status_ready": "Готова"
+    "status_ready": "Готова",
+    "searchTitles": "Фильтр по названию",
+    "unassigned": "Нераспределённые сцены",
+    "trash": "Корзина",
+    "restore": "Восстановить",
+    "reorderError": "Не удалось сохранить порядок — дерево восстановлено."
   },
   "editor": {
     "wordCount": "{count} слов",
+    "charCount": "{count} знаков",
     "focusMode": "Режим фокуса",
-    "comingSoon": "Редактор сцен — в Sprint 3. Структура и навигация уже работают."
+    "comingSoon": "Редактор сцен — в Sprint 3. Структура и навигация уже работают.",
+    "saveStatus": "{status, select, saved {Сохранено} saving {Сохраняем…} device {Сохранено на устройстве} conflict {Конфликт} error {Ошибка — повторить} other {Сохранено}}",
+    "loadServer": "Загрузить с сервера",
+    "keepMine": "Оставить моё",
+    "retry": "Повторить",
+    "mobileReadOnly": "Редактирование доступно на широком экране. Здесь только просмотр.",
+    "deleted": "Эта сцена в корзине."
   },
   "stats": {
     "title": "Статистика",

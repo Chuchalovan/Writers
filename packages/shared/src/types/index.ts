@@ -15,11 +15,19 @@ export type WorldArticleType =
   | "event"
   | "article";
 
+export type PlotMethod = "blank" | "three-act" | "heros-journey" | "beat-sheet";
+
+export type RelationshipType =
+  | "family"
+  | "ally"
+  | "enemy"
+  | "romantic"
+  | "mentor"
+  | "other";
+
 export type GoalType = "daily" | "project";
 
 export type AIProvider = "openai" | "anthropic" | "custom";
-
-export type IdeaType = "plot" | "character" | "conflict" | "general";
 
 export interface Project {
   id: string;
@@ -32,6 +40,8 @@ export interface Project {
   genre: string | null;
   coverUrl: string | null;
   templateId: string | null;
+  plotMethod: PlotMethod;
+  continueNodeId: string | null;
   targetWordCount: number | null;
   totalWordCount: number;
   status: ProjectStatus;
@@ -69,9 +79,23 @@ export interface Character {
   name: string;
   role: string | null;
   summary: string | null;
+  appearance: string | null;
+  motivation: string | null;
+  notes: string | null;
   imageUrl: string | null;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface CharacterRelationship {
+  id: string;
+  projectId: string;
+  fromCharacterId: string;
+  toCharacterId: string;
+  type: RelationshipType;
+  label: string | null;
+  comment: string | null;
+  symmetric: boolean;
 }
 
 export interface WorldArticle {

@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -36,6 +37,15 @@ enum WorldArticleType {
   culture
   event
   article
+}
+
+enum RelationshipType {
+  family
+  ally
+  enemy
+  romantic
+  mentor
+  other
 }
 
 enum GoalType {
@@ -118,6 +128,8 @@ model Project {
   genre           String?
   coverUrl        String?
   templateId      String?
+  plotMethod      String        @default("blank")
+  continueNodeId  String?
   targetWordCount Int?
   totalWordCount  Int           @default(0)
   status          ProjectStatus @default(draft)
@@ -125,15 +137,18 @@ model Project {
   updatedAt       DateTime      @updatedAt
   archivedAt      DateTime?
 
-  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  nodes       ManuscriptNode[]
-  characters  Character[]
-  worldArticles WorldArticle[]
-  stats       DailyStat[]
-  goals       WritingGoal[]
+  user            User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  continueNode    ManuscriptNode?         @relation("ProjectContinue", fields: [continueNodeId], references: [id], onDelete: SetNull)
+  nodes           ManuscriptNode[]
+  characters      Character[]
+  worldArticles   WorldArticle[]
+  relationships   CharacterRelationship[]
+  stats           DailyStat[]
+  goals           WritingGoal[]
 
   @@index([userId])
   @@index([userId, status])
+  @@index([userId, updatedAt])
 }
 
 model ManuscriptNode {
@@ -150,14 +165,18 @@ model ManuscriptNode {
   updatedAt DateTime           @updatedAt
   deletedAt DateTime?
 
-  project  Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  parent   ManuscriptNode?  @relation("NodeTree", fields: [parentId], references: [id], onDelete: SetNull)
-  children ManuscriptNode[] @relation("NodeTree")
-  content  SceneContent?
+  project      Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  parent       ManuscriptNode?    @relation("NodeTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children     ManuscriptNode[]   @relation("NodeTree")
+  content      SceneContent?
+  metadata     SceneMetadata?
+  participants SceneParticipant[]
+  continueFor  Project[]          @relation("ProjectContinue")
 
   @@index([projectId])
   @@index([projectId, parentId, position])
   @@index([projectId, type])
+  @@index([projectId, deletedAt])
 }
 
 model SceneContent {
@@ -170,19 +189,77 @@ model SceneContent {
   scene ManuscriptNode @relation(fields: [sceneId], references: [id], onDelete: Cascade)
 }
 
+model SceneMetadata {
+  sceneId        String   @id
+  goal           String?
+  conflict       String?
+  outcome        String?
+  povCharacterId String?
+  locationId     String?
+  storyTime      String?
+  updatedAt      DateTime @updatedAt
+
+  scene        ManuscriptNode @relation(fields: [sceneId], references: [id], onDelete: Cascade)
+  povCharacter Character?     @relation("ScenePov", fields: [povCharacterId], references: [id], onDelete: SetNull)
+  location     WorldArticle?  @relation("SceneLocation", fields: [locationId], references: [id], onDelete: SetNull)
+}
+
+model SceneParticipant {
+  sceneId     String
+  characterId String
+  projectId   String
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  scene     ManuscriptNode @relation(fields: [sceneId], references: [id], onDelete: Cascade)
+  character Character      @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@id([sceneId, characterId])
+  @@index([projectId])
+}
+
 model Character {
-  id        String   @id @default(cuid())
-  projectId String
-  name      String
-  role      String?
-  summary   String?
-  imageUrl  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime?
+  id         String   @id @default(cuid())
+  projectId  String
+  name       String
+  role       String?
+  summary    String?
+  appearance String?
+  motivation String?
+  notes      String?
+  extra      Json?
+  imageUrl   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  deletedAt  DateTime?
 
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project        Project                 @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  participations SceneParticipant[]
+  povScenes      SceneMetadata[]         @relation("ScenePov")
+  relationsFrom  CharacterRelationship[] @relation("RelFrom")
+  relationsTo    CharacterRelationship[] @relation("RelTo")
 
+  @@index([projectId])
+  @@index([projectId, name])
+}
+
+model CharacterRelationship {
+  id              String           @id @default(cuid())
+  projectId       String
+  fromCharacterId String
+  toCharacterId   String
+  type            RelationshipType
+  label           String?
+  comment         String?
+  symmetric       Boolean          @default(true)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  project Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  from    Character @relation("RelFrom", fields: [fromCharacterId], references: [id], onDelete: Cascade)
+  to      Character @relation("RelTo", fields: [toCharacterId], references: [id], onDelete: Cascade)
+
+  @@unique([fromCharacterId, toCharacterId, type])
   @@index([projectId])
 }
 
@@ -198,10 +275,12 @@ model WorldArticle {
   updatedAt   DateTime         @updatedAt
   deletedAt   DateTime?
 
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project        Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sceneLocations SceneMetadata[] @relation("SceneLocation")
 
   @@index([projectId])
   @@index([projectId, type])
+  @@index([projectId, title])
 }
 
 model DailyStat {

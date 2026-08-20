@@ -25,7 +25,16 @@ export function LoginForm() {
     const result = await signIn.email({ email, password });
 
     if (result.error) {
-      setError(result.error.message ?? t("loginError"));
+      const code =
+        typeof result.error === "object" && result.error && "code" in result.error
+          ? String((result.error as { code?: string }).code)
+          : "";
+      const message = result.error.message ?? "";
+      setError(
+        code === "RATE_LIMITED" || message.includes("RATE_LIMITED") || result.error.status === 429
+          ? t("rateLimited")
+          : (message || t("loginError"))
+      );
       setLoading(false);
       return;
     }
