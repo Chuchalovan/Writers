@@ -1,20 +1,27 @@
 const { spawn } = require("node:child_process");
 const fs = require("node:fs");
 const path = require("node:path");
+const { drizzle } = require("drizzle-orm/node-postgres");
+const { migrate } = require("drizzle-orm/node-postgres/migrator");
+const { Pool } = require("pg");
 
 const webRoot = path.resolve(__dirname, "..");
-const repoRoot = path.resolve(webRoot, "..", "..");
+const migrationsFolder = path.join(webRoot, "drizzle");
 const port = process.env.PORT || "3000";
-const isWin = process.platform === "win32";
 
-function resolveBin(name) {
-  const fileName = isWin ? `${name}.cmd` : name;
-  const candidates = [
-    path.join(webRoot, "node_modules", ".bin", fileName),
-    path.join(repoRoot, "node_modules", ".bin", fileName),
-  ];
+function getDatabaseUrl() {
+  const url = process.env.DATABASE_URL;
+  if (!url) {
+    throw new Error("DATABASE_URL is not set");
+  }
 
-  return candidates.find((candidate) => fs.existsSync(candidate)) ?? name;
+  try {
+    const parsed = new URL(url);
+    parsed.searchParams.delete("schema");
+    return parsed.toString();
+  } catch {
+    return url;
+  }
 }
 
 function run(bin, args) {
@@ -23,7 +30,6 @@ function run(bin, args) {
       cwd: webRoot,
       stdio: "inherit",
       env: process.env,
-      shell: isWin,
     });
 
     child.on("error", reject);
@@ -38,9 +44,31 @@ function run(bin, args) {
   });
 }
 
+async function applyMigrations() {
+  if (!fs.existsSync(migrationsFolder)) {
+    throw new Error(`Drizzle migrations folder not found: ${migrationsFolder}`);
+  }
+
+  const pool = new Pool({
+    connectionString: getDatabaseUrl(),
+    max: 1,
+  });
+
+  try {
+    console.log("Applying database migrations...");
+    await migrate(drizzle(pool), { migrationsFolder });
+    console.log("Database migrations applied.");
+  } finally {
+    await pool.end();
+  }
+}
+
 async function main() {
-  await run(resolveBin("drizzle-kit"), ["migrate"]);
-  await run(resolveBin("next"), [
+  await applyMigrations();
+
+  const nextBin = require.resolve("next/dist/bin/next", { paths: [webRoot] });
+  await run(process.execPath, [
+    nextBin,
     "start",
     "--hostname",
     "0.0.0.0",
