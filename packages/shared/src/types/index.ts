@@ -136,6 +136,8 @@ export interface ChatMessage {
   content: string;
 }
 
+export type IdeaType = "plot" | "character" | "conflict" | "general";
+
 export interface Idea {
   title: string;
   description: string;
